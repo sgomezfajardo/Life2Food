@@ -45,12 +45,11 @@ public class LoginActivity extends AppCompatActivity {
                 mAuth.signInWithEmailAndPassword(email, password)
                         .addOnCompleteListener(LoginActivity.this, task -> {
                             if (task.isSuccessful()) {
-                                // Si el inicio de sesión es exitoso, ir a MainActivity
-                                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                                // Redirigir a la nueva actividad
+                                Intent intent = new Intent(LoginActivity.this, EcommerceActivity.class);
                                 startActivity(intent);
-                                finish(); // Cerrar esta actividad
+                                finish();
                             } else {
-                                // Si el inicio de sesión falla, mostrar un mensaje
                                 Toast.makeText(LoginActivity.this, "Error de autenticación", Toast.LENGTH_SHORT).show();
                             }
                         });
