@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal">
+
+    <ImageView
+        android:id="@+id/action_profile"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:src="@drawable/icono_perfil"
+        android:contentDescription="@string/profile" />
+
+    <ImageView
+        android:id="@+id/action_cart"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:src="@drawable/icono_carrito"
+        android:contentDescription="@string/cart" />
+
+    <ImageView
+        android:id="@+id/action_supermarket"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:src="@drawable/icono_supermercado"
+        android:contentDescription="@string/supermarket" />
+
+    <ImageView
+        android:id="@+id/action_restaurant"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:src="@drawable/icono_restaurantes"
+        android:contentDescription="@string/restaurant" />
+
+</LinearLayout>

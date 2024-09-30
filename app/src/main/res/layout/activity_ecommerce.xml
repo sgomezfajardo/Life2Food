@@ -1,32 +1,61 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:padding="16dp">
+    android:orientation="vertical">
 
-    <!-- Título del menú -->
-    <TextView
-        android:id="@+id/menu_title"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Nuestros productos para el dia de hoy!"
-        android:textSize="24sp"
-        android:textStyle="bold"
-        android:layout_gravity="center"
-        android:paddingBottom="16dp"/>
-
-    <!-- RecyclerView para la lista de productos -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_view"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1" />
 
-    <!-- Botón para agregar productos (opcional) -->
-    <Button
-        android:id="@+id/add_product_button"
-        android:layout_width="wrap_content"
+
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Agregar Producto" />
+        android:orientation="horizontal"
+        android:padding="8dp"
+        android:gravity="center"
+        android:background="@android:color/white"
+        android:elevation="4dp"> <!-- efecto de relieve -->
+
+        <ImageView
+            android:id="@+id/action_profile"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:src="@drawable/icono_perfil"
+            android:contentDescription="@string/profile"
+            android:padding="8dp"
+            android:background="@android:color/white" /> <!-- Usando un color de fondo blanco -->
+
+        <ImageView
+            android:id="@+id/action_cart"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:src="@drawable/icono_carrito"
+            android:contentDescription="@string/cart"
+            android:padding="8dp"
+            android:background="@android:color/white" />
+
+        <ImageView
+            android:id="@+id/action_supermarket"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:src="@drawable/icono_supermercado"
+            android:contentDescription="@string/supermarket"
+            android:padding="8dp"
+            android:background="@android:color/white" />
+
+        <ImageView
+            android:id="@+id/action_restaurant"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:src="@drawable/icono_restaurantes"
+            android:contentDescription="@string/restaurant"
+            android:padding="8dp"
+            android:background="@android:color/white" />
+    </LinearLayout>
+
 </LinearLayout>

@@ -1,23 +1,25 @@
 package com.example.life2food;
 
+import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
-
-import androidx.appcompat.app.AlertDialog;
+import android.widget.ImageView;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.auth.FirebaseAuth;
 import java.util.ArrayList;
 import java.util.List;
 
-public class EcommerceActivity extends AppCompatActivity {
+public class EcommerceActivity extends AppCompatActivity implements ProductAdapter.OnProductClickListener {
 
     private RecyclerView recyclerView;
     private ProductAdapter productAdapter;
     private List<Product> productList;
-
+    private FirebaseFirestore db;
+    private String currentUserEmail;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,69 +27,83 @@ public class EcommerceActivity extends AppCompatActivity {
         setContentView(R.layout.activity_ecommerce);
 
         // Inicializar RecyclerView y lista de productos
-        Button addProductButton = findViewById(R.id.add_product_button);
-        addProductButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Inflate the dialog layout
-                View dialogView = getLayoutInflater().inflate(R.layout.add_product_dialog, null);
-
-                // Get references to the input fields and buttons
-                EditText productNameEditText = dialogView.findViewById(R.id.product_name_edittext);
-                EditText productPriceEditText = dialogView.findViewById(R.id.product_price_edittext);
-                Button saveButton = dialogView.findViewById(R.id.save_button);
-                Button cancelButton = dialogView.findViewById(R.id.cancel_button);
-
-                // Create and show the dialog
-                AlertDialog.Builder builder = new AlertDialog.Builder(EcommerceActivity.this);
-                builder.setView(dialogView);
-                AlertDialog dialog = builder.create();
-                dialog.show();
-
-                // Set up click listeners for the buttons
-                saveButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        String productName = productNameEditText.getText().toString();
-                        double productPrice = Double.parseDouble(productPriceEditText.getText().toString());
-                        addProduct(productName, productPrice);
-                        dialog.dismiss();
-                    }
-                });
-
-                cancelButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        dialog.dismiss();
-                    }
-                });
-            }
-        });
         recyclerView = findViewById(R.id.recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         productList = new ArrayList<>();
 
-        // Agregar algunos productos de ejemplo
-        productList.add(new Product("Papas margarita", 10.00));
-        productList.add(new Product("Postobon manzana", 15.00));
-        productList.add(new Product("Coca cola flexy", 20.00));
+        // Inicializar Firestore y FirebaseAuth
+        db = FirebaseFirestore.getInstance();
+        currentUserEmail = FirebaseAuth.getInstance().getCurrentUser().getEmail(); // Obtener correo del usuario actual
+
+        // Cargar productos de Firestore
+        loadProductsFromFirestore();
 
         // Configurar el adaptador del RecyclerView
-        productAdapter = new ProductAdapter(productList);
+        productAdapter = new ProductAdapter(productList, currentUserEmail, this);
         recyclerView.setAdapter(productAdapter);
+
+        // Configurar el menú inferior
+        setupBottomNavigation();
     }
 
-    // Método para agregar productos
-    private void addProduct(String name, double price) {
-        productList.add(new Product(name, price));
-        productAdapter.notifyItemInserted(productList.size() - 1);
+    private void loadProductsFromFirestore() {
+        db.collection("products") // Cambia "products" por el nombre de tu colección
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        productList.clear(); // Asegúrate de limpiar la lista antes de agregar nuevos productos
+                        for (QueryDocumentSnapshot document : task.getResult()) {
+                            String id = document.getId(); // Obtiene el ID del documento
+                            String name = document.getString("name");
+                            double price = document.getDouble("price"); // Obtener el precio como double
+                            int quantity = document.getLong("quantity") != null ? document.getLong("quantity").intValue() : 0;
+                            String type = document.getString("type"); // Obtener tipo de producto
+                            String email = document.getString("email"); // Correo del usuario que subió el producto
+
+                            // Agregar el producto a la lista
+                            productList.add(new Product(id, name, quantity, type, email, price));
+                        }
+                        productAdapter.notifyDataSetChanged(); // Notificar al adaptador que los datos han cambiado
+                    }
+                });
     }
 
-    // Método para eliminar productos
-    private void removeProduct(int position) {
-        if (position >= 0 && position < productList.size()) {
-            productList.remove(position);
-            productAdapter.notifyItemRemoved(position);
-        }
+    @Override
+    public void onDeleteProductClick(Product product) {
+        // Implementar lógica para eliminar el producto de Firestore
+        db.collection("products")
+                .document(product.getId()) // Cambia esto para obtener el documento correcto usando el ID
+                .delete()
+                .addOnSuccessListener(aVoid -> {
+                    // Eliminar el producto de la lista local
+                    productList.remove(product);
+                    productAdapter.notifyDataSetChanged();
+                })
+                .addOnFailureListener(e -> {
+                    // Manejo de errores
+                });
+    }
+
+    private void setupBottomNavigation() {
+        ImageView profileIcon = findViewById(R.id.action_profile);
+        ImageView cartIcon = findViewById(R.id.action_cart);
+        ImageView supermarketIcon = findViewById(R.id.action_supermarket);
+        ImageView restaurantIcon = findViewById(R.id.action_restaurant);
+
+        profileIcon.setOnClickListener(v -> {
+            startActivity(new Intent(EcommerceActivity.this, ProfileActivity.class));
+        });
+
+        cartIcon.setOnClickListener(v -> {
+            startActivity(new Intent(EcommerceActivity.this, CartActivity.class));
+        });
+
+        supermarketIcon.setOnClickListener(v -> {
+            startActivity(new Intent(EcommerceActivity.this, SupermarketActivity.class));
+        });
+
+        restaurantIcon.setOnClickListener(v -> {
+            startActivity(new Intent(EcommerceActivity.this, RestaurantActivity.class));
+        });
     }
 }

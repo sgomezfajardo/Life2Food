@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <ImageView
+        android:id="@+id/profile_image"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_gravity="center"
+        android:src="@drawable/ic_default_profile"
+        android:contentDescription="@string/profile_picture"
+        android:background="@drawable/circle_background" />
+
+    <EditText
+        android:id="@+id/edit_email"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Correo Electrónico"
+        android:inputType="textEmailAddress" />
+
+    <TextView
+        android:id="@+id/name_text_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Nombre"
+        android:textSize="18sp"
+        android:layout_marginTop="4dp"/>
+
+    <TextView
+        android:id="@+id/lastname_text_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Apellido"
+        android:textSize="18sp"
+        android:layout_marginTop="4dp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Rol:"
+        android:textSize="16sp"
+        android:layout_marginTop="16dp" />
+
+    <RadioGroup
+        android:id="@+id/radio_group_role"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <RadioButton
+            android:id="@+id/radio_business"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Negocio" />
+
+        <RadioButton
+            android:id="@+id/radio_restaurant"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Restaurante" />
+
+        <RadioButton
+            android:id="@+id/radio_user"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Usuario" />
+    </RadioGroup>
+
+    <EditText
+        android:id="@+id/edit_address"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Dirección" />
+
+    <EditText
+        android:id="@+id/edit_phone"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Número de Teléfono"
+        android:inputType="phone" />
+
+    <Button
+        android:id="@+id/button_update"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Actualizar Perfil"
+        android:backgroundTint="@color/Life2Food_color"
+        android:layout_marginTop="16dp" />
+
+    <Button
+        android:id="@+id/button_logout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Cerrar Sesión"
+        android:layout_marginTop="16dp"
+        android:backgroundTint="@color/Life2Food_color"
+        android:textColor="@android:color/white" />
+
+
+</LinearLayout>
