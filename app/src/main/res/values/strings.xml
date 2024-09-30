@@ -1,3 +1,18 @@
 <resources>
     <string name="app_name">Life2Food</string>
+    <string name="profile">Perfil</string>
+    <string name="cart">Carrito</string>
+    <string name="supermarket">Supermercado</string>
+    <string name="restaurant">Restaurante</string>
+    <string name="profile_picture">Imagen de perfil</string>
+    <string-array name="product_types">
+        <item>Bebidas</item>
+        <item>Legumbres</item>
+        <item>Frutas</item>
+        <item>Verduras</item>
+        <item>Snacks</item>
+        <item>Pastas</item>
+
+    </string-array>
+
 </resources>

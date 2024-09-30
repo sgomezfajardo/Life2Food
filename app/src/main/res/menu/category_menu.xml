@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/all_products"
+        android:title="All Products"/>
+
+    <item
+        android:id="@+id/category_snacks"
+        android:title="Snacks"/>
+
+    <item
+        android:id="@+id/category_bebidas"
+        android:title="Bebidas"/>
+
+    <!-- Añade más categorías si es necesario -->
+</menu>
