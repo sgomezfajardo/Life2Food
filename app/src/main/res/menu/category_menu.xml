@@ -7,10 +7,20 @@
     <item
         android:id="@+id/category_snacks"
         android:title="Snacks"/>
-
     <item
         android:id="@+id/category_bebidas"
         android:title="Bebidas"/>
+    <item
+        android:id="@+id/category_legumbres"
+        android:title="Legumbres"/>
+    <item
+        android:id="@+id/category_pastas"
+        android:title="Pastas"/>
+    <item
+        android:id="@+id/category_frutas"
+        android:title="Frutas"/>
+    <item
+        android:id="@+id/category_verduras"
+        android:title="Verduras"/>
 
-    <!-- Añade más categorías si es necesario -->
 </menu>

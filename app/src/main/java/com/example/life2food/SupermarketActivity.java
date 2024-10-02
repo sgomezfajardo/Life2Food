@@ -30,7 +30,7 @@ public class SupermarketActivity extends AppCompatActivity implements ProductAda
     private ProductAdapter productAdapter;
     private List<Product> productList;
     private String currentUserEmail;
-    private String currentUserRole; // Para almacenar el rol del usuario actual
+    private String currentUserRole;
     private FirebaseFirestore db;
 
     @Override
@@ -38,44 +38,44 @@ public class SupermarketActivity extends AppCompatActivity implements ProductAda
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_supermarket);
 
-        // Inicializar Firestore
+
         db = FirebaseFirestore.getInstance();
 
-        // Obtener el correo del usuario actual
-        currentUserEmail = FirebaseAuth.getInstance().getCurrentUser().getEmail(); // Asegúrate de que el usuario esté autenticado
 
-        // Obtener el rol del usuario
+        currentUserEmail = FirebaseAuth.getInstance().getCurrentUser().getEmail();
+
+
         getUserRole();
 
-        // Inicializar la lista de productos
+
         productList = new ArrayList<>();
 
-        // Configurar el RecyclerView
+
         recyclerView = findViewById(R.id.recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         productAdapter = new ProductAdapter(productList, currentUserEmail, this);
         recyclerView.setAdapter(productAdapter);
 
-        // Cargar productos del usuario actual desde Firestore
+
         loadProducts();
 
-        // Botón para agregar producto
+
         Button btnAddProduct = findViewById(R.id.btn_add_product);
         btnAddProduct.setOnClickListener(v -> showAddProductDialog());
     }
 
     private void getUserRole() {
         db.collection("users")
-                .whereEqualTo("email", currentUserEmail) // Buscar por correo electrónico
+                .whereEqualTo("email", currentUserEmail)
                 .get()
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
                         if (!task.getResult().isEmpty()) {
                             for (DocumentSnapshot document : task.getResult()) {
                                 if (document.exists()) {
-                                    // Verifica si el campo "role" existe
-                                    if (document.contains("role")) { // Mantener "role"
-                                        currentUserRole = document.getString("role"); // Obtener el rol del usuario
+
+                                    if (document.contains("role")) {
+                                        currentUserRole = document.getString("role");
                                         Log.d("SupermarketActivity", "User Role: " + currentUserRole);
                                     } else {
                                         Log.d("SupermarketActivity", "Role field does not exist");
@@ -96,16 +96,16 @@ public class SupermarketActivity extends AppCompatActivity implements ProductAda
 
     private void loadProducts() {
         db.collection("products")
-                .whereEqualTo("userEmail", currentUserEmail) // Filtrar por el correo del usuario
+                .whereEqualTo("userEmail", currentUserEmail)
                 .get()
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
                         for (QueryDocumentSnapshot document : task.getResult()) {
                             Product product = document.toObject(Product.class);
-                            product.setId(document.getId()); // Asignar el ID del documento al producto
+                            product.setId(document.getId());
                             productList.add(product);
                         }
-                        productAdapter.notifyDataSetChanged(); // Notificar al adaptador que los datos han cambiado
+                        productAdapter.notifyDataSetChanged();
                     } else {
                         Toast.makeText(SupermarketActivity.this, "Error al cargar productos", Toast.LENGTH_SHORT).show();
                     }
@@ -127,7 +127,7 @@ public class SupermarketActivity extends AppCompatActivity implements ProductAda
         final TextInputEditText productPriceInput = customLayout.findViewById(R.id.product_price);
         final Spinner productTypeSpinner = customLayout.findViewById(R.id.product_type_spinner);
 
-        // Configurar el spinner para tipos de productos
+
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.product_types, android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         productTypeSpinner.setAdapter(adapter);
@@ -140,19 +140,19 @@ public class SupermarketActivity extends AppCompatActivity implements ProductAda
                 String productPrice = productPriceInput.getText().toString().trim();
                 String productType = productTypeSpinner.getSelectedItem().toString();
 
-                // Validar la entrada
+
                 if (productName.isEmpty() || productQuantity.isEmpty() || productPrice.isEmpty()) {
                     Toast.makeText(SupermarketActivity.this, "Por favor llena todos los campos", Toast.LENGTH_SHORT).show();
                     return;
                 }
 
-                // Crear y agregar el producto
+
                 Product newProduct = new Product(null, productName, Integer.parseInt(productQuantity), productType, currentUserEmail, Double.parseDouble(productPrice));
                 productList.add(newProduct);
                 productAdapter.notifyItemInserted(productList.size() - 1);
                 Toast.makeText(SupermarketActivity.this, "Producto agregado", Toast.LENGTH_SHORT).show();
 
-                // Agregar el producto a Firestore
+
                 addProductToFirestore(newProduct);
             }
         });
@@ -177,20 +177,19 @@ public class SupermarketActivity extends AppCompatActivity implements ProductAda
 
     @Override
     public void onDeleteProductClick(Product product) {
-        // Verificar si el producto pertenece al usuario actual
+
         if (product.getUserEmail().equals(currentUserEmail)) {
-            // Eliminar producto de la lista
+
             productList.remove(product);
             productAdapter.notifyDataSetChanged();
             Toast.makeText(this, "Producto eliminado", Toast.LENGTH_SHORT).show();
 
-            // Eliminar de Firestore
+
             db.collection("products").document(product.getId()).delete()
                     .addOnSuccessListener(aVoid -> {
-                        // El producto se eliminó de Firestore
+
                     })
                     .addOnFailureListener(e -> {
-                        // Manejo de errores
                     });
         } else {
             Toast.makeText(this, "No puedes eliminar este producto", Toast.LENGTH_SHORT).show();

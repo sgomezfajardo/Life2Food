@@ -11,7 +11,6 @@ public class User {
         this.email = email;
     }
 
-    // Getters y Setters si son necesarios
     public String getFirstName() {
         return firstName;
     }

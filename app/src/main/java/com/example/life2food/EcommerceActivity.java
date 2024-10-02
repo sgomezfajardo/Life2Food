@@ -30,12 +30,9 @@ public class EcommerceActivity extends AppCompatActivity implements ProductAdapt
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_ecommerce);
-
-        // Inicializar el Toolbar
         toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar); // Configura el Toolbar como la ActionBar
+        setSupportActionBar(toolbar);
 
-        // Inicializar RecyclerView y lista de productos
         recyclerView = findViewById(R.id.recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         productList = new ArrayList<>();
@@ -44,63 +41,63 @@ public class EcommerceActivity extends AppCompatActivity implements ProductAdapt
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                // Manejar la búsqueda
                 performSearch(query);
                 return true;
             }
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                // Manejar el cambio en el texto de búsqueda
                 performSearch(newText);
                 return true;
             }
         });
 
-        // Inicializar Firestore y FirebaseAuth
         db = FirebaseFirestore.getInstance();
-        currentUserEmail = FirebaseAuth.getInstance().getCurrentUser().getEmail(); // Obtener correo del usuario actual
+        currentUserEmail = FirebaseAuth.getInstance().getCurrentUser().getEmail(); //
 
-        // Cargar productos desde Firestore
         loadProductsFromFirestore();
 
-        // Configurar el adaptador del RecyclerView
         productAdapter = new ProductAdapter(productList, currentUserEmail, this);
         recyclerView.setAdapter(productAdapter);
 
-        // Configurar el menú inferior (navegación)
         setupBottomNavigation();
     }
 
+    //Metodo que se usa para crear el espacio de la barra de tareas
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflar el menú con las categorías
         getMenuInflater().inflate(R.menu.category_menu, menu);
         return true;
     }
 
+    //Metodo que se usa para obtener el id de la barra de tareas
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         int itemId = item.getItemId();
         if (itemId == R.id.all_products) {
-            // Mostrar todos los productos
             productAdapter.updateData(productList);
         } else if (itemId == R.id.category_snacks) {
-            // Filtrar por la categoría de snacks
             filterProductsByCategory("Snacks");
         } else if (itemId == R.id.category_bebidas) {
-            // Filtrar por la categoría de bebidas
             filterProductsByCategory("Bebidas");
+        } else if (itemId == R.id.category_frutas) {
+            filterProductsByCategory("Frutas");
+        } else if (itemId == R.id.category_verduras) {
+            filterProductsByCategory("Verduras");
+        } else if (itemId == R.id.category_legumbres) {
+            filterProductsByCategory("Legumbres");
+        } else if (itemId == R.id.category_pastas) {
+            filterProductsByCategory("Pastas");
         }
-        // Manejar otras categorías si es necesario
+
         return super.onOptionsItemSelected(item);
     }
 
+    //Metodo que se usa para cargar los productos de la base de datos
     private void loadProductsFromFirestore() {
         db.collection("products")
                 .addSnapshotListener((value, error) -> {
                     if (error != null) {
-                        // Manejar el error
                         return;
                     }
 
@@ -119,19 +116,17 @@ public class EcommerceActivity extends AppCompatActivity implements ProductAdapt
                 });
     }
 
+    //Metodo que se usa para eliminar un producto de la base de datos
     @Override
     public void onDeleteProductClick(Product product) {
-        // Lógica para eliminar el producto de Firestore
         db.collection("products")
-                .document(product.getId()) // Usa el ID del documento correcto
+                .document(product.getId())
                 .delete()
                 .addOnSuccessListener(aVoid -> {
-                    // Eliminar el producto de la lista local
                     productList.remove(product);
                     productAdapter.notifyDataSetChanged();
                 })
                 .addOnFailureListener(e -> {
-                    // Manejo de errores
                 });
     }
 
@@ -158,6 +153,7 @@ public class EcommerceActivity extends AppCompatActivity implements ProductAdapt
         });
     }
 
+    //Metodo que se usa para buscar un producto en la base de datos
     private void performSearch(String query) {
         List<Product> filteredList = new ArrayList<>();
         for (Product product : productList) {
@@ -168,9 +164,12 @@ public class EcommerceActivity extends AppCompatActivity implements ProductAdapt
         productAdapter.updateData(filteredList);
     }
 
+    //Metodo que se usa para filtrar los productos por categoria
     private void filterProductsByCategory(String category) {
         List<Product> filteredList = new ArrayList<>();
         for (Product product : productList) {
+            System.out.println("Product: " + product.getName());
+            System.out.println("Category: " + product.getType());
             if (product.getType().equals(category)) {
                 filteredList.add(product);
             }

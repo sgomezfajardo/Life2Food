@@ -20,18 +20,15 @@ public class MainActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = mAuth.getCurrentUser();
 
-        // Verificar si el usuario ya ha iniciado sesión
         if (currentUser != null) {
-            // Si ya hay un usuario autenticado, redirigir al perfil
             Intent intent = new Intent(MainActivity.this, EcommerceActivity.class);
             startActivity(intent);
-            finish(); // Evitar que el usuario regrese a la pantalla de inicio
+            finish();
         }
 
         Button registerButton = findViewById(R.id.register_button);
         Button loginButton = findViewById(R.id.login_button);
 
-        // Ir a la pantalla de registro
         registerButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -40,7 +37,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        // Ir a la pantalla de inicio de sesión
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

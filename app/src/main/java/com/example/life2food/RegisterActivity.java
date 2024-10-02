@@ -44,24 +44,24 @@ public class RegisterActivity extends AppCompatActivity {
                 mAuth.createUserWithEmailAndPassword(email, password)
                         .addOnCompleteListener(RegisterActivity.this, task -> {
                             if (task.isSuccessful()) {
-                                // Sign in success
+
                                 String userId = mAuth.getCurrentUser().getUid();
 
-                                // Create a user object
+
                                 User user = new User(firstName, lastName, email);
 
-                                // Save user to Firestore
+
                                 db.collection("users").document(userId)
                                         .set(user)
                                         .addOnSuccessListener(aVoid -> {
                                             Toast.makeText(RegisterActivity.this, "Registration successful", Toast.LENGTH_SHORT).show();
-                                            finish(); // Close the activity
+                                            finish();
                                         })
                                         .addOnFailureListener(e -> {
                                             Toast.makeText(RegisterActivity.this, "Error saving user", Toast.LENGTH_SHORT).show();
                                         });
                             } else {
-                                // If sign in fails
+
                                 Toast.makeText(RegisterActivity.this, "Authentication Failed.", Toast.LENGTH_SHORT).show();
                             }
                         });

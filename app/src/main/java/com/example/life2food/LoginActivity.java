@@ -19,33 +19,26 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        // Inicializar FirebaseAuth
         mAuth = FirebaseAuth.getInstance();
 
-        // Encontrar los elementos de la interfaz por su ID
         final EditText emailEditText = findViewById(R.id.email_edit_text);
         final EditText passwordEditText = findViewById(R.id.password_edit_text);
         Button loginButton = findViewById(R.id.login_button);
 
-        // Configurar la acción del botón de inicio de sesión
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Obtener los valores de los campos de texto
                 String email = emailEditText.getText().toString().trim();
                 String password = passwordEditText.getText().toString().trim();
 
-                // Verificar que los campos no estén vacíos
                 if (email.isEmpty() || password.isEmpty()) {
                     Toast.makeText(LoginActivity.this, "Por favor ingrese todos los campos", Toast.LENGTH_SHORT).show();
                     return;
                 }
 
-                // Intentar iniciar sesión con Firebase Authentication
                 mAuth.signInWithEmailAndPassword(email, password)
                         .addOnCompleteListener(LoginActivity.this, task -> {
                             if (task.isSuccessful()) {
-                                // Redirigir a la nueva actividad
                                 Intent intent = new Intent(LoginActivity.this, EcommerceActivity.class);
                                 startActivity(intent);
                                 finish();

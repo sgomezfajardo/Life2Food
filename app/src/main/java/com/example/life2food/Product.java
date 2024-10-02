@@ -1,27 +1,27 @@
 package com.example.life2food;
 
 public class Product {
-    private String id; // ID de Firestore
+    private String id;
     private String name;
     private int quantity;
     private String type;
-    private String email; // Correo del usuario que subió el producto
-    private double price; // Agregar campo para el precio
+    private String email;
+    private double price;
 
     public Product() {
-        // Constructor vacío requerido para Firestore
+
     }
 
     public Product(String id, String name, int quantity, String type, String email, double price) {
-        this.id = id; // Inicializa el ID de Firestore
+        this.id = id;
         this.name = name;
         this.quantity = quantity;
         this.type = type;
         this.email = email;
-        this.price = price; // Inicializa el precio
+        this.price = price;
     }
 
-    // Métodos getter y setter
+
     public String getId() {
         return id;
     }
@@ -40,7 +40,7 @@ public class Product {
         this.name = name;
     }
 
-    public String getUserEmail() { // Método que se utiliza para obtener el correo del usuario
+    public String getUserEmail() {
         return email;
     }
 
@@ -49,7 +49,7 @@ public class Product {
     }
 
     public void setPrice(double price) {
-        this.price = price; // Cambiado a double para reflejar el precio
+        this.price = price;
     }
 
     public int getQuantity() {

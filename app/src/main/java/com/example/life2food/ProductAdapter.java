@@ -12,7 +12,7 @@ import java.util.List;
 
 public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductViewHolder> {
     private List<Product> productList;
-    private String currentUserEmail; // Correo electrónico del usuario actual
+    private String currentUserEmail;
     private OnProductClickListener listener;
 
     public ProductAdapter(List<Product> productList, String currentUserEmail, OnProductClickListener listener) {
@@ -33,13 +33,12 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
         Product product = productList.get(position);
         holder.productName.setText(product.getName());
         holder.productQuantity.setText("Cantidad: " + product.getQuantity());
-        holder.productPrice.setText("Precio: $" + String.format("%.2f", product.getPrice())); // Mostrar el precio
+        holder.productPrice.setText("Precio: $" + String.format("%.2f", product.getPrice()));
 
-        // Habilitar el botón de eliminar solo si el producto fue subido por el usuario actual
         if (product.getEmail().equals(currentUserEmail)) {
             holder.deleteButton.setVisibility(View.VISIBLE);
             holder.deleteButton.setOnClickListener(v -> {
-                listener.onDeleteProductClick(product); // Llamar al listener para eliminar
+                listener.onDeleteProductClick(product);
             });
         } else {
             holder.deleteButton.setVisibility(View.GONE);
@@ -54,14 +53,14 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
     public static class ProductViewHolder extends RecyclerView.ViewHolder {
         TextView productName;
         TextView productQuantity;
-        TextView productPrice; // Añadir TextView para el precio
+        TextView productPrice;
         ImageButton deleteButton;
 
         public ProductViewHolder(@NonNull View itemView) {
             super(itemView);
             productName = itemView.findViewById(R.id.product_name);
             productQuantity = itemView.findViewById(R.id.product_quantity);
-            productPrice = itemView.findViewById(R.id.product_price); // Inicializar el TextView para el precio
+            productPrice = itemView.findViewById(R.id.product_price);
             deleteButton = itemView.findViewById(R.id.btn_delete_product);
         }
     }

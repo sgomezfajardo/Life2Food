@@ -49,15 +49,13 @@ public class ProfileActivity extends AppCompatActivity {
 
         buttonUpdate.setOnClickListener(view -> updateProfile());
 
-        // Implementar cierre de sesión
         buttonLogout.setOnClickListener(view -> {
-            auth.signOut();  // Cierra la sesión en Firebase
+            auth.signOut();
 
-            // Redirigir al usuario a la pantalla de inicio de sesión
             Intent intent = new Intent(ProfileActivity.this, MainActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(intent);
-            finish();  // Finaliza la actividad actual para evitar que el usuario regrese con el botón "Atrás"
+            finish();
         });
     }
 
@@ -69,10 +67,9 @@ public class ProfileActivity extends AppCompatActivity {
                 editEmail.setText(documentSnapshot.getString("email"));
                 String firstname = documentSnapshot.getString("firstName");
                 String lastname = documentSnapshot.getString("lastName");
-                nameTextView.setText(firstname); // Establece el nombre
-                lastnameTextView.setText(lastname); // Establece el apellido
+                nameTextView.setText(firstname);
+                lastnameTextView.setText(lastname);
 
-                // Cargar rol
                 String role = documentSnapshot.getString("role");
                 if ("business".equals(role)) {
                     ((RadioButton) findViewById(R.id.radio_business)).setChecked(true);
@@ -82,16 +79,14 @@ public class ProfileActivity extends AppCompatActivity {
                     ((RadioButton) findViewById(R.id.radio_user)).setChecked(true);
                 }
 
-                // Cargar dirección y número de teléfono
                 editAddress.setText(documentSnapshot.getString("address"));
                 editPhone.setText(documentSnapshot.getString("phone"));
 
-                // Cargar imagen de perfil si existe
                 String imageUrl = documentSnapshot.getString("profileImage");
                 if (imageUrl != null) {
                     Glide.with(this).load(imageUrl).into(profileImage);
                 } else {
-                    profileImage.setImageResource(R.drawable.ic_default_profile); // Imagen por defecto
+                    profileImage.setImageResource(R.drawable.ic_default_profile);
                 }
             }
         });
@@ -116,8 +111,7 @@ public class ProfileActivity extends AppCompatActivity {
         DocumentReference docRef = firestore.collection("users").document(userId);
         docRef.update("email", email, "role", role, "address", address, "phone", phone)
                 .addOnSuccessListener(aVoid -> {
-                    // Actualización exitosa
-                    finish(); // Regresar a la actividad anterior
+                    finish();
                 });
     }
 }
