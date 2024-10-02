@@ -1,6 +1,7 @@
 package com.example.life2food;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -32,6 +33,7 @@ public class SupermarketActivity extends AppCompatActivity implements ProductAda
     private String currentUserEmail;
     private String currentUserRole;
     private FirebaseFirestore db;
+    private Button back;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,6 +64,14 @@ public class SupermarketActivity extends AppCompatActivity implements ProductAda
 
         Button btnAddProduct = findViewById(R.id.btn_add_product);
         btnAddProduct.setOnClickListener(v -> showAddProductDialog());
+        back = findViewById(R.id.button_back);
+        back.setOnClickListener(v -> {
+            Intent intent = new Intent(this, EcommerceActivity.class);
+            startActivity(intent);
+            finish();
+        });
+
+
     }
 
     private void getUserRole() {

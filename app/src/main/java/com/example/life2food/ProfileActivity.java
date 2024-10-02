@@ -23,7 +23,7 @@ public class ProfileActivity extends AppCompatActivity {
     private TextView nameTextView, lastnameTextView;
     private RadioGroup radioGroupRole;
     private ImageView profileImage;
-    private Button buttonUpdate, buttonLogout;
+    private Button buttonUpdate, buttonLogout, back;
     private FirebaseAuth auth;
     private FirebaseFirestore firestore;
 
@@ -41,6 +41,13 @@ public class ProfileActivity extends AppCompatActivity {
         profileImage = findViewById(R.id.profile_image);
         buttonUpdate = findViewById(R.id.button_update);
         buttonLogout = findViewById(R.id.button_logout);
+        back = findViewById(R.id.button_back);
+        back = findViewById(R.id.button_back);
+        back.setOnClickListener(v -> {
+            Intent intent = new Intent(this, EcommerceActivity.class);
+            startActivity(intent);
+            finish();
+        });
 
         auth = FirebaseAuth.getInstance();
         firestore = FirebaseFirestore.getInstance();
