@@ -5,19 +5,24 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageView;
+import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.auth.FirebaseAuth;
+
 import java.util.ArrayList;
 import java.util.List;
 
-public class EcommerceActivity extends AppCompatActivity implements ProductAdapter.OnProductClickListener {
+public class EcommerceActivity extends AppCompatActivity
+        implements ProductAdapter.OnProductClickListener, ProductAdapter.OnAddToCartClickListener {
 
     private RecyclerView recyclerView;
     private ProductAdapter productAdapter;
@@ -25,6 +30,7 @@ public class EcommerceActivity extends AppCompatActivity implements ProductAdapt
     private FirebaseFirestore db;
     private String currentUserEmail;
     private Toolbar toolbar;
+    private Cart cart = new Cart();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,19 +64,18 @@ public class EcommerceActivity extends AppCompatActivity implements ProductAdapt
         loadProductsFromFirestore();
 
         productAdapter = new ProductAdapter(productList, currentUserEmail, this);
+        productAdapter.setOnAddToCartClickListener(this); // Set the listener
         recyclerView.setAdapter(productAdapter);
 
         setupBottomNavigation();
     }
 
-    //Método que se usa para crear el menú de la barra de tareas
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.category_menu, menu);
         return true;
     }
 
-    //Método que se usa para manejar los clics en el menú de la barra de tareas
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         int itemId = item.getItemId();
@@ -93,7 +98,6 @@ public class EcommerceActivity extends AppCompatActivity implements ProductAdapt
         return super.onOptionsItemSelected(item);
     }
 
-    //Método que se usa para cargar los productos de la base de datos
     private void loadProductsFromFirestore() {
         db.collection("products")
                 .addSnapshotListener((value, error) -> {
@@ -109,7 +113,7 @@ public class EcommerceActivity extends AppCompatActivity implements ProductAdapt
                         int quantity = document.getLong("quantity") != null ? document.getLong("quantity").intValue() : 0;
                         String type = document.getString("type");
                         String email = document.getString("email");
-                        String imageUrl = document.getString("imageUrl"); // Obtener la URL de la imagen
+                        String imageUrl = document.getString("imageUrl");
 
                         productList.add(new Product(id, name, quantity, type, email, price, imageUrl));
                     }
@@ -117,7 +121,6 @@ public class EcommerceActivity extends AppCompatActivity implements ProductAdapt
                 });
     }
 
-    //Método que se usa para eliminar un producto de la base de datos
     @Override
     public void onDeleteProductClick(Product product) {
         db.collection("products")
@@ -128,7 +131,7 @@ public class EcommerceActivity extends AppCompatActivity implements ProductAdapt
                     productAdapter.notifyDataSetChanged();
                 })
                 .addOnFailureListener(e -> {
-                    // Manejar el error si es necesario
+                    // Handle the error if necessary
                 });
     }
 
@@ -155,7 +158,6 @@ public class EcommerceActivity extends AppCompatActivity implements ProductAdapt
         });
     }
 
-    //Método que se usa para buscar un producto en la base de datos
     private void performSearch(String query) {
         List<Product> filteredList = new ArrayList<>();
         for (Product product : productList) {
@@ -166,7 +168,6 @@ public class EcommerceActivity extends AppCompatActivity implements ProductAdapt
         productAdapter.updateData(filteredList);
     }
 
-    //Método que se usa para filtrar los productos por categoría
     private void filterProductsByCategory(String category) {
         List<Product> filteredList = new ArrayList<>();
         for (Product product : productList) {
@@ -175,5 +176,11 @@ public class EcommerceActivity extends AppCompatActivity implements ProductAdapt
             }
         }
         productAdapter.updateData(filteredList);
+    }
+
+    @Override
+    public void onAddToCartClick(Product product) {
+        cart.addProduct(product);
+        Toast.makeText(this, product.getName() + " added to cart", Toast.LENGTH_SHORT).show();
     }
 }

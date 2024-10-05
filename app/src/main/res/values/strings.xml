@@ -5,6 +5,8 @@
     <string name="supermarket">Supermercado</string>
     <string name="restaurant">Restaurante</string>
     <string name="profile_picture">Imagen de perfil</string>
+    <string name="delete_product">Eliminar</string>
+    <string name="add_product">Agregar</string>
     <string-array name="product_types">
         <item>Bebidas</item>
         <item>Legumbres</item>
