@@ -7,26 +7,26 @@ public class Product {
     private String type;
     private String email;
     private double price;
+    private String imageUrl; // Campo para la URL de la imagen
 
     public Product() {
-
     }
 
-    public Product(String id, String name, int quantity, String type, String email, double price) {
+    public Product(String id, String name, int quantity, String type, String email, double price, String imageUrl) {
         this.id = id;
         this.name = name;
         this.quantity = quantity;
         this.type = type;
         this.email = email;
         this.price = price;
+        this.imageUrl = imageUrl; // Inicializar el campo de imagen
     }
 
+    // Getters y Setters
 
     public String getId() {
         return id;
     }
-
-
 
     public void setId(String id) {
         this.id = id;
@@ -74,5 +74,13 @@ public class Product {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 }

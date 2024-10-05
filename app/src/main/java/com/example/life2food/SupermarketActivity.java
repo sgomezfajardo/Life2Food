@@ -2,11 +2,13 @@ package com.example.life2food;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -34,33 +36,28 @@ public class SupermarketActivity extends AppCompatActivity implements ProductAda
     private String currentUserRole;
     private FirebaseFirestore db;
     private Button back;
+    private static final int PICK_IMAGE_REQUEST = 1; // Código de solicitud de imagen
+    private Uri imageUri; // URI para la imagen seleccionada
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_supermarket);
 
-
         db = FirebaseFirestore.getInstance();
-
 
         currentUserEmail = FirebaseAuth.getInstance().getCurrentUser().getEmail();
 
-
         getUserRole();
 
-
         productList = new ArrayList<>();
-
 
         recyclerView = findViewById(R.id.recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         productAdapter = new ProductAdapter(productList, currentUserEmail, this);
         recyclerView.setAdapter(productAdapter);
 
-
         loadProducts();
-
 
         Button btnAddProduct = findViewById(R.id.btn_add_product);
         btnAddProduct.setOnClickListener(v -> showAddProductDialog());
@@ -70,8 +67,6 @@ public class SupermarketActivity extends AppCompatActivity implements ProductAda
             startActivity(intent);
             finish();
         });
-
-
     }
 
     private void getUserRole() {
@@ -83,7 +78,6 @@ public class SupermarketActivity extends AppCompatActivity implements ProductAda
                         if (!task.getResult().isEmpty()) {
                             for (DocumentSnapshot document : task.getResult()) {
                                 if (document.exists()) {
-
                                     if (document.contains("role")) {
                                         currentUserRole = document.getString("role");
                                         Log.d("SupermarketActivity", "User Role: " + currentUserRole);
@@ -100,9 +94,6 @@ public class SupermarketActivity extends AppCompatActivity implements ProductAda
                     }
                 });
     }
-
-
-
 
     private void loadProducts() {
         db.collection("products")
@@ -136,11 +127,13 @@ public class SupermarketActivity extends AppCompatActivity implements ProductAda
         final TextInputEditText productQuantityInput = customLayout.findViewById(R.id.product_quantity);
         final TextInputEditText productPriceInput = customLayout.findViewById(R.id.product_price);
         final Spinner productTypeSpinner = customLayout.findViewById(R.id.product_type_spinner);
-
+        Button btnSelectImage = customLayout.findViewById(R.id.btn_select_image); // Botón para seleccionar imagen
 
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.product_types, android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         productTypeSpinner.setAdapter(adapter);
+
+        btnSelectImage.setOnClickListener(v -> openImageChooser());
 
         builder.setPositiveButton("Agregar", new DialogInterface.OnClickListener() {
             @Override
@@ -150,18 +143,15 @@ public class SupermarketActivity extends AppCompatActivity implements ProductAda
                 String productPrice = productPriceInput.getText().toString().trim();
                 String productType = productTypeSpinner.getSelectedItem().toString();
 
-
                 if (productName.isEmpty() || productQuantity.isEmpty() || productPrice.isEmpty()) {
                     Toast.makeText(SupermarketActivity.this, "Por favor llena todos los campos", Toast.LENGTH_SHORT).show();
                     return;
                 }
 
-
-                Product newProduct = new Product(null, productName, Integer.parseInt(productQuantity), productType, currentUserEmail, Double.parseDouble(productPrice));
+                Product newProduct = new Product(null, productName, Integer.parseInt(productQuantity), productType, currentUserEmail, Double.parseDouble(productPrice), imageUri.toString());
                 productList.add(newProduct);
                 productAdapter.notifyItemInserted(productList.size() - 1);
                 Toast.makeText(SupermarketActivity.this, "Producto agregado", Toast.LENGTH_SHORT).show();
-
 
                 addProductToFirestore(newProduct);
             }
@@ -171,6 +161,22 @@ public class SupermarketActivity extends AppCompatActivity implements ProductAda
 
         AlertDialog dialog = builder.create();
         dialog.show();
+    }
+
+    private void openImageChooser() {
+        Intent intent = new Intent();
+        intent.setType("image/*");
+        intent.setAction(Intent.ACTION_GET_CONTENT);
+        startActivityForResult(Intent.createChooser(intent, "Selecciona una imagen"), PICK_IMAGE_REQUEST);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null) {
+            imageUri = data.getData(); // Obtén la URI de la imagen seleccionada
+
+        }
     }
 
     private void addProductToFirestore(Product product) {
@@ -194,10 +200,8 @@ public class SupermarketActivity extends AppCompatActivity implements ProductAda
             productAdapter.notifyDataSetChanged();
             Toast.makeText(this, "Producto eliminado", Toast.LENGTH_SHORT).show();
 
-
             db.collection("products").document(product.getId()).delete()
                     .addOnSuccessListener(aVoid -> {
-
                     })
                     .addOnFailureListener(e -> {
                     });

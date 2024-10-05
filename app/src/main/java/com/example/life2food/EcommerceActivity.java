@@ -53,7 +53,7 @@ public class EcommerceActivity extends AppCompatActivity implements ProductAdapt
         });
 
         db = FirebaseFirestore.getInstance();
-        currentUserEmail = FirebaseAuth.getInstance().getCurrentUser().getEmail(); //
+        currentUserEmail = FirebaseAuth.getInstance().getCurrentUser().getEmail();
 
         loadProductsFromFirestore();
 
@@ -63,14 +63,14 @@ public class EcommerceActivity extends AppCompatActivity implements ProductAdapt
         setupBottomNavigation();
     }
 
-    //Metodo que se usa para crear el espacio de la barra de tareas
+    //Método que se usa para crear el menú de la barra de tareas
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.category_menu, menu);
         return true;
     }
 
-    //Metodo que se usa para obtener el id de la barra de tareas
+    //Método que se usa para manejar los clics en el menú de la barra de tareas
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         int itemId = item.getItemId();
@@ -93,7 +93,7 @@ public class EcommerceActivity extends AppCompatActivity implements ProductAdapt
         return super.onOptionsItemSelected(item);
     }
 
-    //Metodo que se usa para cargar los productos de la base de datos
+    //Método que se usa para cargar los productos de la base de datos
     private void loadProductsFromFirestore() {
         db.collection("products")
                 .addSnapshotListener((value, error) -> {
@@ -109,14 +109,15 @@ public class EcommerceActivity extends AppCompatActivity implements ProductAdapt
                         int quantity = document.getLong("quantity") != null ? document.getLong("quantity").intValue() : 0;
                         String type = document.getString("type");
                         String email = document.getString("email");
+                        String imageUrl = document.getString("imageUrl"); // Obtener la URL de la imagen
 
-                        productList.add(new Product(id, name, quantity, type, email, price));
+                        productList.add(new Product(id, name, quantity, type, email, price, imageUrl));
                     }
                     productAdapter.notifyDataSetChanged();
                 });
     }
 
-    //Metodo que se usa para eliminar un producto de la base de datos
+    //Método que se usa para eliminar un producto de la base de datos
     @Override
     public void onDeleteProductClick(Product product) {
         db.collection("products")
@@ -127,6 +128,7 @@ public class EcommerceActivity extends AppCompatActivity implements ProductAdapt
                     productAdapter.notifyDataSetChanged();
                 })
                 .addOnFailureListener(e -> {
+                    // Manejar el error si es necesario
                 });
     }
 
@@ -153,7 +155,7 @@ public class EcommerceActivity extends AppCompatActivity implements ProductAdapt
         });
     }
 
-    //Metodo que se usa para buscar un producto en la base de datos
+    //Método que se usa para buscar un producto en la base de datos
     private void performSearch(String query) {
         List<Product> filteredList = new ArrayList<>();
         for (Product product : productList) {
@@ -164,12 +166,10 @@ public class EcommerceActivity extends AppCompatActivity implements ProductAdapt
         productAdapter.updateData(filteredList);
     }
 
-    //Metodo que se usa para filtrar los productos por categoria
+    //Método que se usa para filtrar los productos por categoría
     private void filterProductsByCategory(String category) {
         List<Product> filteredList = new ArrayList<>();
         for (Product product : productList) {
-            System.out.println("Product: " + product.getName());
-            System.out.println("Category: " + product.getType());
             if (product.getType().equals(category)) {
                 filteredList.add(product);
             }

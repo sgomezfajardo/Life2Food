@@ -37,11 +37,28 @@
             android:id="@+id/product_price"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="numberDecimal" /> <!-- Para aceptar decimales -->
+            android:inputType="numberDecimal" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <Spinner
         android:id="@+id/product_type_spinner"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
+
+
+    <Button
+        android:id="@+id/btn_select_image"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Seleccionar imagen" />
+
+
+
+    <ImageView
+        android:id="@+id/selected_image_preview"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:layout_marginTop="16dp"
+        android:scaleType="centerCrop"
+        android:visibility="gone" />
 </LinearLayout>
