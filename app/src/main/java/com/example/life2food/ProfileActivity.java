@@ -1,6 +1,8 @@
 package com.example.life2food;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -10,22 +12,39 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.bumptech.glide.Glide;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 public class ProfileActivity extends AppCompatActivity {
 
     private EditText editEmail, editAddress, editPhone;
-    private TextView nameTextView, lastnameTextView;
+    private TextView nameTextView;
     private RadioGroup radioGroupRole;
     private ImageView profileImage;
     private Button buttonUpdate, buttonLogout, back;
     private FirebaseAuth auth;
     private FirebaseFirestore firestore;
+    private StorageReference storageReference;
+    private Button pic_button;
+    String storage_path = "profile_images/*";
+
+    private static final int COD_SEL_STORAGE = 200;
+    private static final int COD_SEL_IMAGE = 300;
+
+    private Uri image_url;
+    String photo = "photo";
+    String idd;
+    ProgressDialog progressDialog;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,13 +53,13 @@ public class ProfileActivity extends AppCompatActivity {
 
         editEmail = findViewById(R.id.edit_email);
         nameTextView = findViewById(R.id.name_text_view);
-        lastnameTextView = findViewById(R.id.lastname_text_view);
         radioGroupRole = findViewById(R.id.radio_group_role);
         editAddress = findViewById(R.id.edit_address);
         editPhone = findViewById(R.id.edit_phone);
         profileImage = findViewById(R.id.profile_image);
         buttonUpdate = findViewById(R.id.button_update);
         buttonLogout = findViewById(R.id.button_logout);
+        pic_button = findViewById(R.id.pic_button);
         back = findViewById(R.id.button_back);
         back = findViewById(R.id.button_back);
         back.setOnClickListener(v -> {
@@ -51,6 +70,7 @@ public class ProfileActivity extends AppCompatActivity {
 
         auth = FirebaseAuth.getInstance();
         firestore = FirebaseFirestore.getInstance();
+        storageReference = FirebaseStorage.getInstance().getReference();
 
         loadProfileData();
 
@@ -64,6 +84,13 @@ public class ProfileActivity extends AppCompatActivity {
             startActivity(intent);
             finish();
         });
+
+        pic_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                updatePhoto();
+            }
+        });
     }
 
     private void loadProfileData() {
@@ -74,8 +101,7 @@ public class ProfileActivity extends AppCompatActivity {
                 editEmail.setText(documentSnapshot.getString("email"));
                 String firstname = documentSnapshot.getString("firstName");
                 String lastname = documentSnapshot.getString("lastName");
-                nameTextView.setText(firstname);
-                lastnameTextView.setText(lastname);
+                nameTextView.setText(firstname + " "  + lastname);
 
                 String role = documentSnapshot.getString("role");
                 if ("business".equals(role)) {
@@ -120,5 +146,49 @@ public class ProfileActivity extends AppCompatActivity {
                 .addOnSuccessListener(aVoid -> {
                     finish();
                 });
+    }
+    private void updatePhoto() {
+        Intent i = new Intent(Intent.ACTION_PICK);
+        i.setType("image/*");
+        startActivityForResult(i, COD_SEL_IMAGE);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (resultCode == RESULT_OK) {
+            if (requestCode == COD_SEL_IMAGE) {
+                image_url = data.getData();
+                profileImage.setImageURI(image_url);
+                uploadImageToFirebase();
+            }
+        }
+    }
+
+    private void uploadImageToFirebase() {
+        if (image_url != null) {
+            progressDialog = new ProgressDialog(this);
+            progressDialog.setTitle("Subiendo Imagen...");
+            progressDialog.show();
+
+            String userId = auth.getCurrentUser().getUid();
+            StorageReference fileReference = storageReference.child("profile_images/" + userId + ".jpg"); // Cambia el nombre de archivo según sea necesario
+
+            fileReference.putFile(image_url)
+                    .addOnSuccessListener(taskSnapshot -> {
+                        fileReference.getDownloadUrl().addOnSuccessListener(uri -> {
+                            DocumentReference docRef = firestore.collection("users").document(userId);
+                            docRef.update("profileImage", uri.toString())
+                                    .addOnSuccessListener(aVoid -> {
+                                        progressDialog.dismiss();
+                                    });
+                        });
+                    })
+                    .addOnFailureListener(e -> {
+                        progressDialog.dismiss();
+
+                    });
+        }
     }
 }

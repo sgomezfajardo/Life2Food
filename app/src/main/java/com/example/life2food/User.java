@@ -4,13 +4,17 @@ public class User {
     private String firstName;
     private String lastName;
     private String email;
+    private String photo;
+
 
     public User(String firstName, String lastName, String email) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
+        this.photo = "https://firebasestorage.googleapis.com/v0/b/life2food-ec030.appspot.com/o/profile_images%2Fdefault_profile.png?alt=media&token=6caf9356-80ca-419d-b894-bd58d2878631";
     }
 
+    // Getters y Setters
     public String getFirstName() {
         return firstName;
     }
@@ -33,5 +37,13 @@ public class User {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public String getPhoto() {
+        return photo;
+    }
+
+    public void setPhoto(String photo) {
+        this.photo = photo;
     }
 }

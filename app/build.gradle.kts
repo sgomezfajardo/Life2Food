@@ -49,6 +49,8 @@ dependencies {
     implementation(libs.recyclerview)
     implementation(libs.firebase.database)
     implementation(libs.firebase.storage)
+    implementation ("com.google.firebase:firebase-storage:21.0.1")
+    implementation ("com.squareup.picasso:picasso:2.8")
 
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
