@@ -191,7 +191,7 @@ public class EcommerceActivity extends AppCompatActivity
     @Override
     public void onAddToCartClick(Product product) {
         cart.addProduct(product);
-        Toast.makeText(this, product.getName() + " added to cart", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, product.getName() + " añadid@ al carrito", Toast.LENGTH_SHORT).show();
     }
 
     // Método para verificar y solicitar permisos
@@ -201,11 +201,10 @@ public class EcommerceActivity extends AppCompatActivity
                 // Si no se ha otorgado el permiso, solicitarlo
                 ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_PERMISSION_REQUEST_CODE);
             } else {
-                // Permiso ya otorgado, puedes continuar
+                // Permiso ya otorgado
                 initLocationServices();
             }
         } else {
-            // Para versiones anteriores a Marshmallow, los permisos se otorgan automáticamente
             initLocationServices();
         }
     }
