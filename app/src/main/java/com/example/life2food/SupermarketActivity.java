@@ -41,6 +41,8 @@ public class SupermarketActivity extends AppCompatActivity implements ProductAda
     private Button back;
     private static final int PICK_IMAGE_REQUEST = 1; // Código de solicitud de imagen
     private Uri imageUri; // URI para la imagen seleccionada
+    private int id = 0; //autoincrementado para cada producto
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -119,7 +121,7 @@ public class SupermarketActivity extends AppCompatActivity implements ProductAda
     }
 
     private void showAddProductDialog() {
-        if (currentUserRole == null || currentUserRole.equals("usuario")) {
+        if (currentUserRole == null || currentUserRole.equals("user")) {
             Toast.makeText(this, "No tienes permisos para agregar productos.", Toast.LENGTH_SHORT).show();
             return;
         }
@@ -152,7 +154,8 @@ public class SupermarketActivity extends AppCompatActivity implements ProductAda
             }
 
             // Agregar el producto a Firestore primero, luego subir la imagen
-            Product newProduct = new Product(null, productName, Integer.parseInt(productQuantity), productType, currentUserEmail, Double.parseDouble(productPrice), null);
+            Product newProduct = new Product(String.valueOf(getId()), productName, Integer.parseInt(productQuantity), productType, currentUserEmail, Double.parseDouble(productPrice), null);
+            setId(getId()+1);
             productList.add(newProduct);
             productAdapter.notifyItemInserted(productList.size() - 1);
             Toast.makeText(SupermarketActivity.this, "Producto agregado", Toast.LENGTH_SHORT).show();
@@ -231,5 +234,12 @@ public class SupermarketActivity extends AppCompatActivity implements ProductAda
             Toast.makeText(this, "No tienes permisos para eliminar este producto", Toast.LENGTH_SHORT).show();
         }
     }
-}
 
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+}

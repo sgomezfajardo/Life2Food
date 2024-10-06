@@ -1,13 +1,17 @@
 package com.example.life2food;
 
 import android.Manifest;
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -19,12 +23,17 @@ import androidx.core.app.ActivityCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
-
+import com.google.firebase.firestore.DocumentReference;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class EcommerceActivity extends AppCompatActivity
         implements ProductAdapter.OnProductClickListener, ProductAdapter.OnAddToCartClickListener {
@@ -34,8 +43,8 @@ public class EcommerceActivity extends AppCompatActivity
     private List<Product> productList;
     private FirebaseFirestore db;
     private String currentUserEmail;
+    private String userID;
     private Toolbar toolbar;
-    private Cart cart = new Cart();
 
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
 
@@ -70,6 +79,8 @@ public class EcommerceActivity extends AppCompatActivity
 
         db = FirebaseFirestore.getInstance();
         currentUserEmail = FirebaseAuth.getInstance().getCurrentUser().getEmail();
+        userID = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
 
         loadProductsFromFirestore();
 
@@ -190,18 +201,98 @@ public class EcommerceActivity extends AppCompatActivity
 
     @Override
     public void onAddToCartClick(Product product) {
-        cart.addProduct(product);
-        Toast.makeText(this, product.getName() + " añadid@ al carrito", Toast.LENGTH_SHORT).show();
+        // Primero, asegurarse de que el carrito existe
+        createCartIfNotExists();
+
+        // Mostrar el diálogo para añadir el producto
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        final View customLayout = getLayoutInflater().inflate(R.layout.dialog_add_product_to_cart, null);
+        builder.setView(customLayout);
+        AlertDialog dialog = builder.create();
+        dialog.show();
+
+        TextInputEditText productQuantityInput = customLayout.findViewById(R.id.product_quantity);
+        Button confirm_add_to_cart = customLayout.findViewById(R.id.btn_add_to_cart);
+
+        confirm_add_to_cart.setOnClickListener(v -> {
+            String product_quantity = productQuantityInput.getText().toString();
+
+            // Validación de cantidad ingresada
+            if (product_quantity.isEmpty()) {
+                Toast.makeText(this, "Por favor ingrese la cantidad", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            int quantityToAdd = Integer.parseInt(product_quantity);
+            if (quantityToAdd > product.getQuantity()) {
+                Toast.makeText(this, "No hay suficiente stock", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            DocumentReference cartRef = db.collection("carts").document(userID);
+
+            // Crear el producto que se añadirá al carrito
+            Map<String, Object> newProduct = new HashMap<>();
+            newProduct.put("productId", product.getId());
+            newProduct.put("productName", product.getName());
+            newProduct.put("quantity", quantityToAdd);
+            newProduct.put("price", product.getPrice());
+            newProduct.put("imageUrl", product.getImageUrl());
+
+            // Usar FieldValue.arrayUnion() para añadir el producto al array "items"
+            cartRef.update("items", FieldValue.arrayUnion(newProduct))
+                    .addOnSuccessListener(aVoid -> {
+                        Toast.makeText(this, "Se añadió " + product_quantity + " " + product.getName(), Toast.LENGTH_SHORT).show();
+                    })
+                    .addOnFailureListener(e -> {
+                        Toast.makeText(this, "No se pudo añadir el producto", Toast.LENGTH_SHORT).show();
+                    });
+
+            dialog.dismiss();
+        });
     }
 
-    // Método para verificar y solicitar permisos
+
+    public void createCartIfNotExists() {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        FirebaseAuth auth = FirebaseAuth.getInstance();
+        String userId = auth.getCurrentUser().getUid();  // UID del usuario autenticado
+
+        // Referencia al documento del carrito del usuario
+        DocumentReference cartRef = db.collection("carts").document(userId);
+
+        // Verificar si el carrito ya existe
+        cartRef.get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                DocumentSnapshot document = task.getResult();
+                if (!document.exists()) {
+                    // Si el carrito no existe, creamos un nuevo documento
+                    Map<String, Object> newCart = new HashMap<>();
+                    newCart.put("id_usuario", userId);  // Guardar el UID del usuario
+                    newCart.put("items", new ArrayList<>());  // Crear un array vacío para los productos
+
+                    cartRef.set(newCart)
+                            .addOnSuccessListener(aVoid -> {
+                                Log.d("Firestore", "Nuevo carrito creado exitosamente.");
+                            })
+                            .addOnFailureListener(e -> {
+                                Log.w("Firestore", "Error al crear el carrito", e);
+                            });
+                } else {
+                    Log.d("Firestore", "El carrito ya existe.");
+                }
+            } else {
+                Log.w("Firestore", "Error al verificar si el carrito existe", task.getException());
+            }
+        });
+    }
+
+
     private void checkLocationPermission() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                // Si no se ha otorgado el permiso, solicitarlo
                 ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_PERMISSION_REQUEST_CODE);
             } else {
-                // Permiso ya otorgado
                 initLocationServices();
             }
         } else {
