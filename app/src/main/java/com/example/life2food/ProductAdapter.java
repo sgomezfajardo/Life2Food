@@ -1,5 +1,8 @@
 package com.example.life2food;
 
+import android.graphics.drawable.Drawable;
+import android.net.Uri;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,9 +12,14 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.DataSource;
+import com.bumptech.glide.load.engine.GlideException;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
 
 import java.util.List;
 
@@ -51,23 +59,41 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
     public void onBindViewHolder(@NonNull ProductViewHolder holder, int position) {
         Product product = productList.get(position);
 
-        // Load image using Glide
+        // Verificar la URL de la imagen
+        String imageUrl = product.getImageUrl();
+        Log.d("ProductAdapter", "Cargando imagen desde: " + imageUrl);
+
+        // Cargar imagen usando Glide con manejo de errores
         Glide.with(holder.itemView.getContext())
-                .load(product.getImageUrl())
+                .load(imageUrl)
+                .listener(new RequestListener<Drawable>() {
+                    @Override
+                    public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+                        Log.e("ProductAdapter", "Error al cargar la imagen: " + e.getMessage());
+                        Toast.makeText(holder.itemView.getContext(), "Error al cargar la imagen", Toast.LENGTH_SHORT).show();
+                        return false; // Dejar que Glide maneje el error
+                    }
+
+                    @Override
+                    public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+                        return false; // Dejar que Glide maneje el recurso
+                    }
+                })
                 .into(holder.productImage);
 
+        // Configurar otros datos del producto
         holder.productName.setText(product.getName());
         holder.productQuantity.setText("Cantidad: " + product.getQuantity());
         holder.productPrice.setText("Precio: $" + product.getPrice());
 
-        // Show/hide delete button based on user's email
+        // Mostrar/ocultar botón de eliminar basado en el correo del usuario
         if (product.getEmail().equals(currentUserEmail)) {
             holder.deleteButton.setVisibility(View.VISIBLE);
         } else {
             holder.deleteButton.setVisibility(View.GONE);
         }
 
-        // Set click listeners
+        // Configurar listeners de los botones
         holder.deleteButton.setOnClickListener(v -> {
             if (productClickListener != null) {
                 productClickListener.onDeleteProductClick(product);

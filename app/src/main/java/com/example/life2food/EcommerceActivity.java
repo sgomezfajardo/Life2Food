@@ -1,6 +1,10 @@
 package com.example.life2food;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.location.LocationManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -11,6 +15,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -32,12 +37,17 @@ public class EcommerceActivity extends AppCompatActivity
     private Toolbar toolbar;
     private Cart cart = new Cart();
 
+    private static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_ecommerce);
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        // Verificar permisos al iniciar
+        checkLocationPermission();
 
         recyclerView = findViewById(R.id.recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -64,7 +74,7 @@ public class EcommerceActivity extends AppCompatActivity
         loadProductsFromFirestore();
 
         productAdapter = new ProductAdapter(productList, currentUserEmail, this);
-        productAdapter.setOnAddToCartClickListener(this); // Set the listener
+        productAdapter.setOnAddToCartClickListener(this);
         recyclerView.setAdapter(productAdapter);
 
         setupBottomNavigation();
@@ -182,5 +192,41 @@ public class EcommerceActivity extends AppCompatActivity
     public void onAddToCartClick(Product product) {
         cart.addProduct(product);
         Toast.makeText(this, product.getName() + " added to cart", Toast.LENGTH_SHORT).show();
+    }
+
+    // Método para verificar y solicitar permisos
+    private void checkLocationPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                // Si no se ha otorgado el permiso, solicitarlo
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_PERMISSION_REQUEST_CODE);
+            } else {
+                // Permiso ya otorgado, puedes continuar
+                initLocationServices();
+            }
+        } else {
+            // Para versiones anteriores a Marshmallow, los permisos se otorgan automáticamente
+            initLocationServices();
+        }
+    }
+
+    // Método que se llama cuando se recibe la respuesta de la solicitud de permisos
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == LOCATION_PERMISSION_REQUEST_CODE) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // Permiso otorgado, puedes continuar
+                initLocationServices();
+            } else {
+                // Permiso denegado, mostrar un mensaje al usuario
+                Toast.makeText(this, "Permiso de ubicación denegado. Algunas funciones pueden no estar disponibles.", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+    // Método para inicializar los servicios de ubicación (implementa tu lógica aquí)
+    private void initLocationServices() {
+        // Aquí puedes inicializar la lógica que requiere el permiso de ubicación
     }
 }
