@@ -8,11 +8,12 @@ public class Product {
     private String email;
     private double price;
     private String imageUrl; // Campo para la URL de la imagen
+    private String description; // Nuevo campo para la descripción
 
     public Product() {
     }
 
-    public Product(String id, String name, int quantity, String type, String email, double price, String imageUrl) {
+    public Product(String id, String name, int quantity, String type, String email, double price, String imageUrl, String description) {
         this.id = id;
         this.name = name;
         this.quantity = quantity;
@@ -20,6 +21,7 @@ public class Product {
         this.email = email;
         this.price = price;
         this.imageUrl = imageUrl; // Inicializar el campo de imagen
+        this.description = description; // Inicializar el campo de descripción
     }
 
     // Getters y Setters
@@ -82,5 +84,13 @@ public class Product {
 
     public void setImageUrl(String imageUrl) {
         this.imageUrl = imageUrl;
+    }
+
+    public String getDescription() {
+        return description; // Nuevo getter para la descripción
+    }
+
+    public void setDescription(String description) {
+        this.description = description; // Nuevo setter para la descripción
     }
 }

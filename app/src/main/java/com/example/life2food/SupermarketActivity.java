@@ -133,6 +133,7 @@ public class SupermarketActivity extends AppCompatActivity implements ProductAda
         final TextInputEditText productNameInput = customLayout.findViewById(R.id.product_name);
         final TextInputEditText productQuantityInput = customLayout.findViewById(R.id.product_quantity);
         final TextInputEditText productPriceInput = customLayout.findViewById(R.id.product_price);
+        final TextInputEditText productDescriptionInput = customLayout.findViewById(R.id.product_description); // Nuevo campo para la descripción
         final Spinner productTypeSpinner = customLayout.findViewById(R.id.product_type_spinner);
         Button btnSelectImage = customLayout.findViewById(R.id.btn_select_image); // Botón para seleccionar imagen
 
@@ -146,16 +147,17 @@ public class SupermarketActivity extends AppCompatActivity implements ProductAda
             String productName = productNameInput.getText().toString().trim();
             String productQuantity = productQuantityInput.getText().toString().trim();
             String productPrice = productPriceInput.getText().toString().trim();
+            String productDescription = productDescriptionInput.getText().toString().trim(); // Obtener la descripción
             String productType = productTypeSpinner.getSelectedItem().toString();
 
-            if (productName.isEmpty() || productQuantity.isEmpty() || productPrice.isEmpty()) {
+            if (productName.isEmpty() || productQuantity.isEmpty() || productPrice.isEmpty() || productDescription.isEmpty()) {
                 Toast.makeText(SupermarketActivity.this, "Por favor llena todos los campos", Toast.LENGTH_SHORT).show();
                 return;
             }
 
             // Agregar el producto a Firestore primero, luego subir la imagen
-            Product newProduct = new Product(String.valueOf(getId()), productName, Integer.parseInt(productQuantity), productType, currentUserEmail, Double.parseDouble(productPrice), null);
-            setId(getId()+1);
+            Product newProduct = new Product(String.valueOf(getId()), productName, Integer.parseInt(productQuantity), productType, currentUserEmail, Double.parseDouble(productPrice), null, productDescription);
+            setId(getId() + 1);
             productList.add(newProduct);
             productAdapter.notifyItemInserted(productList.size() - 1);
             Toast.makeText(SupermarketActivity.this, "Producto agregado", Toast.LENGTH_SHORT).show();

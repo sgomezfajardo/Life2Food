@@ -135,8 +135,9 @@ public class EcommerceActivity extends AppCompatActivity
                         String type = document.getString("type");
                         String email = document.getString("email");
                         String imageUrl = document.getString("imageUrl");
+                        String description = document.getString("description");
 
-                        productList.add(new Product(id, name, quantity, type, email, price, imageUrl));
+                        productList.add(new Product(id, name, quantity, type, email, price, imageUrl, description));
                     }
                     productAdapter.notifyDataSetChanged();
                 });

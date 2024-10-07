@@ -86,6 +86,9 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
         holder.productQuantity.setText("Cantidad: " + product.getQuantity());
         holder.productPrice.setText("Precio: $" + product.getPrice());
 
+        // **Nuevo: Agregar la descripción del producto**
+        holder.productDescription.setText(product.getDescription());
+
         // Mostrar/ocultar botón de eliminar basado en el correo del usuario
         if (product.getEmail().equals(currentUserEmail)) {
             holder.deleteButton.setVisibility(View.VISIBLE);
@@ -123,6 +126,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
         public TextView productName;
         public TextView productQuantity;
         public TextView productPrice;
+        public TextView productDescription;
         public ImageButton deleteButton;
         public ImageButton addToCartButton;
 
@@ -132,6 +136,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
             productName = itemView.findViewById(R.id.product_name);
             productQuantity = itemView.findViewById(R.id.product_quantity);
             productPrice = itemView.findViewById(R.id.product_price);
+            productDescription = itemView.findViewById(R.id.product_description);
             deleteButton = itemView.findViewById(R.id.btn_delete_product);
             addToCartButton = itemView.findViewById(R.id.btn_add_to_cart);
         }

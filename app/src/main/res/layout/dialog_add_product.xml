@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
@@ -40,11 +41,22 @@
             android:inputType="numberDecimal" />
     </com.google.android.material.textfield.TextInputLayout>
 
+    <com.google.android.material.textfield.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Descripción">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/product_description"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textMultiLine" />
+    </com.google.android.material.textfield.TextInputLayout>
+
     <Spinner
         android:id="@+id/product_type_spinner"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
-
 
     <Button
         android:id="@+id/btn_select_image"
@@ -52,8 +64,6 @@
         android:layout_height="wrap_content"
         android:backgroundTint="#4CAF50"
         android:text="Seleccionar imagen" />
-
-
 
     <ImageView
         android:id="@+id/selected_image_preview"
