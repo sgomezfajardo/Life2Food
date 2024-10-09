@@ -1,5 +1,7 @@
 package com.example.life2food;
 
+import com.google.firebase.firestore.FirebaseFirestore;
+
 public class Product {
     private String id;
     private String name;
@@ -9,6 +11,7 @@ public class Product {
     private double price;
     private String imageUrl; // Campo para la URL de la imagen
     private String description; // Nuevo campo para la descripción
+    private FirebaseFirestore db = FirebaseFirestore.getInstance();
 
     public Product() {
     }
@@ -20,8 +23,8 @@ public class Product {
         this.type = type;
         this.email = email;
         this.price = price;
-        this.imageUrl = imageUrl; // Inicializar el campo de imagen
-        this.description = description; // Inicializar el campo de descripción
+        this.imageUrl = imageUrl;
+        this.description = description;
     }
 
     // Getters y Setters
@@ -60,6 +63,7 @@ public class Product {
 
     public void setQuantity(int quantity) {
         this.quantity = quantity;
+        db.collection("products").document(getId()).update("quantity", getQuantity());
     }
 
     public String getType() {
@@ -87,10 +91,10 @@ public class Product {
     }
 
     public String getDescription() {
-        return description; // Nuevo getter para la descripción
+        return description;
     }
 
     public void setDescription(String description) {
-        this.description = description; // Nuevo setter para la descripción
+        this.description = description;
     }
 }

@@ -202,10 +202,8 @@ public class EcommerceActivity extends AppCompatActivity
 
     @Override
     public void onAddToCartClick(Product product) {
-        // Primero, asegurarse de que el carrito existe
         createCartIfNotExists();
 
-        // Mostrar el diálogo para añadir el producto
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         final View customLayout = getLayoutInflater().inflate(R.layout.dialog_add_product_to_cart, null);
         builder.setView(customLayout);
@@ -244,6 +242,7 @@ public class EcommerceActivity extends AppCompatActivity
             cartRef.update("items", FieldValue.arrayUnion(newProduct))
                     .addOnSuccessListener(aVoid -> {
                         Toast.makeText(this, "Se añadió " + product_quantity + " " + product.getName(), Toast.LENGTH_SHORT).show();
+                        product.setQuantity(product.getQuantity() - quantityToAdd);
                     })
                     .addOnFailureListener(e -> {
                         Toast.makeText(this, "No se pudo añadir el producto", Toast.LENGTH_SHORT).show();
