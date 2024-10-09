@@ -36,13 +36,12 @@ public class SupermarketActivity extends AppCompatActivity implements ProductAda
     private String currentUserEmail;
     private String currentUserRole;
     private FirebaseFirestore db;
-    private FirebaseStorage storage; // Añade FirebaseStorage
-    private StorageReference storageRef; // Referencia para el almacenamiento
+    private FirebaseStorage storage;
+    private StorageReference storageRef;
     private Button back;
-    private static final int PICK_IMAGE_REQUEST = 1; // Código de solicitud de imagen
-    private Uri imageUri; // URI para la imagen seleccionada
-    private int id = 0; //autoincrementado para cada producto
-
+    private static final int PICK_IMAGE_REQUEST = 1;
+    private Uri imageUri;
+    private int id = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,15 +49,13 @@ public class SupermarketActivity extends AppCompatActivity implements ProductAda
         setContentView(R.layout.activity_supermarket);
 
         db = FirebaseFirestore.getInstance();
-        storage = FirebaseStorage.getInstance(); // Inicializa FirebaseStorage
-        storageRef = storage.getReference(); // Inicializa la referencia de almacenamiento
+        storage = FirebaseStorage.getInstance();
+        storageRef = storage.getReference();
 
         currentUserEmail = FirebaseAuth.getInstance().getCurrentUser().getEmail();
-
         getUserRole();
 
         productList = new ArrayList<>();
-
         recyclerView = findViewById(R.id.recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         productAdapter = new ProductAdapter(productList, currentUserEmail, this);
@@ -68,6 +65,7 @@ public class SupermarketActivity extends AppCompatActivity implements ProductAda
 
         Button btnAddProduct = findViewById(R.id.btn_add_product);
         btnAddProduct.setOnClickListener(v -> showAddProductDialog());
+
         back = findViewById(R.id.button_back);
         back.setOnClickListener(v -> {
             Intent intent = new Intent(this, EcommerceActivity.class);
@@ -133,9 +131,9 @@ public class SupermarketActivity extends AppCompatActivity implements ProductAda
         final TextInputEditText productNameInput = customLayout.findViewById(R.id.product_name);
         final TextInputEditText productQuantityInput = customLayout.findViewById(R.id.product_quantity);
         final TextInputEditText productPriceInput = customLayout.findViewById(R.id.product_price);
-        final TextInputEditText productDescriptionInput = customLayout.findViewById(R.id.product_description); // Nuevo campo para la descripción
+        final TextInputEditText productDescriptionInput = customLayout.findViewById(R.id.product_description);
         final Spinner productTypeSpinner = customLayout.findViewById(R.id.product_type_spinner);
-        Button btnSelectImage = customLayout.findViewById(R.id.btn_select_image); // Botón para seleccionar imagen
+        Button btnSelectImage = customLayout.findViewById(R.id.btn_select_image);
 
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.product_types, android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -145,9 +143,9 @@ public class SupermarketActivity extends AppCompatActivity implements ProductAda
 
         builder.setPositiveButton("Agregar", (dialog, which) -> {
             String productName = productNameInput.getText().toString().trim();
-            String productQuantity = productQuantityInput.getText().toString().trim();
+            String productQuantity = productQuantityInput.getText().toString().trim(); // Aquí capturamos la cantidad
             String productPrice = productPriceInput.getText().toString().trim();
-            String productDescription = productDescriptionInput.getText().toString().trim(); // Obtener la descripción
+            String productDescription = productDescriptionInput.getText().toString().trim();
             String productType = productTypeSpinner.getSelectedItem().toString();
 
             if (productName.isEmpty() || productQuantity.isEmpty() || productPrice.isEmpty() || productDescription.isEmpty()) {
@@ -155,14 +153,16 @@ public class SupermarketActivity extends AppCompatActivity implements ProductAda
                 return;
             }
 
-            // Agregar el producto a Firestore primero, luego subir la imagen
+            // Creamos el producto con la cantidad como entero
             Product newProduct = new Product(String.valueOf(getId()), productName, Integer.parseInt(productQuantity), productType, currentUserEmail, Double.parseDouble(productPrice), null, productDescription);
+            newProduct.setQuantity(Integer.parseInt(productQuantity)); // Se usa setQuantity() para asignar la cantidad
+
             setId(getId() + 1);
             productList.add(newProduct);
             productAdapter.notifyItemInserted(productList.size() - 1);
             Toast.makeText(SupermarketActivity.this, "Producto agregado", Toast.LENGTH_SHORT).show();
 
-            // Si se seleccionó una imagen, subirla a Firebase Storage
+            // Manejo de imagen
             if (imageUri != null) {
                 uploadImageToFirebase(newProduct);
             } else {
@@ -187,20 +187,17 @@ public class SupermarketActivity extends AppCompatActivity implements ProductAda
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null) {
-            imageUri = data.getData(); // Obtén la URI de la imagen seleccionada
-
+            imageUri = data.getData();
         }
     }
 
     private void uploadImageToFirebase(Product product) {
-        // Crear una referencia de imagen única
         StorageReference fileReference = storageRef.child("products/" + System.currentTimeMillis() + ".jpg");
 
         fileReference.putFile(imageUri)
                 .addOnSuccessListener(taskSnapshot -> {
-                    // Obtener la URL de descarga
                     fileReference.getDownloadUrl().addOnSuccessListener(uri -> {
-                        product.setImageUrl(uri.toString()); // Establecer la URL de la imagen en el producto
+                        product.setImageUrl(uri.toString());
                         addProductToFirestore(product);
                     });
                 })
@@ -210,9 +207,8 @@ public class SupermarketActivity extends AppCompatActivity implements ProductAda
     }
 
     private void addProductToFirestore(Product product) {
-        db.collection("products").add(product) // Agregar el producto a Firestore
+        db.collection("products").add(product)
                 .addOnSuccessListener(documentReference -> {
-                    // Asignar el ID del documento generado al producto
                     product.setId(documentReference.getId());
                     Toast.makeText(SupermarketActivity.this, "Producto guardado en la base de datos", Toast.LENGTH_SHORT).show();
                 })
@@ -228,7 +224,6 @@ public class SupermarketActivity extends AppCompatActivity implements ProductAda
             productAdapter.notifyDataSetChanged();
             Toast.makeText(this, "Producto eliminado", Toast.LENGTH_SHORT).show();
 
-            // Elimina el producto de Firestore
             db.collection("products").document(product.getId()).delete()
                     .addOnSuccessListener(aVoid -> Toast.makeText(SupermarketActivity.this, "Producto eliminado de la base de datos", Toast.LENGTH_SHORT).show())
                     .addOnFailureListener(e -> Toast.makeText(SupermarketActivity.this, "Error al eliminar el producto", Toast.LENGTH_SHORT).show());
