@@ -13,11 +13,9 @@ public class Product {
     private String description; // Nuevo campo para la descripción
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-    // Constructor por defecto
     public Product() {
     }
 
-    // Constructor completo (con todos los campos)
     public Product(String id, String name, int quantity, String type, String email, double price, String imageUrl, String description) {
         this.id = id;
         this.name = name;
@@ -27,16 +25,6 @@ public class Product {
         this.price = price;
         this.imageUrl = imageUrl;
         this.description = description;
-    }
-
-    // Constructor sin imagen (sobrecarga)
-    public Product(String id, String name, int quantity, String type, String email, double price, String description) {
-        this(id, name, quantity, type, email, price, null, description); // Llama al constructor completo con imageUrl como null
-    }
-
-    // Constructor con solo nombre y cantidad (sobrecarga)
-    public Product(String id, String name, int quantity) {
-        this(id, name, quantity, null, null, 0.0, null, null); // Llama al constructor completo con valores por defecto
     }
 
     // Getters y Setters
@@ -75,10 +63,10 @@ public class Product {
 
     public void setQuantity(int quantity) {
         this.quantity = quantity;
-        // Actualizar Firebase cada vez que se cambie la cantidad
-        if (this.id != null && !this.id.isEmpty()) {
-            db.collection("products").document(getId()).update("quantity", getQuantity());
-        }
+    }
+    public void updateQuantity(int quantity) {
+        this.quantity = quantity;
+        db.collection("products").document(getId()).update("quantity", getQuantity());
     }
 
     public String getType() {

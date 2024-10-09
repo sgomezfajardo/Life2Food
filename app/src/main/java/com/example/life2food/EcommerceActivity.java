@@ -242,7 +242,7 @@ public class EcommerceActivity extends AppCompatActivity
             cartRef.update("items", FieldValue.arrayUnion(newProduct))
                     .addOnSuccessListener(aVoid -> {
                         Toast.makeText(this, "Se añadió " + product_quantity + " " + product.getName(), Toast.LENGTH_SHORT).show();
-                        product.setQuantity(product.getQuantity() - quantityToAdd);
+                        product.updateQuantity(product.getQuantity() - quantityToAdd);
                     })
                     .addOnFailureListener(e -> {
                         Toast.makeText(this, "No se pudo añadir el producto", Toast.LENGTH_SHORT).show();

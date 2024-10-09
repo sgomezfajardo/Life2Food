@@ -2,7 +2,6 @@ package com.example.life2food;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -60,7 +59,6 @@ public class CartActivity extends AppCompatActivity {
                             while(items.length() > 100){
                                 getInfo();
                             }
-                            userCart.setText(cart);
                         } else {
                             userCart.setText("Error al obtener productos");
                         }
@@ -95,8 +93,8 @@ public class CartActivity extends AppCompatActivity {
             productName = items.substring(12, items.indexOf("}"));
             items = items.substring(items.indexOf(","));
             cart =   productName + "\n" +
-                     productQuantity + "\n" +
-                     productPrice +  "\n";
+                    productQuantity + "\n" +
+                    productPrice +  "\n";
             Button newDeleteButton = new Button(this);
             newDeleteButton.setText("Eliminar producto del carrito");
             newDeleteButton.setBackgroundColor(getResources().getColor(android.R.color.holo_red_light));
