@@ -82,7 +82,6 @@ public class CartActivity extends AppCompatActivity {
             items = items.substring(items.indexOf("productName="));
             productName = items.substring(12, items.indexOf("}") -1 );
             items = items.substring(items.indexOf(","));
-            System.out.println("items length: " + items.length());
 
             cart += "Nombre del producto: " + productName + "\n" +
                     "Cantidad: " + productQuantity + "\n" +
@@ -98,7 +97,6 @@ public class CartActivity extends AppCompatActivity {
             productPrice = items.substring(6, items.indexOf(","));
             items = items.substring(items.indexOf(","));
             items = items.substring(items.indexOf("productName="));
-            System.out.println("items: " + items);
             productName = items.substring(12, items.indexOf("}"));
             items = items.substring(items.indexOf("}"));
 
