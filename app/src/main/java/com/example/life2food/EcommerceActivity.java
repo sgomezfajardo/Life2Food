@@ -4,7 +4,6 @@ import android.Manifest;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
@@ -26,7 +25,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.DocumentReference;
@@ -137,7 +135,9 @@ public class EcommerceActivity extends AppCompatActivity
                         String imageUrl = document.getString("imageUrl");
                         String description = document.getString("description");
 
-                        productList.add(new Product(id, name, quantity, type, email, price, imageUrl, description));
+                        if(quantity>0)
+                            productList.add(new Product(id, name, quantity, type, email, price, imageUrl, description));
+
                     }
                     productAdapter.notifyDataSetChanged();
                 });
@@ -153,7 +153,7 @@ public class EcommerceActivity extends AppCompatActivity
                     productAdapter.notifyDataSetChanged();
                 })
                 .addOnFailureListener(e -> {
-                    // Handle the error if necessary
+
                 });
     }
 
@@ -203,7 +203,6 @@ public class EcommerceActivity extends AppCompatActivity
     @Override
     public void onAddToCartClick(Product product) {
         createCartIfNotExists();
-
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         final View customLayout = getLayoutInflater().inflate(R.layout.dialog_add_product_to_cart, null);
         builder.setView(customLayout);
@@ -214,39 +213,63 @@ public class EcommerceActivity extends AppCompatActivity
         Button confirm_add_to_cart = customLayout.findViewById(R.id.btn_add_to_cart);
 
         confirm_add_to_cart.setOnClickListener(v -> {
-            String product_quantity = productQuantityInput.getText().toString();
+            String productQuantity = productQuantityInput.getText().toString();
 
-            // Validación de cantidad ingresada
-            if (product_quantity.isEmpty()) {
+            if (productQuantity.isEmpty()) {
                 Toast.makeText(this, "Por favor ingrese la cantidad", Toast.LENGTH_SHORT).show();
                 return;
             }
 
-            int quantityToAdd = Integer.parseInt(product_quantity);
+            int quantityToAdd = Integer.parseInt(productQuantity);
             if (quantityToAdd > product.getQuantity()) {
                 Toast.makeText(this, "No hay suficiente stock", Toast.LENGTH_SHORT).show();
                 return;
             }
 
             DocumentReference cartRef = db.collection("carts").document(userID);
+            cartRef.get().addOnSuccessListener(documentSnapshot -> {
+                if (documentSnapshot.exists()) {
+                    List<Map<String, Object>> items = (List<Map<String, Object>>) documentSnapshot.get("items");
 
-            // Crear el producto que se añadirá al carrito
-            Map<String, Object> newProduct = new HashMap<>();
-            newProduct.put("productId", product.getId());
-            newProduct.put("productName", product.getName());
-            newProduct.put("quantity", quantityToAdd);
-            newProduct.put("price", product.getPrice());
-            newProduct.put("imageUrl", product.getImageUrl());
+                    if (items != null) {
+                        boolean productExists = false;
 
-            // Usar FieldValue.arrayUnion() para añadir el producto al array "items"
-            cartRef.update("items", FieldValue.arrayUnion(newProduct))
-                    .addOnSuccessListener(aVoid -> {
-                        Toast.makeText(this, "Se añadió " + product_quantity + " " + product.getName(), Toast.LENGTH_SHORT).show();
-                        product.updateQuantity(product.getQuantity() - quantityToAdd);
-                    })
-                    .addOnFailureListener(e -> {
-                        Toast.makeText(this, "No se pudo añadir el producto", Toast.LENGTH_SHORT).show();
-                    });
+                        for (Map<String, Object> item : items) {
+                            if (item.get("productId").equals(product.getId())) {
+                                int currentQuantity = ((Long) item.get("quantity")).intValue();
+                                int newQuantity = currentQuantity + quantityToAdd;
+
+                                // Actualizamos la cantidad en el carrito
+                                item.put("quantity", newQuantity);
+                                productExists = true;
+                                break;
+                            }
+                        }
+
+                        if (!productExists) {
+                            // Si el producto no está en el carrito, lo añadimos
+                            Map<String, Object> newProduct = new HashMap<>();
+                            newProduct.put("productId", product.getId());
+                            newProduct.put("productName", product.getName());
+                            newProduct.put("quantity", quantityToAdd);
+                            newProduct.put("price", product.getPrice());
+                            newProduct.put("imageUrl", product.getImageUrl());
+
+                            items.add(newProduct);
+                        }
+
+                        // Actualizamos el carrito en la base de datos
+                        cartRef.update("items", items)
+                                .addOnSuccessListener(aVoid -> {
+                                    Toast.makeText(this, "Producto actualizado en el carrito", Toast.LENGTH_SHORT).show();
+                                    product.updateQuantity(product.getQuantity() - quantityToAdd);
+                                })
+                                .addOnFailureListener(e -> {
+                                    Toast.makeText(this, "Error al actualizar el carrito", Toast.LENGTH_SHORT).show();
+                                });
+                    }
+                }
+            });
 
             dialog.dismiss();
         });

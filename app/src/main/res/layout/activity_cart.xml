@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="wrap_content"
+
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="center_horizontal">
 
@@ -9,29 +10,31 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="center_horizontal"
+        android:padding="0dp"
         android:orientation="vertical">
 
         <TextView
             android:id="@+id/title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
+            android:background="@color/Life2Food_secundary"
+            android:paddingRight="53dp"
+            android:paddingLeft="53dp"
+            android:paddingBottom="10dp"
+            android:paddingTop="10dp"
             android:text="Tu carrito de compra"
-            android:textSize="24sp" />
-
-        <TextView
-            android:id="@+id/cart"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp" />
+            android:textColor="@color/white"
+            android:textSize="33dp" />
 
         <Button
             android:id="@+id/button_back"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="80dp"
+            android:layout_marginTop="10dp"
             android:backgroundTint="#006F4A"
             android:text="Volver"
             android:textColor="#FDF9FC" />
     </LinearLayout>
 
-</RelativeLayout>
+</ScrollView>

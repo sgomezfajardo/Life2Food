@@ -41,7 +41,7 @@ public class SupermarketActivity extends AppCompatActivity implements ProductAda
     private Button back;
     private static final int PICK_IMAGE_REQUEST = 1;
     private Uri imageUri;
-    private int id = 0;
+    private int id = 7;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -154,10 +154,8 @@ public class SupermarketActivity extends AppCompatActivity implements ProductAda
             }
 
             // Creamos el producto con la cantidad como entero
-            Product newProduct = new Product(String.valueOf(getId()), productName, Integer.parseInt(productQuantity), productType, currentUserEmail, Double.parseDouble(productPrice), null, productDescription);
+            Product newProduct = new Product(String.valueOf(id++), productName, Integer.parseInt(productQuantity), productType, currentUserEmail, Double.parseDouble(productPrice), null, productDescription);
             newProduct.setQuantity(Integer.parseInt(productQuantity)); // Se usa setQuantity() para asignar la cantidad
-
-            setId(getId() + 1);
             productList.add(newProduct);
             productAdapter.notifyItemInserted(productList.size() - 1);
             Toast.makeText(SupermarketActivity.this, "Producto agregado", Toast.LENGTH_SHORT).show();
@@ -230,13 +228,5 @@ public class SupermarketActivity extends AppCompatActivity implements ProductAda
         } else {
             Toast.makeText(this, "No tienes permisos para eliminar este producto", Toast.LENGTH_SHORT).show();
         }
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
     }
 }

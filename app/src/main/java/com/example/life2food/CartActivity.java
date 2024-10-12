@@ -1,11 +1,14 @@
 package com.example.life2food;
 
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -26,14 +29,12 @@ import java.util.Map;
 
 public class CartActivity extends AppCompatActivity {
 
-    private FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private final FirebaseFirestore db = FirebaseFirestore.getInstance();
     private Button back;
-    private TextView userCart;
     private String items = " ";
-    private String cart = "";
     private LinearLayout linearLayout;
     FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
-    private String userId = String.valueOf(currentUser.getUid());
+    private final String userId = currentUser.getUid();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,7 +48,6 @@ public class CartActivity extends AppCompatActivity {
             finish();
         });
         linearLayout = findViewById(R.id.linearLayout);
-        userCart = findViewById(R.id.cart);
 
         db.collection("carts")
                 .whereEqualTo("id_usuario", userId) //
@@ -59,11 +59,23 @@ public class CartActivity extends AppCompatActivity {
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 items = document.getData().toString();
                             }
-                            while(items.length() > 100){
-                                getInfo();
+                            if(items.length()<100){
+                                ImageView imageView = new ImageView(CartActivity.this);
+
+                                Glide.with(CartActivity.this)
+                                                .load("https://firebasestorage.googleapis.com/v0/b/life2food-ec030.appspot.com/o/img%2Fcart.png?alt=media&token=42b49254-1d55-4546-afdd-7a310869d030")
+                                                .into(imageView);
+
+                                linearLayout.addView(imageView, linearLayout.indexOfChild(back));
+
+                            } else {
+                                while(items.length() > 100){
+                                    getInfo();
+                                }
                             }
+
                         } else {
-                            userCart.setText("Error al obtener productos");
+                            Toast.makeText(CartActivity.this, "Error al obtener productos", Toast.LENGTH_SHORT).show();
                         }
                     }
                 });
@@ -76,6 +88,11 @@ public class CartActivity extends AppCompatActivity {
         String productQuantity;
         String productPrice;
         String image_url;
+        ImageView imageView = new ImageView(CartActivity.this);
+
+        Glide.with(CartActivity.this)
+                .load("https://firebasestorage.googleapis.com/v0/b/life2food-ec030.appspot.com/o/img%2Fcart.png?alt=media&token=42b49254-1d55-4546-afdd-7a310869d030")
+                .into(imageView);
 
         items = items.substring(2);
         items = items.substring(items.indexOf("quantity="));
@@ -93,20 +110,33 @@ public class CartActivity extends AppCompatActivity {
         items = items.substring(items.indexOf("productName="));
         productName = items.substring(12, items.indexOf("}"));
         items = items.substring(items.indexOf("}"));
-        cart =   productName + "\n" +
+        String cart =   productName + "\n" +
                 productQuantity + "\n" +
                 productPrice +  "\n";
+        GradientDrawable drawable = new GradientDrawable();
+        drawable.setShape(GradientDrawable.RECTANGLE);
+        drawable.setColor(getResources().getColor(android.R.color.holo_orange_light));
+        drawable.setCornerRadius(60);
         Button newDeleteButton = new Button(this);
         newDeleteButton.setText("Eliminar producto del carrito");
-        newDeleteButton.setBackgroundColor(getResources().getColor(android.R.color.holo_red_light));
+        newDeleteButton.setBackground(drawable);
+        newDeleteButton.setTextColor(Color.WHITE);
+        newDeleteButton.setTextSize(11);
+        newDeleteButton.setPadding(30, 2, 30, 2);
+        newDeleteButton.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+
         TextView newTextView = new TextView(this);
         newTextView.setText(cart);
         ImageView newImage = new ImageView(this);
         Glide.with(this).load(image_url).override(350,350).into(newImage);
         CardView cardView = new CardView(this);
-        cardView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+        );
+        layoutParams.setMargins(16, 16, 16, 16);
+        cardView.setLayoutParams(layoutParams);
         cardView.setRadius(16);
-        cardView.setCardElevation(8);
         LinearLayout innerLayout = new LinearLayout(this);
         innerLayout.setOrientation(LinearLayout.VERTICAL);
         innerLayout.setPadding(16, 16, 16, 16);
@@ -114,6 +144,7 @@ public class CartActivity extends AppCompatActivity {
         innerLayout.addView(newTextView);
         innerLayout.addView(newDeleteButton);
         cardView.addView(innerLayout);
+        cardView.setCardBackgroundColor(Color.parseColor("#F5F5F5"));
         newDeleteButton.setOnClickListener(v -> {
             db.collection("products").document(productId).update("quantity", FieldValue.increment(Integer.parseInt(productQuantity)));
             Map<String, Object> itemToRemove = new HashMap<>();
@@ -122,22 +153,22 @@ public class CartActivity extends AppCompatActivity {
             itemToRemove.put("productId", productId);
             itemToRemove.put("productName", productName);
             itemToRemove.put("quantity", Integer.parseInt(productQuantity));
-            removeItemFromCart(productId, itemToRemove);
+            removeItemFromCart(itemToRemove);
             linearLayout.removeView(cardView);
+            if(linearLayout.getChildCount()<=2){
+                linearLayout.addView(imageView, linearLayout.indexOfChild(back));
+            }
         });
         linearLayout.addView(cardView, linearLayout.indexOfChild(back));
-        cart = "";
     }
 
-    private void removeItemFromCart(String productId, Map<String, Object> itemToRemove) {
+    private void removeItemFromCart( Map<String, Object> itemToRemove) {
 
         db.collection("carts").document(userId)
                 .update("items", FieldValue.arrayRemove(itemToRemove))
                 .addOnSuccessListener(aVoid -> {
-                    System.out.println("eliminado");
                 })
                 .addOnFailureListener(e -> {
-                    System.out.println("perdedor");
 
                 });
     }

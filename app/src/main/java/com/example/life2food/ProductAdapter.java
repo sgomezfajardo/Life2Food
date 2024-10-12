@@ -6,7 +6,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -59,11 +59,8 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
     public void onBindViewHolder(@NonNull ProductViewHolder holder, int position) {
         Product product = productList.get(position);
 
-        // Verificar la URL de la imagen
         String imageUrl = product.getImageUrl();
-        Log.d("ProductAdapter", "Cargando imagen desde: " + imageUrl);
 
-        // Cargar imagen usando Glide con manejo de errores
         Glide.with(holder.itemView.getContext())
                 .load(imageUrl)
                 .listener(new RequestListener<Drawable>() {
@@ -81,32 +78,19 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
                 })
                 .into(holder.productImage);
 
-        // Configurar otros datos del producto
-        holder.productName.setText(product.getName());
+        holder.productName.setText(String.valueOf(product.getName().toUpperCase()));
         holder.productQuantity.setText("Cantidad: " + product.getQuantity());
-        holder.productPrice.setText("Precio: $" + product.getPrice());
-
-        // **Nuevo: Agregar la descripción del producto**
-        holder.productDescription.setText(product.getDescription());
-
-        // Mostrar/ocultar botón de eliminar basado en el correo del usuario
-        if (product.getEmail().equals(currentUserEmail)) {
-            holder.deleteButton.setVisibility(View.VISIBLE);
-        } else {
-            holder.deleteButton.setVisibility(View.GONE);
-        }
-
-        // Configurar listeners de los botones
-        holder.deleteButton.setOnClickListener(v -> {
-            if (productClickListener != null) {
-                productClickListener.onDeleteProductClick(product);
-                Toast.makeText(holder.itemView.getContext(), "Producto eliminado", Toast.LENGTH_SHORT).show();
-            }
-        });
-
+        holder.productPrice.setText("Precio: $" + String.valueOf(product.getPrice()).substring(0,String.valueOf(product.getPrice()).indexOf(".")));
+        holder.productDescription.setText("Descripcion: " + product.getDescription());
         holder.addToCartButton.setOnClickListener(v -> {
             if (addToCartClickListener != null) {
                 addToCartClickListener.onAddToCartClick(product);
+            }
+
+        });
+        holder.buyButton.setOnClickListener(v -> {
+            if (productClickListener != null) {
+                productClickListener.onDeleteProductClick(product);
             }
         });
     }
@@ -127,8 +111,8 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
         public TextView productQuantity;
         public TextView productPrice;
         public TextView productDescription;
-        public ImageButton deleteButton;
-        public ImageButton addToCartButton;
+        public Button addToCartButton;
+        public Button buyButton;
 
         public ProductViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -137,8 +121,8 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
             productQuantity = itemView.findViewById(R.id.product_quantity);
             productPrice = itemView.findViewById(R.id.product_price);
             productDescription = itemView.findViewById(R.id.product_description);
-            deleteButton = itemView.findViewById(R.id.btn_delete_product);
             addToCartButton = itemView.findViewById(R.id.btn_add_to_cart);
+            buyButton = itemView.findViewById(R.id.btn_buy);
         }
     }
 }

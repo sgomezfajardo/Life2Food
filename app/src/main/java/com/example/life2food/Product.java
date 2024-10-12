@@ -9,9 +9,9 @@ public class Product {
     private String type;
     private String email;
     private double price;
-    private String imageUrl; // Campo para la URL de la imagen
-    private String description; // Nuevo campo para la descripción
-    private FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private String imageUrl;
+    private String description;
+    private final FirebaseFirestore db = FirebaseFirestore.getInstance();
 
     public Product() {
     }
@@ -66,7 +66,8 @@ public class Product {
     }
     public void updateQuantity(int quantity) {
         this.quantity = quantity;
-        db.collection("products").document(getId()).update("quantity", getQuantity());
+        //db.collection("products").document(getId()).update("quantity", getQuantity());
+        db.collection("products").document(String.valueOf(getId())).update("quantity", getQuantity());
     }
 
     public String getType() {
