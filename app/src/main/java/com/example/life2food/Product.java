@@ -16,8 +16,7 @@ public class Product {
     public Product() {
     }
 
-    public Product(String id, String name, int quantity, String type, String email, double price, String imageUrl, String description) {
-        this.id = id;
+    public Product(String name, int quantity, String type, String email, double price, String imageUrl, String description) {
         this.name = name;
         this.quantity = quantity;
         this.type = type;
@@ -26,8 +25,6 @@ public class Product {
         this.imageUrl = imageUrl;
         this.description = description;
     }
-
-    // Getters y Setters
 
     public String getId() {
         return id;

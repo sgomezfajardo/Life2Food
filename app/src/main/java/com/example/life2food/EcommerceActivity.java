@@ -136,7 +136,7 @@ public class EcommerceActivity extends AppCompatActivity
                         String description = document.getString("description");
 
                         if(quantity>0)
-                            productList.add(new Product(id, name, quantity, type, email, price, imageUrl, description));
+                            productList.add(new Product(name, quantity, type, email, price, imageUrl, description));
 
                     }
                     productAdapter.notifyDataSetChanged();

@@ -1,6 +1,4 @@
 package com.example.life2food;
-
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -8,7 +6,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -30,18 +27,15 @@ import java.util.List;
 
 public class SupermarketActivity extends AppCompatActivity implements ProductAdapter.OnProductClickListener {
 
-    private RecyclerView recyclerView;
     private ProductAdapter productAdapter;
     private List<Product> productList;
     private String currentUserEmail;
     private String currentUserRole;
     private FirebaseFirestore db;
-    private FirebaseStorage storage;
     private StorageReference storageRef;
-    private Button back;
     private static final int PICK_IMAGE_REQUEST = 1;
     private Uri imageUri;
-    private int id = 7;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,14 +43,14 @@ public class SupermarketActivity extends AppCompatActivity implements ProductAda
         setContentView(R.layout.activity_supermarket);
 
         db = FirebaseFirestore.getInstance();
-        storage = FirebaseStorage.getInstance();
+        FirebaseStorage storage = FirebaseStorage.getInstance();
         storageRef = storage.getReference();
 
         currentUserEmail = FirebaseAuth.getInstance().getCurrentUser().getEmail();
         getUserRole();
 
         productList = new ArrayList<>();
-        recyclerView = findViewById(R.id.recycler_view);
+        RecyclerView recyclerView = findViewById(R.id.recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         productAdapter = new ProductAdapter(productList, currentUserEmail, this);
         recyclerView.setAdapter(productAdapter);
@@ -66,7 +60,7 @@ public class SupermarketActivity extends AppCompatActivity implements ProductAda
         Button btnAddProduct = findViewById(R.id.btn_add_product);
         btnAddProduct.setOnClickListener(v -> showAddProductDialog());
 
-        back = findViewById(R.id.button_back);
+        Button back = findViewById(R.id.button_back);
         back.setOnClickListener(v -> {
             Intent intent = new Intent(this, EcommerceActivity.class);
             startActivity(intent);
@@ -154,7 +148,7 @@ public class SupermarketActivity extends AppCompatActivity implements ProductAda
             }
 
             // Creamos el producto con la cantidad como entero
-            Product newProduct = new Product(String.valueOf(id++), productName, Integer.parseInt(productQuantity), productType, currentUserEmail, Double.parseDouble(productPrice), null, productDescription);
+            Product newProduct = new Product(productName, Integer.parseInt(productQuantity), productType, currentUserEmail, Double.parseDouble(productPrice), null, productDescription);
             newProduct.setQuantity(Integer.parseInt(productQuantity)); // Se usa setQuantity() para asignar la cantidad
             productList.add(newProduct);
             productAdapter.notifyItemInserted(productList.size() - 1);
