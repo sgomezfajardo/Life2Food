@@ -78,10 +78,10 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
                 })
                 .into(holder.productImage);
 
-        holder.productName.setText(String.valueOf(product.getName().toUpperCase()));
+        holder.productName.setText(String.valueOf(product.getName()));
         holder.productQuantity.setText("Cantidad: " + product.getQuantity());
-        holder.productPrice.setText("Precio: $" + String.valueOf(product.getPrice()).substring(0,String.valueOf(product.getPrice()).indexOf(".")));
-        holder.productDescription.setText("Descripcion: " + product.getDescription());
+        holder.productPrice.setText("$" + String.valueOf(product.getPrice()).substring(0,String.valueOf(product.getPrice()).indexOf(".")));
+        holder.productDescription.setText(product.getDescription());
         holder.addToCartButton.setOnClickListener(v -> {
             if (addToCartClickListener != null) {
                 addToCartClickListener.onAddToCartClick(product);

@@ -12,6 +12,8 @@
         android:layout_height="?attr/actionBarSize"
         android:background="@color/Life2Food_color"
         app:titleTextColor="@color/white"
+        android:fontFamily="@font/poppins"
+        android:textStyle="bold"
         android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
 
@@ -20,9 +22,8 @@
         android:id="@+id/search_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:iconifiedByDefault="false"
         android:background="@color/Life2Food_secundary"
-        android:queryHint="Search products..." />
+        android:queryHint="Busca tus productos..." />
 
 
     <!-- RecyclerView -->
@@ -50,8 +51,7 @@
             android:layout_height="48dp"
             android:src="@drawable/icono_perfil"
             android:contentDescription="@string/profile"
-            android:padding="8dp"
-            android:background="@android:color/white" />
+            android:padding="8dp" />
 
         <ImageView
             android:id="@+id/action_cart"
@@ -59,8 +59,7 @@
             android:layout_height="48dp"
             android:src="@drawable/icono_carrito"
             android:contentDescription="@string/cart"
-            android:padding="8dp"
-            android:background="@android:color/white" />
+            android:padding="8dp"/>
 
         <ImageView
             android:id="@+id/action_supermarket"
@@ -68,8 +67,7 @@
             android:layout_height="48dp"
             android:src="@drawable/icono_supermercado"
             android:contentDescription="@string/supermarket"
-            android:padding="8dp"
-            android:background="@android:color/white" />
+            android:padding="8dp" />
 
         <ImageView
             android:id="@+id/action_restaurant"
@@ -77,8 +75,7 @@
             android:layout_height="48dp"
             android:src="@drawable/icono_restaurantes"
             android:contentDescription="@string/restaurant"
-            android:padding="8dp"
-            android:background="@android:color/white" />
+            android:padding="8dp" />
     </LinearLayout>
 
 </LinearLayout>

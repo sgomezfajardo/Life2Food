@@ -16,7 +16,8 @@ public class Product {
     public Product() {
     }
 
-    public Product(String name, int quantity, String type, String email, double price, String imageUrl, String description) {
+    public Product(String id, String name, int quantity, String type, String email, double price, String imageUrl, String description) {
+        this.id = id;
         this.name = name;
         this.quantity = quantity;
         this.type = type;
@@ -63,8 +64,7 @@ public class Product {
     }
     public void updateQuantity(int quantity) {
         this.quantity = quantity;
-        //db.collection("products").document(getId()).update("quantity", getQuantity());
-        db.collection("products").document(String.valueOf(getId())).update("quantity", getQuantity());
+        db.collection("products").document(getId()).update("quantity", getQuantity());
     }
 
     public String getType() {

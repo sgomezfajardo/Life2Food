@@ -148,7 +148,8 @@ public class SupermarketActivity extends AppCompatActivity implements ProductAda
             }
 
             // Creamos el producto con la cantidad como entero
-            Product newProduct = new Product(productName, Integer.parseInt(productQuantity), productType, currentUserEmail, Double.parseDouble(productPrice), null, productDescription);
+            String id = "0";
+            Product newProduct = new Product(id, productName, Integer.parseInt(productQuantity), productType, currentUserEmail, Double.parseDouble(productPrice), null, productDescription);
             newProduct.setQuantity(Integer.parseInt(productQuantity)); // Se usa setQuantity() para asignar la cantidad
             productList.add(newProduct);
             productAdapter.notifyItemInserted(productList.size() - 1);

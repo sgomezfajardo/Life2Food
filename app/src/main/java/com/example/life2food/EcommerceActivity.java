@@ -136,7 +136,7 @@ public class EcommerceActivity extends AppCompatActivity
                         String description = document.getString("description");
 
                         if(quantity>0)
-                            productList.add(new Product(name, quantity, type, email, price, imageUrl, description));
+                            productList.add(new Product(id, name, quantity, type, email, price, imageUrl, description));
 
                     }
                     productAdapter.notifyDataSetChanged();
@@ -261,8 +261,8 @@ public class EcommerceActivity extends AppCompatActivity
                         // Actualizamos el carrito en la base de datos
                         cartRef.update("items", items)
                                 .addOnSuccessListener(aVoid -> {
-                                    Toast.makeText(this, "Producto actualizado en el carrito", Toast.LENGTH_SHORT).show();
                                     product.updateQuantity(product.getQuantity() - quantityToAdd);
+                                    Toast.makeText(this, "Producto actualizado en el carrito", Toast.LENGTH_SHORT).show();
                                 })
                                 .addOnFailureListener(e -> {
                                     Toast.makeText(this, "Error al actualizar el carrito", Toast.LENGTH_SHORT).show();

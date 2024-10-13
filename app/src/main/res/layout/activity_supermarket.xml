@@ -8,7 +8,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:gravity="center">
+        android:gravity="center"
+        android:background="@color/Background">
 
         <TextView
             android:id="@+id/title"
@@ -16,8 +17,7 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="20dp"
             android:background="@color/Life2Food_secundary"
-            android:paddingRight="53dp"
-            android:paddingLeft="80dp"
+            android:textAlignment="center"
             android:paddingBottom="10dp"
             android:paddingTop="10dp"
             android:text="Tus productos"
@@ -32,18 +32,18 @@
 
         <Button
             android:id="@+id/btn_add_product"
-            android:layout_width="wrap_content"
+            android:layout_width="200dp"
             android:layout_height="wrap_content"
-            android:text="Agregar Producto"
-            android:layout_marginTop="20dp"
-            android:layout_marginBottom="10dp"
-            android:backgroundTint="@color/Life2Food_color" />
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="0dp"
+            android:backgroundTint="@color/Life2Food_secundary"
+            android:text="Agregar Producto" />
 
         <Button
             android:id="@+id/button_back"
-            android:layout_width="wrap_content"
+            android:layout_width="200dp"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="20dp"
+            android:layout_marginBottom="10dp"
             android:backgroundTint="#006F4A"
             android:text="Volver"
             android:textColor="#FDF9FC"/>

@@ -1,8 +1,8 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
     <style name="Base.Theme.Life2Food" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your light theme here. -->
-        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+        <item name="android:statusBarColor">#006F4A</item> <!-- Color de la barra de estado -->
+        <item name="android:windowLightStatusBar">true</item> <!-- Si el contenido es oscuro, usa true -->
     </style>
 
     <style name="Theme.Life2Food" parent="Base.Theme.Life2Food" />
