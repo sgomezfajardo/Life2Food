@@ -24,10 +24,13 @@
         android:background="@color/Life2Food_secundary"
         android:queryHint="Search products..." />
 
+
     <!-- RecyclerView -->
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_view"
         android:layout_width="match_parent"
+        android:background="@color/Background"
         android:layout_height="0dp"
         android:layout_weight="1" />
 
@@ -38,7 +41,7 @@
         android:orientation="horizontal"
         android:padding="8dp"
         android:gravity="center"
-        android:background="@android:color/white"
+        android:background="@color/icons"
         android:elevation="4dp"> <!-- efecto de relieve -->
 
         <ImageView

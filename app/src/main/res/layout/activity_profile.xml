@@ -10,9 +10,8 @@
         android:layout_width="100dp"
         android:layout_height="100dp"
         android:layout_gravity="center"
-        android:src="@drawable/ic_default_profile"
         android:contentDescription="@string/profile_picture"
-        android:background="@drawable/circle_background" />
+        android:src="@drawable/ic_default_profile" />
 
     <Button
         android:id="@+id/pic_button"
@@ -23,20 +22,25 @@
         android:textColor="#FDF9FC"
         android:layout_marginTop="16dp"/>
 
-    <EditText
-        android:id="@+id/edit_email"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Correo Electrónico"
-        android:inputType="textEmailAddress" />
 
     <TextView
         android:id="@+id/name_text_view"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Nombre"
-        android:textSize="18sp"
-        android:layout_marginTop="4dp"/>
+        android:textSize="18dp"
+        android:gravity="center"
+        android:layout_marginTop="2dp"/>
+
+    <TextView
+        android:id="@+id/email"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="2dp"
+        android:textSize="15dp"
+        android:textColor="@color/text"
+        android:gravity="center"/>
+
+
 
     <TextView
         android:layout_width="wrap_content"

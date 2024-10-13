@@ -14,10 +14,7 @@ import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-
 import com.bumptech.glide.Glide;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -26,15 +23,13 @@ import com.google.firebase.storage.StorageReference;
 
 public class ProfileActivity extends AppCompatActivity {
 
-    private EditText editEmail, editAddress, editPhone;
-    private TextView nameTextView;
+    private EditText editAddress, editPhone;
+    private TextView email, nameTextView;
     private RadioGroup radioGroupRole;
     private ImageView profileImage;
-    private Button buttonUpdate, buttonLogout, back;
     private FirebaseAuth auth;
     private FirebaseFirestore firestore;
     private StorageReference storageReference;
-    private Button pic_button;
     String storage_path = "profile_images/*";
 
     private static final int COD_SEL_STORAGE = 200;
@@ -51,16 +46,16 @@ public class ProfileActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
 
-        editEmail = findViewById(R.id.edit_email);
+        email = findViewById(R.id.email);
         nameTextView = findViewById(R.id.name_text_view);
         radioGroupRole = findViewById(R.id.radio_group_role);
         editAddress = findViewById(R.id.edit_address);
         editPhone = findViewById(R.id.edit_phone);
         profileImage = findViewById(R.id.profile_image);
-        buttonUpdate = findViewById(R.id.button_update);
-        buttonLogout = findViewById(R.id.button_logout);
-        pic_button = findViewById(R.id.pic_button);
-        back = findViewById(R.id.button_back);
+        Button buttonUpdate = findViewById(R.id.button_update);
+        Button buttonLogout = findViewById(R.id.button_logout);
+        Button pic_button = findViewById(R.id.pic_button);
+        Button back = findViewById(R.id.button_back);
         back = findViewById(R.id.button_back);
         back.setOnClickListener(v -> {
             Intent intent = new Intent(this, EcommerceActivity.class);
@@ -98,7 +93,8 @@ public class ProfileActivity extends AppCompatActivity {
         DocumentReference docRef = firestore.collection("users").document(userId);
         docRef.get().addOnSuccessListener(documentSnapshot -> {
             if (documentSnapshot.exists()) {
-                editEmail.setText(documentSnapshot.getString("email"));
+                String email = documentSnapshot.getString("email");
+                this.email.setText(email);
                 String firstname = documentSnapshot.getString("firstName");
                 String lastname = documentSnapshot.getString("lastName");
                 nameTextView.setText(firstname + " "  + lastname);
@@ -127,7 +123,6 @@ public class ProfileActivity extends AppCompatActivity {
 
     private void updateProfile() {
         String userId = auth.getCurrentUser().getUid();
-        String email = editEmail.getText().toString();
         String address = editAddress.getText().toString();
         String phone = editPhone.getText().toString();
         String role = "";
@@ -142,7 +137,7 @@ public class ProfileActivity extends AppCompatActivity {
         }
 
         DocumentReference docRef = firestore.collection("users").document(userId);
-        docRef.update("email", email, "role", role, "address", address, "phone", phone)
+        docRef.update("role", role, "address", address, "phone", phone)
                 .addOnSuccessListener(aVoid -> {
                     finish();
                 });

@@ -3,6 +3,12 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="gray">#F5F5F5</color>
+    <color name="Background">#f1f8e9</color>
+    <color name="cardBackground">#E0F2F1</color>
     <color name="Life2Food_color">#00704A</color>
     <color name="Life2Food_secundary">#33c461</color>
+    <color name="buy_button">#00c853</color>
+    <color name="cart_button">#ffd600</color>
+    <color name="text">#424242</color>
+    <color name="icons">#006F4A</color>
 </resources>

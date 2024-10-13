@@ -7,34 +7,38 @@
     android:padding="16dp">
 
     <androidx.cardview.widget.CardView
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:layout_marginEnd="16dp"
-        app:cardCornerRadius="8dp"
+        app:cardCornerRadius="30dp"
         app:cardElevation="0dp"
         app:cardBackgroundColor="@color/white">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/gray"
+            android:background="@color/cardBackground"
             android:orientation="vertical"
             android:padding="16dp">
 
             <!-- Imagen del producto -->
+
+            <!-- Nombre del producto (opcional) -->
+
             <ImageView
                 android:id="@+id/image_product"
                 android:layout_width="200dp"
                 android:layout_height="200dp"
+                android:layout_gravity="center"
                 android:scaleType="fitCenter" />
 
-            <!-- Nombre del producto (opcional) -->
             <TextView
                 android:id="@+id/product_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
+                android:textColor="@color/text"
                 android:textSize="18sp"
                 android:textStyle="bold" />
 
@@ -44,6 +48,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
+                android:textColor="@color/text"
                 android:textSize="16sp" />
 
             <!-- Precio del producto -->
@@ -52,6 +57,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
+                android:textColor="@color/text"
                 android:textSize="16sp" />
 
             <!-- Descripción del producto -->
@@ -60,6 +66,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
+                android:textColor="@color/text"
                 android:textSize="16sp" />
 
 
@@ -74,14 +81,14 @@
                     android:layout_width="220dp"
                     android:layout_height="50dp"
                     android:layout_marginTop="1dp"
-                    android:backgroundTint="#6396D3"
+                    android:backgroundTint="@color/buy_button"
                     android:text="Comprar" />
 
                 <Button
                     android:id="@+id/btn_add_to_cart"
                     android:layout_width="220dp"
                     android:layout_height="50dp"
-                    android:backgroundTint="#4F47F2"
+                    android:backgroundTint="@color/cart_button"
                     android:text="Agregar al carrito" />
             </LinearLayout>
 
