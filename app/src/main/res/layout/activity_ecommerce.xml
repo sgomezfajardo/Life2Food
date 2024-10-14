@@ -69,13 +69,6 @@
             android:contentDescription="@string/supermarket"
             android:padding="8dp" />
 
-        <ImageView
-            android:id="@+id/action_restaurant"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:src="@drawable/icono_restaurantes"
-            android:contentDescription="@string/restaurant"
-            android:padding="8dp" />
     </LinearLayout>
 
 </LinearLayout>

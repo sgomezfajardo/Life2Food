@@ -161,7 +161,6 @@ public class EcommerceActivity extends AppCompatActivity
         ImageView profileIcon = findViewById(R.id.action_profile);
         ImageView cartIcon = findViewById(R.id.action_cart);
         ImageView supermarketIcon = findViewById(R.id.action_supermarket);
-        ImageView restaurantIcon = findViewById(R.id.action_restaurant);
 
         profileIcon.setOnClickListener(v -> {
             startActivity(new Intent(EcommerceActivity.this, ProfileActivity.class));
@@ -173,10 +172,6 @@ public class EcommerceActivity extends AppCompatActivity
 
         supermarketIcon.setOnClickListener(v -> {
             startActivity(new Intent(EcommerceActivity.this, SupermarketActivity.class));
-        });
-
-        restaurantIcon.setOnClickListener(v -> {
-            startActivity(new Intent(EcommerceActivity.this, RestaurantActivity.class));
         });
     }
 

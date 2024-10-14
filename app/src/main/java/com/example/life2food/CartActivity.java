@@ -56,9 +56,9 @@ public class CartActivity extends AppCompatActivity {
 
         // Asignar un onClickListener al botón de pago
         payButton.setOnClickListener(v -> {
-            Intent intent = new Intent(CartActivity.this, RealizarPagosActivity.class);
-            intent.putExtra("TOTAL", String.valueOf(totalPrice));
-            startActivity(intent);
+            //Intent intent = new Intent(CartActivity.this, RealizarPagosActivity.class);
+            //intent.putExtra("TOTAL", String.valueOf(totalPrice));
+            //startActivity(intent);
   // Iniciar la actividad
         });
 
