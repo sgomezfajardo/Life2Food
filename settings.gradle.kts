@@ -9,16 +9,18 @@ pluginManagement {
         }
         mavenCentral()
         gradlePluginPortal()
+        maven("https://repo.payu.com")
     }
 }
+
 dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
         google()
         mavenCentral()
+        maven("https://repo.payu.com")
     }
 }
 
 rootProject.name = "Life2Food"
 include(":app")
- 

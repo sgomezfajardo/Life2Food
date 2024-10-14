@@ -1,40 +1,63 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:gravity="center_horizontal">
+    android:layout_height="match_parent">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/button_container"
+        android:layout_alignParentTop="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <Button
+                android:id="@+id/button_back"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@color/Life2Food_color"
+                android:text="Volver" />
+
+            <LinearLayout
+                android:id="@+id/linearLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp" />
+
+        </LinearLayout>
+    </ScrollView>
 
     <LinearLayout
-        android:id="@+id/linearLayout"
+        android:id="@+id/button_container"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center_horizontal"
-        android:padding="0dp"
-        android:orientation="vertical">
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:orientation="vertical"
+        android:padding="16dp">
 
         <TextView
-            android:id="@+id/title"
+            android:id="@+id/text_total"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="20dp"
-            android:background="@color/Life2Food_secundary"
-            android:paddingRight="53dp"
-            android:paddingLeft="53dp"
-            android:paddingBottom="10dp"
-            android:paddingTop="10dp"
-            android:text="Tu carrito de compra"
-            android:textColor="@color/white"
-            android:textSize="33dp" />
+            android:text="Total a pagar: $0.00"
+            android:textSize="20sp"
+            android:textColor="@android:color/black"
+            android:layout_marginTop="16dp" />
 
         <Button
-            android:id="@+id/button_back"
-            android:layout_width="wrap_content"
+            android:id="@+id/button_pay"
+            android:layout_width="370dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:backgroundTint="#006F4A"
-            android:text="Volver"
-            android:textColor="#FDF9FC" />
+            android:backgroundTint="@color/rosa"
+            android:text="Pagar" />
+
+
     </LinearLayout>
 
-</ScrollView>
+</RelativeLayout>
+
+

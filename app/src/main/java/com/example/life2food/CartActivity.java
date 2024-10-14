@@ -33,6 +33,9 @@ public class CartActivity extends AppCompatActivity {
     private Button back;
     private String items = " ";
     private LinearLayout linearLayout;
+    private TextView totalTextView;
+    private Button payButton;
+    private double totalPrice = 0;
     FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
     private final String userId = currentUser.getUid();
 
@@ -48,9 +51,19 @@ public class CartActivity extends AppCompatActivity {
             finish();
         });
         linearLayout = findViewById(R.id.linearLayout);
+        totalTextView = findViewById(R.id.text_total);  // Inicializar el TextView del total
+        payButton = findViewById(R.id.button_pay);  // Inicializar el botón de pago
+
+        // Asignar un onClickListener al botón de pago
+        payButton.setOnClickListener(v -> {
+            Intent intent = new Intent(CartActivity.this, RealizarPagosActivity.class);
+            intent.putExtra("TOTAL", String.valueOf(totalPrice));
+            startActivity(intent);
+  // Iniciar la actividad
+        });
 
         db.collection("carts")
-                .whereEqualTo("id_usuario", userId) //
+                .whereEqualTo("id_usuario", userId)
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
@@ -59,21 +72,17 @@ public class CartActivity extends AppCompatActivity {
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 items = document.getData().toString();
                             }
-                            if(items.length()<100){
+                            if (items.length() < 100) {
                                 ImageView imageView = new ImageView(CartActivity.this);
-
                                 Glide.with(CartActivity.this)
-                                                .load("https://firebasestorage.googleapis.com/v0/b/life2food-ec030.appspot.com/o/img%2Fcart.png?alt=media&token=42b49254-1d55-4546-afdd-7a310869d030")
-                                                .into(imageView);
-
+                                        .load("https://firebasestorage.googleapis.com/v0/b/life2food-ec030.appspot.com/o/img%2Fcart.png?alt=media&token=42b49254-1d55-4546-afdd-7a310869d030")
+                                        .into(imageView);
                                 linearLayout.addView(imageView, linearLayout.indexOfChild(back));
-
                             } else {
-                                while(items.length() > 100){
+                                while (items.length() > 100) {
                                     getInfo();
                                 }
                             }
-
                         } else {
                             Toast.makeText(CartActivity.this, "Error al obtener productos", Toast.LENGTH_SHORT).show();
                         }
@@ -81,8 +90,7 @@ public class CartActivity extends AppCompatActivity {
                 });
     }
 
-    private void getInfo(){
-
+    private void getInfo() {
         String productId;
         String productName;
         String productQuantity;
@@ -110,9 +118,15 @@ public class CartActivity extends AppCompatActivity {
         items = items.substring(items.indexOf("productName="));
         productName = items.substring(12, items.indexOf("}"));
         items = items.substring(items.indexOf("}"));
-        String cart =   productName + "\n" +
+
+        // Calcular el precio total
+        double priceValue = Double.parseDouble(productPrice.substring(0, productPrice.indexOf(".")));
+        totalPrice += priceValue * Integer.parseInt(productQuantity);  // Sumar al total
+        updateTotalPrice();  // Actualizar el TextView del total
+
+        String cart = productName + "\n" +
                 productQuantity + "\n" +
-                productPrice +  "\n";
+                productPrice + "\n";
         GradientDrawable drawable = new GradientDrawable();
         drawable.setShape(GradientDrawable.RECTANGLE);
         drawable.setColor(getResources().getColor(android.R.color.holo_orange_light));
@@ -128,7 +142,7 @@ public class CartActivity extends AppCompatActivity {
         TextView newTextView = new TextView(this);
         newTextView.setText(cart);
         ImageView newImage = new ImageView(this);
-        Glide.with(this).load(image_url).override(350,350).into(newImage);
+        Glide.with(this).load(image_url).override(350, 350).into(newImage);
         CardView cardView = new CardView(this);
         LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
@@ -155,21 +169,24 @@ public class CartActivity extends AppCompatActivity {
             itemToRemove.put("quantity", Integer.parseInt(productQuantity));
             removeItemFromCart(itemToRemove);
             linearLayout.removeView(cardView);
-            if(linearLayout.getChildCount()<=2){
+            totalPrice -= priceValue * Integer.parseInt(productQuantity);  // Restar del total
+            updateTotalPrice();  // Actualizar el TextView del total
+            if (linearLayout.getChildCount() <= 2) {
                 linearLayout.addView(imageView, linearLayout.indexOfChild(back));
             }
         });
         linearLayout.addView(cardView, linearLayout.indexOfChild(back));
     }
 
-    private void removeItemFromCart( Map<String, Object> itemToRemove) {
+    private void updateTotalPrice() {
+        totalTextView.setText("Total a pagar: $" + String.format("%.2f", totalPrice));
+    }
 
+    private void removeItemFromCart(Map<String, Object> itemToRemove) {
         db.collection("carts").document(userId)
                 .update("items", FieldValue.arrayRemove(itemToRemove))
                 .addOnSuccessListener(aVoid -> {
                 })
                 .addOnFailureListener(e -> {
-
                 });
-    }
-}
+    }}
