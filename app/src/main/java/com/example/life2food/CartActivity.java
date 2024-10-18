@@ -9,16 +9,12 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
-
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -30,14 +26,21 @@ import java.util.Map;
 public class CartActivity extends AppCompatActivity {
 
     private final FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+    //Graphic elements
     private Button back;
-    private String items = " ";
-    private LinearLayout linearLayout;
-    private TextView totalTextView;
     private Button payButton;
+    private TextView totalTextView;
+    private LinearLayout linearLayout;
+
+
+    //FIREBASE
+    private Firebase firebase = new Firebase();
+    private final String USERID = firebase.getUSERID();
+
+    //Strings and int
+    private String items = " ";
     private double totalPrice = 0;
-    FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
-    private final String userId = currentUser.getUid();
     private int numberItems = 0;
 
     @Override
@@ -57,13 +60,13 @@ public class CartActivity extends AppCompatActivity {
 
         // Asignar un onClickListener al botón de pago
         payButton.setOnClickListener(v -> {
-            //Intent intent = new Intent(CartActivity.this, RealizarPagosActivity.class);
+            /*Intent intent = new Intent(CartActivity.this, RealizarPagosActivity.class);
             //intent.putExtra("TOTAL", String.valueOf(totalPrice));
-            //startActivity(intent);
+            //startActivity(intent);*/
             // Iniciar la actividad
         });
 
-        db.collection("carts").whereEqualTo("id_usuario", userId).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+        db.collection("carts").whereEqualTo("id_usuario", USERID).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 if (task.isSuccessful()) {
@@ -174,7 +177,7 @@ public class CartActivity extends AppCompatActivity {
     }
 
     private void removeItemFromCart(Map<String, Object> itemToRemove) {
-        db.collection("carts").document(userId).update("items", FieldValue.arrayRemove(itemToRemove)).addOnSuccessListener(aVoid -> {
+        db.collection("carts").document(USERID).update("items", FieldValue.arrayRemove(itemToRemove)).addOnSuccessListener(aVoid -> {
         }).addOnFailureListener(e -> {
         });
     }
