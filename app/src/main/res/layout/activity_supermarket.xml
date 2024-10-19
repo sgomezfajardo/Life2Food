@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <!-- Contenido desplazable de los productos -->
     <ScrollView
@@ -23,12 +24,12 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="20dp"
                 android:background="@color/Life2Food_secundary"
-                android:textAlignment="center"
-                android:paddingBottom="10dp"
-                android:paddingTop="10dp"
-                android:text="Tus productos"
-                android:textColor="@color/white"
                 android:fontFamily="@font/poppins"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp"
+                android:text="Tus productos"
+                android:textAlignment="center"
+                android:textColor="@color/white"
                 android:textSize="37dp" />
 
             <androidx.recyclerview.widget.RecyclerView
@@ -52,6 +53,20 @@
         android:backgroundTint="@color/blue"
         android:textSize="30dp"/>
 
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/lottie_add_product"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginTop="200dp"
+        android:layout_marginLeft="200dp"
+        android:visibility="gone"
+        app:lottie_autoPlay="false"
+        app:lottie_loop="false"
+        app:lottie_rawRes="@raw/add_products" />
+
+
     <!-- Barra de navegación inferior -->
     <LinearLayout
         android:id="@+id/navigation_container"
@@ -63,6 +78,7 @@
         android:background="@color/icons"
         android:layout_alignParentBottom="true"
         android:elevation="4dp"> <!-- efecto de relieve -->
+
 
         <ImageView
             android:id="@+id/action_profile"

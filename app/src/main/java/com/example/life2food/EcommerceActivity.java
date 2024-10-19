@@ -52,6 +52,7 @@ public class EcommerceActivity extends AppCompatActivity
         setContentView(R.layout.activity_ecommerce);
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        getSupportActionBar().setTitle("");
         setupBottomNavigation();
 
         // Verificar permisos al iniciar

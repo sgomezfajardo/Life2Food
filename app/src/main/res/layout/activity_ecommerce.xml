@@ -15,7 +15,18 @@
         android:fontFamily="@font/poppins"
         android:textStyle="bold"
         android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
-        app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
+
+        <!-- ImageView para la imagen en la izquierda -->
+        <ImageView
+            android:id="@+id/toolbar_image"
+            android:layout_width="120dp"
+            android:layout_height="70dp"
+            android:src="@drawable/life2foodlettering"
+            android:layout_gravity="start"
+            android:padding="8dp" />
+
+    </androidx.appcompat.widget.Toolbar>
 
     <!-- SearchView -->
     <androidx.appcompat.widget.SearchView
@@ -28,14 +39,14 @@
 
     <!-- RecyclerView -->
 
+    <!-- Bottom Navigation: Iconos perfil, carrito, supermercado, restaurante -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_view"
         android:layout_width="match_parent"
-        android:background="@color/Background"
         android:layout_height="0dp"
-        android:layout_weight="1" />
+        android:layout_weight="1"
+        android:background="@color/Background" />
 
-    <!-- Bottom Navigation: Iconos perfil, carrito, supermercado, restaurante -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

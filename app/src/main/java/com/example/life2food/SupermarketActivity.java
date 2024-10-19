@@ -15,6 +15,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.airbnb.lottie.LottieAnimationView;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -45,6 +46,7 @@ public class SupermarketActivity extends AppCompatActivity implements ProductAda
     private StorageReference storageRef;
     private static final int PICK_IMAGE_REQUEST = 1;
     private Uri imageUri;
+    private LottieAnimationView lottieAnimation;
 
 
     @Override
@@ -52,6 +54,7 @@ public class SupermarketActivity extends AppCompatActivity implements ProductAda
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_supermarket);
         setupBottomNavigation();
+        lottieAnimation = findViewById(R.id.lottie_add_product);
 
         FirebaseStorage storage = FirebaseStorage.getInstance();
         storageRef = storage.getReference();
@@ -140,6 +143,8 @@ public class SupermarketActivity extends AppCompatActivity implements ProductAda
         btnSelectImage.setOnClickListener(v -> openImageChooser());
 
         builder.setPositiveButton("Agregar", (dialog, which) -> {
+            lottieAnimation.setVisibility(View.VISIBLE);
+            lottieAnimation.playAnimation();
             String productName = productNameInput.getText().toString().trim();
             String productQuantity = productQuantityInput.getText().toString().trim(); // Aquí capturamos la cantidad
             String productPrice = productPriceInput.getText().toString().trim();
