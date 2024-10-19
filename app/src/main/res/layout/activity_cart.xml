@@ -7,6 +7,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_above="@+id/button_container"
+        android:background="@color/Background"
         android:layout_alignParentTop="true">
 
         <LinearLayout
@@ -24,6 +25,7 @@
                 android:paddingBottom="10dp"
                 android:paddingTop="10dp"
                 android:text="Tu carrito"
+                android:fontFamily="@font/poppins"
                 android:textColor="@color/white"
                 android:textSize="37dp" />
             <LinearLayout

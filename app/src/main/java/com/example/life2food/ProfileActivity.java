@@ -178,14 +178,9 @@ public class ProfileActivity extends AppCompatActivity {
     }
 
     private void setupBottomNavigation() {
-        ImageView profileIcon = findViewById(R.id.action_profile);
         ImageView cartIcon = findViewById(R.id.action_cart);
         ImageView restaurantIcon = findViewById(R.id.action_ecommerce);
         ImageView supermarketIcon = findViewById(R.id.action_supermarket);
-
-        profileIcon.setOnClickListener(v -> {
-            startActivity(new Intent(this, ProfileActivity.class));
-        });
 
         cartIcon.setOnClickListener(v -> {
             startActivity(new Intent(this, CartActivity.class));

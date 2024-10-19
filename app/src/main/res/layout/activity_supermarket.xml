@@ -28,6 +28,7 @@
                 android:paddingTop="10dp"
                 android:text="Tus productos"
                 android:textColor="@color/white"
+                android:fontFamily="@font/poppins"
                 android:textSize="37dp" />
 
             <androidx.recyclerview.widget.RecyclerView

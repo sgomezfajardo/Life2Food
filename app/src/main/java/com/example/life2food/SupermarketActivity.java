@@ -232,7 +232,6 @@ public class SupermarketActivity extends AppCompatActivity implements ProductAda
         ImageView profileIcon = findViewById(R.id.action_profile);
         ImageView cartIcon = findViewById(R.id.action_cart);
         ImageView restaurantIcon = findViewById(R.id.action_ecommerce);
-        ImageView supermarketIcon = findViewById(R.id.action_supermarket);
 
         profileIcon.setOnClickListener(v -> {
             startActivity(new Intent(this, ProfileActivity.class));
@@ -244,10 +243,6 @@ public class SupermarketActivity extends AppCompatActivity implements ProductAda
 
         restaurantIcon.setOnClickListener(v -> {
             startActivity(new Intent(this, EcommerceActivity.class));
-        });
-
-        supermarketIcon.setOnClickListener(v -> {
-            startActivity(new Intent(this, SupermarketActivity.class));
         });
     }
 }
