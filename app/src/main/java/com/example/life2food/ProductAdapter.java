@@ -29,7 +29,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
     private String currentUserEmail;
     private OnProductClickListener productClickListener;
     private OnAddToCartClickListener addToCartClickListener;
-    private boolean isEcommerce;
+    private static boolean isEcommerce;
 
     public ProductAdapter(List<Product> productList, String currentUserEmail, OnProductClickListener listener) {
         this.productList = productList;
@@ -100,13 +100,13 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
         holder.productQuantity.setText("Cantidad: " + product.getQuantity());
         holder.productPrice.setText("$" + String.valueOf(product.getPrice()).substring(0,String.valueOf(product.getPrice()).indexOf(".")));
         holder.productDescription.setText(product.getDescription());
-        holder.addToCartButton.setOnClickListener(v -> {
+        holder.green.setOnClickListener(v -> {
             if (addToCartClickListener != null) {
                 addToCartClickListener.onAddToCartClick(product);
             }
 
         });
-        holder.buyButton.setOnClickListener(v -> {
+        holder.yellow.setOnClickListener(v -> {
             if (productClickListener != null) {
                 productClickListener.onDeleteProductClick(product);
             }
@@ -129,8 +129,8 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
         public TextView productQuantity;
         public TextView productPrice;
         public TextView productDescription;
-        public Button addToCartButton;
-        public Button buyButton;
+        public Button green;
+        public Button yellow;
 
         public ProductViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -139,8 +139,13 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
             productQuantity = itemView.findViewById(R.id.product_quantity);
             productPrice = itemView.findViewById(R.id.product_price);
             productDescription = itemView.findViewById(R.id.product_description);
-            addToCartButton = itemView.findViewById(R.id.btn_add_to_cart);
-            buyButton = itemView.findViewById(R.id.btn_buy);
+            if(isEcommerce){
+                green = itemView.findViewById(R.id.btn_add_to_cart);
+                yellow = itemView.findViewById(R.id.btn_buy);
+            } else {
+                green = itemView.findViewById(R.id.edit_product);
+                yellow = itemView.findViewById(R.id.btn_delete_product);
+            }
         }
     }
 }
