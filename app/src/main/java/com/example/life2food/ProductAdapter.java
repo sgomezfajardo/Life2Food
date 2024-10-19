@@ -29,12 +29,22 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
     private String currentUserEmail;
     private OnProductClickListener productClickListener;
     private OnAddToCartClickListener addToCartClickListener;
+    private boolean isEcommerce;
 
     public ProductAdapter(List<Product> productList, String currentUserEmail, OnProductClickListener listener) {
         this.productList = productList;
         this.currentUserEmail = currentUserEmail;
         this.productClickListener = listener;
+        isEcommerce = false;
     }
+
+    public ProductAdapter(List<Product> productList, OnProductClickListener listener) {
+        this.productList = productList;
+        this.productClickListener = listener;
+        isEcommerce = true;
+    }
+
+
 
     public interface OnProductClickListener {
         void onDeleteProductClick(Product product);
@@ -51,9 +61,17 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
     @NonNull
     @Override
     public ProductViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_product, parent, false);
+
+        View view = null;
+
+        if(isEcommerce){
+            view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_product_ecommerce, parent, false);
+        } else {
+            view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_product, parent, false);
+        }
         return new ProductViewHolder(view);
     }
+
 
     @Override
     public void onBindViewHolder(@NonNull ProductViewHolder holder, int position) {

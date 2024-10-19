@@ -83,7 +83,7 @@ public class EcommerceActivity extends AppCompatActivity
 
         loadProductsFromFirestore();
 
-        productAdapter = new ProductAdapter(productList, currentUserEmail, this);
+        productAdapter = new ProductAdapter(productList, this);
         productAdapter.setOnAddToCartClickListener(this);
         recyclerView.setAdapter(productAdapter);
     }

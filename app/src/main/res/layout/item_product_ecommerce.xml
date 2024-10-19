@@ -86,7 +86,7 @@
                     android:layout_width="220dp"
                     android:layout_height="50dp"
                     android:backgroundTint="@color/cart_button"
-                    android:text="Eliminar producto" />
+                    android:text="Agregar al carrito" />
             </LinearLayout>
 
         </LinearLayout>

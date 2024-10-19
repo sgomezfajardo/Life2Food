@@ -36,7 +36,6 @@ public class SupermarketActivity extends AppCompatActivity implements ProductAda
 
     //Firebase
     private final Firebase firebase = new Firebase();
-    private final String USERID = firebase.getUSERID();
     private final FirebaseFirestore DB = firebase.getDB();
     private String currentUserEmail = FirebaseAuth.getInstance().getCurrentUser().getEmail();
     private String currentUserRole;
