@@ -14,6 +14,7 @@ import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+
 import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
@@ -30,14 +31,10 @@ public class ProfileActivity extends AppCompatActivity {
     private FirebaseAuth auth;
     private FirebaseFirestore firestore;
     private StorageReference storageReference;
-    String storage_path = "profile_images/*";
-
-    private static final int COD_SEL_STORAGE = 200;
     private static final int COD_SEL_IMAGE = 300;
 
     private Uri image_url;
     String photo = "photo";
-    String idd;
     ProgressDialog progressDialog;
 
 
@@ -45,7 +42,7 @@ public class ProfileActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
-
+        setupBottomNavigation();
         email = findViewById(R.id.email);
         nameTextView = findViewById(R.id.name_text_view);
         radioGroupRole = findViewById(R.id.radio_group_role);
@@ -55,14 +52,6 @@ public class ProfileActivity extends AppCompatActivity {
         Button buttonUpdate = findViewById(R.id.button_update);
         Button buttonLogout = findViewById(R.id.button_logout);
         Button pic_button = findViewById(R.id.pic_button);
-        Button back = findViewById(R.id.button_back);
-        back = findViewById(R.id.button_back);
-        back.setOnClickListener(v -> {
-            Intent intent = new Intent(this, EcommerceActivity.class);
-            startActivity(intent);
-            finish();
-        });
-
         auth = FirebaseAuth.getInstance();
         firestore = FirebaseFirestore.getInstance();
         storageReference = FirebaseStorage.getInstance().getReference();
@@ -97,7 +86,7 @@ public class ProfileActivity extends AppCompatActivity {
                 this.email.setText(email);
                 String firstname = documentSnapshot.getString("firstName");
                 String lastname = documentSnapshot.getString("lastName");
-                nameTextView.setText(firstname + " "  + lastname);
+                nameTextView.setText(firstname + " " + lastname);
 
                 String role = documentSnapshot.getString("role");
                 if ("business".equals(role)) {
@@ -142,6 +131,7 @@ public class ProfileActivity extends AppCompatActivity {
                     finish();
                 });
     }
+
     private void updatePhoto() {
         Intent i = new Intent(Intent.ACTION_PICK);
         i.setType("image/*");
@@ -185,5 +175,28 @@ public class ProfileActivity extends AppCompatActivity {
 
                     });
         }
+    }
+
+    private void setupBottomNavigation() {
+        ImageView profileIcon = findViewById(R.id.action_profile);
+        ImageView cartIcon = findViewById(R.id.action_cart);
+        ImageView restaurantIcon = findViewById(R.id.action_ecommerce);
+        ImageView supermarketIcon = findViewById(R.id.action_supermarket);
+
+        profileIcon.setOnClickListener(v -> {
+            startActivity(new Intent(this, ProfileActivity.class));
+        });
+
+        cartIcon.setOnClickListener(v -> {
+            startActivity(new Intent(this, CartActivity.class));
+        });
+
+        restaurantIcon.setOnClickListener(v -> {
+            startActivity(new Intent(this, EcommerceActivity.class));
+        });
+
+        supermarketIcon.setOnClickListener(v -> {
+            startActivity(new Intent(this, SupermarketActivity.class));
+        });
     }
 }

@@ -62,6 +62,14 @@
             android:padding="8dp"/>
 
         <ImageView
+            android:id="@+id/action_ecommerce"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:src="@drawable/icono_restaurantes"
+            android:contentDescription="@string/cart"
+            android:padding="8dp"/>
+
+        <ImageView
             android:id="@+id/action_supermarket"
             android:layout_width="48dp"
             android:layout_height="48dp"

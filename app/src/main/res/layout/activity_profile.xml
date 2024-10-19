@@ -1,117 +1,165 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:padding="16dp">
+    android:layout_height="match_parent">
 
-    <ImageView
-        android:id="@+id/profile_image"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:layout_gravity="center"
-        android:contentDescription="@string/profile_picture"
-        android:src="@drawable/ic_default_profile" />
-
-    <Button
-        android:id="@+id/pic_button"
+    <!-- Contenido del perfil -->
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:backgroundTint="#006F4A"
-        android:text="Nueva foto de perfil"
-        android:textColor="#FDF9FC"
-        android:layout_marginTop="16dp"/>
+        android:layout_above="@+id/navigation_container"
+        android:layout_alignParentTop="true">
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
 
-    <TextView
-        android:id="@+id/name_text_view"
+            <ImageView
+                android:id="@+id/profile_image"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_gravity="center"
+                android:contentDescription="@string/profile_picture"
+                android:src="@drawable/ic_default_profile" />
+
+            <Button
+                android:id="@+id/pic_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:backgroundTint="#006F4A"
+                android:text="Nueva foto de perfil"
+                android:textColor="#FDF9FC"
+                android:layout_marginTop="16dp"/>
+
+            <TextView
+                android:id="@+id/name_text_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="18sp"
+                android:gravity="center"
+                android:layout_marginTop="8dp"/>
+
+            <TextView
+                android:id="@+id/email"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:textSize="15sp"
+                android:textColor="@color/text"
+                android:gravity="center"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Rol:"
+                android:textSize="16sp"
+                android:layout_marginTop="16dp" />
+
+            <RadioGroup
+                android:id="@+id/radio_group_role"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <RadioButton
+                    android:id="@+id/radio_business"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Negocio" />
+
+                <RadioButton
+                    android:id="@+id/radio_restaurant"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Restaurante" />
+
+                <RadioButton
+                    android:id="@+id/radio_user"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Usuario" />
+            </RadioGroup>
+
+            <EditText
+                android:id="@+id/edit_address"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Dirección"
+                android:layout_marginTop="8dp" />
+
+            <EditText
+                android:id="@+id/edit_phone"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Número de Teléfono"
+                android:inputType="phone"
+                android:layout_marginTop="8dp" />
+
+            <Button
+                android:id="@+id/button_update"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Actualizar Perfil"
+                android:backgroundTint="#006F4A"
+                android:textColor="#FFFFFF"
+                android:layout_marginTop="16dp" />
+
+            <Button
+                android:id="@+id/button_logout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Cerrar Sesión"
+                android:backgroundTint="#006F4A"
+                android:textColor="@android:color/white"
+                android:layout_marginTop="16dp" />
+        </LinearLayout>
+    </ScrollView>
+
+    <!-- Barra de navegación inferior -->
+    <LinearLayout
+        android:id="@+id/navigation_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="18dp"
+        android:orientation="horizontal"
+        android:padding="8dp"
         android:gravity="center"
-        android:layout_marginTop="2dp"/>
+        android:background="@color/icons"
+        android:layout_alignParentBottom="true"
+        android:elevation="4dp"> <!-- efecto de relieve -->
 
-    <TextView
-        android:id="@+id/email"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="2dp"
-        android:textSize="15dp"
-        android:textColor="@color/text"
-        android:gravity="center"/>
+        <ImageView
+            android:id="@+id/action_profile"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:src="@drawable/icono_perfil"
+            android:contentDescription="@string/profile"
+            android:padding="8dp" />
 
+        <ImageView
+            android:id="@+id/action_cart"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:src="@drawable/icono_carrito"
+            android:contentDescription="@string/cart"
+            android:padding="8dp"/>
 
+        <ImageView
+            android:id="@+id/action_ecommerce"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:src="@drawable/icono_restaurantes"
+            android:contentDescription="@string/cart"
+            android:padding="8dp"/>
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Rol:"
-        android:textSize="16sp"
-        android:layout_marginTop="16dp" />
+        <ImageView
+            android:id="@+id/action_supermarket"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:src="@drawable/icono_supermercado"
+            android:contentDescription="@string/supermarket"
+            android:padding="8dp" />
+    </LinearLayout>
 
-    <RadioGroup
-        android:id="@+id/radio_group_role"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
-
-        <RadioButton
-            android:id="@+id/radio_business"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Negocio" />
-
-        <RadioButton
-            android:id="@+id/radio_restaurant"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Restaurante" />
-
-        <RadioButton
-            android:id="@+id/radio_user"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Usuario" />
-    </RadioGroup>
-
-    <EditText
-        android:id="@+id/edit_address"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Dirección" />
-
-    <EditText
-        android:id="@+id/edit_phone"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Número de Teléfono"
-        android:inputType="phone" />
-
-    <Button
-        android:id="@+id/button_update"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Actualizar Perfil"
-        android:backgroundTint="@color/Life2Food_color"
-        android:layout_marginTop="16dp" />
-
-    <Button
-        android:id="@+id/button_logout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Cerrar Sesión"
-        android:layout_marginTop="16dp"
-        android:backgroundTint="@color/Life2Food_color"
-        android:textColor="@android:color/white" />
-
-    <Button
-        android:id="@+id/button_back"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:backgroundTint="#006F4A"
-        android:text="Volver"
-        android:textColor="#FDF9FC"
-        android:layout_marginTop="16dp"/>
-
-
-</LinearLayout>
+</RelativeLayout>

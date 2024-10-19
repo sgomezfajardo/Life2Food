@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -27,11 +28,21 @@ import java.util.List;
 
 public class SupermarketActivity extends AppCompatActivity implements ProductAdapter.OnProductClickListener {
 
+
+    //User and product info
     private ProductAdapter productAdapter;
     private List<Product> productList;
-    private String currentUserEmail;
+
+
+    //Firebase
+    private final Firebase firebase = new Firebase();
+    private final String USERID = firebase.getUSERID();
+    private final FirebaseFirestore DB = firebase.getDB();
+    private String currentUserEmail = FirebaseAuth.getInstance().getCurrentUser().getEmail();
     private String currentUserRole;
-    private FirebaseFirestore db;
+
+
+
     private StorageReference storageRef;
     private static final int PICK_IMAGE_REQUEST = 1;
     private Uri imageUri;
@@ -41,8 +52,8 @@ public class SupermarketActivity extends AppCompatActivity implements ProductAda
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_supermarket);
+        setupBottomNavigation();
 
-        db = FirebaseFirestore.getInstance();
         FirebaseStorage storage = FirebaseStorage.getInstance();
         storageRef = storage.getReference();
 
@@ -60,16 +71,10 @@ public class SupermarketActivity extends AppCompatActivity implements ProductAda
         Button btnAddProduct = findViewById(R.id.btn_add_product);
         btnAddProduct.setOnClickListener(v -> showAddProductDialog());
 
-        Button back = findViewById(R.id.button_back);
-        back.setOnClickListener(v -> {
-            Intent intent = new Intent(this, EcommerceActivity.class);
-            startActivity(intent);
-            finish();
-        });
     }
 
     private void getUserRole() {
-        db.collection("users")
+        DB.collection("users")
                 .whereEqualTo("email", currentUserEmail)
                 .get()
                 .addOnCompleteListener(task -> {
@@ -95,7 +100,7 @@ public class SupermarketActivity extends AppCompatActivity implements ProductAda
     }
 
     private void loadProducts() {
-        db.collection("products")
+        DB.collection("products")
                 .whereEqualTo("userEmail", currentUserEmail)
                 .get()
                 .addOnCompleteListener(task -> {
@@ -148,8 +153,7 @@ public class SupermarketActivity extends AppCompatActivity implements ProductAda
             }
 
             // Creamos el producto con la cantidad como entero
-            String id = "0";
-            Product newProduct = new Product(id, productName, Integer.parseInt(productQuantity), productType, currentUserEmail, Double.parseDouble(productPrice), null, productDescription);
+            Product newProduct = new Product(productName, Integer.parseInt(productQuantity), productType, currentUserEmail, Double.parseDouble(productPrice), null, productDescription);
             newProduct.setQuantity(Integer.parseInt(productQuantity)); // Se usa setQuantity() para asignar la cantidad
             productList.add(newProduct);
             productAdapter.notifyItemInserted(productList.size() - 1);
@@ -200,7 +204,7 @@ public class SupermarketActivity extends AppCompatActivity implements ProductAda
     }
 
     private void addProductToFirestore(Product product) {
-        db.collection("products").add(product)
+        DB.collection("products").add(product)
                 .addOnSuccessListener(documentReference -> {
                     product.setId(documentReference.getId());
                     Toast.makeText(SupermarketActivity.this, "Producto guardado en la base de datos", Toast.LENGTH_SHORT).show();
@@ -217,11 +221,34 @@ public class SupermarketActivity extends AppCompatActivity implements ProductAda
             productAdapter.notifyDataSetChanged();
             Toast.makeText(this, "Producto eliminado", Toast.LENGTH_SHORT).show();
 
-            db.collection("products").document(product.getId()).delete()
+            DB.collection("products").document(product.getId()).delete()
                     .addOnSuccessListener(aVoid -> Toast.makeText(SupermarketActivity.this, "Producto eliminado de la base de datos", Toast.LENGTH_SHORT).show())
                     .addOnFailureListener(e -> Toast.makeText(SupermarketActivity.this, "Error al eliminar el producto", Toast.LENGTH_SHORT).show());
         } else {
             Toast.makeText(this, "No tienes permisos para eliminar este producto", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    private void setupBottomNavigation() {
+        ImageView profileIcon = findViewById(R.id.action_profile);
+        ImageView cartIcon = findViewById(R.id.action_cart);
+        ImageView restaurantIcon = findViewById(R.id.action_ecommerce);
+        ImageView supermarketIcon = findViewById(R.id.action_supermarket);
+
+        profileIcon.setOnClickListener(v -> {
+            startActivity(new Intent(this, ProfileActivity.class));
+        });
+
+        cartIcon.setOnClickListener(v -> {
+            startActivity(new Intent(this, CartActivity.class));
+        });
+
+        restaurantIcon.setOnClickListener(v -> {
+            startActivity(new Intent(this, EcommerceActivity.class));
+        });
+
+        supermarketIcon.setOnClickListener(v -> {
+            startActivity(new Intent(this, SupermarketActivity.class));
+        });
     }
 }

@@ -52,6 +52,7 @@ public class EcommerceActivity extends AppCompatActivity
         setContentView(R.layout.activity_ecommerce);
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        setupBottomNavigation();
 
         // Verificar permisos al iniciar
         checkLocationPermission();
@@ -85,8 +86,6 @@ public class EcommerceActivity extends AppCompatActivity
         productAdapter = new ProductAdapter(productList, currentUserEmail, this);
         productAdapter.setOnAddToCartClickListener(this);
         recyclerView.setAdapter(productAdapter);
-
-        setupBottomNavigation();
     }
 
     @Override
@@ -160,18 +159,23 @@ public class EcommerceActivity extends AppCompatActivity
     private void setupBottomNavigation() {
         ImageView profileIcon = findViewById(R.id.action_profile);
         ImageView cartIcon = findViewById(R.id.action_cart);
+        ImageView restaurantIcon = findViewById(R.id.action_ecommerce);
         ImageView supermarketIcon = findViewById(R.id.action_supermarket);
 
         profileIcon.setOnClickListener(v -> {
-            startActivity(new Intent(EcommerceActivity.this, ProfileActivity.class));
+            startActivity(new Intent(this, ProfileActivity.class));
         });
 
         cartIcon.setOnClickListener(v -> {
-            startActivity(new Intent(EcommerceActivity.this, CartActivity.class));
+            startActivity(new Intent(this, CartActivity.class));
+        });
+
+        restaurantIcon.setOnClickListener(v -> {
+            startActivity(new Intent(this, EcommerceActivity.class));
         });
 
         supermarketIcon.setOnClickListener(v -> {
-            startActivity(new Intent(EcommerceActivity.this, SupermarketActivity.class));
+            startActivity(new Intent(this, SupermarketActivity.class));
         });
     }
 
@@ -230,6 +234,7 @@ public class EcommerceActivity extends AppCompatActivity
                         boolean productExists = false;
 
                         for (Map<String, Object> item : items) {
+                            // Usa el ID del documento en lugar de un campo "productId"
                             if (item.get("productId").equals(product.getId())) {
                                 int currentQuantity = ((Long) item.get("quantity")).intValue();
                                 int newQuantity = currentQuantity + quantityToAdd;
@@ -244,7 +249,7 @@ public class EcommerceActivity extends AppCompatActivity
                         if (!productExists) {
                             // Si el producto no está en el carrito, lo añadimos
                             Map<String, Object> newProduct = new HashMap<>();
-                            newProduct.put("productId", product.getId());
+                            newProduct.put("productId", product.getId());  // Aquí se refiere al ID del documento
                             newProduct.put("productName", product.getName());
                             newProduct.put("quantity", quantityToAdd);
                             newProduct.put("price", product.getPrice());

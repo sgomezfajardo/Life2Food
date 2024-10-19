@@ -25,8 +25,6 @@ import java.util.Map;
 
 public class CartActivity extends AppCompatActivity {
 
-    private final FirebaseFirestore db = FirebaseFirestore.getInstance();
-
     //Graphic elements
     private Button back;
     private Button payButton;
@@ -34,11 +32,12 @@ public class CartActivity extends AppCompatActivity {
     private LinearLayout linearLayout;
 
 
-    //FIREBASE
-    private Firebase firebase = new Firebase();
+    //Firebase
+    private final Firebase firebase = new Firebase();
     private final String USERID = firebase.getUSERID();
+    private final FirebaseFirestore DB = firebase.getDB();
 
-    //Strings and int
+    //Cart info
     private String items = " ";
     private double totalPrice = 0;
     private int numberItems = 0;
@@ -47,26 +46,12 @@ public class CartActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cart);
-
-        back = findViewById(R.id.button_back);
-        back.setOnClickListener(v -> {
-            Intent intent = new Intent(this, EcommerceActivity.class);
-            startActivity(intent);
-            finish();
-        });
+        setupBottomNavigation();
         linearLayout = findViewById(R.id.linearLayout);
         totalTextView = findViewById(R.id.text_total);  // Inicializar el TextView del total
-        payButton = findViewById(R.id.button_pay);  // Inicializar el botón de pago
+        //payButton = findViewById(R.id.button_pay);  // Inicializar el botón de pago
 
-        // Asignar un onClickListener al botón de pago
-        payButton.setOnClickListener(v -> {
-            /*Intent intent = new Intent(CartActivity.this, RealizarPagosActivity.class);
-            //intent.putExtra("TOTAL", String.valueOf(totalPrice));
-            //startActivity(intent);*/
-            // Iniciar la actividad
-        });
-
-        db.collection("carts").whereEqualTo("id_usuario", USERID).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+        DB.collection("carts").whereEqualTo("id_usuario", USERID).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 if (task.isSuccessful()) {
@@ -153,7 +138,7 @@ public class CartActivity extends AppCompatActivity {
         cardView.addView(innerLayout);
         cardView.setCardBackgroundColor(Color.parseColor("#F5F5F5"));
         newDeleteButton.setOnClickListener(v -> {
-            db.collection("products").document(productId).update("quantity", FieldValue.increment(Integer.parseInt(productQuantity)));
+            DB.collection("products").document(productId).update("quantity", FieldValue.increment(Integer.parseInt(productQuantity)));
             Map<String, Object> itemToRemove = new HashMap<>();
             itemToRemove.put("imageUrl", image_url);
             itemToRemove.put("price", Integer.parseInt(productPrice.substring(0, productPrice.indexOf("."))));
@@ -176,9 +161,32 @@ public class CartActivity extends AppCompatActivity {
         totalTextView.setText("Total a pagar: $" + String.format("%.2f", totalPrice));
     }
 
+
     private void removeItemFromCart(Map<String, Object> itemToRemove) {
-        db.collection("carts").document(USERID).update("items", FieldValue.arrayRemove(itemToRemove)).addOnSuccessListener(aVoid -> {
+        DB.collection("carts").document(USERID).update("items", FieldValue.arrayRemove(itemToRemove)).addOnSuccessListener(aVoid -> {
         }).addOnFailureListener(e -> {
+        });
+    }
+    private void setupBottomNavigation() {
+        ImageView profileIcon = findViewById(R.id.action_profile);
+        ImageView cartIcon = findViewById(R.id.action_cart);
+        ImageView restaurantIcon = findViewById(R.id.action_ecommerce);
+        ImageView supermarketIcon = findViewById(R.id.action_supermarket);
+
+        profileIcon.setOnClickListener(v -> {
+            startActivity(new Intent(this, ProfileActivity.class));
+        });
+
+        cartIcon.setOnClickListener(v -> {
+            startActivity(new Intent(this, CartActivity.class));
+        });
+
+        restaurantIcon.setOnClickListener(v -> {
+            startActivity(new Intent(this, EcommerceActivity.class));
+        });
+
+        supermarketIcon.setOnClickListener(v -> {
+            startActivity(new Intent(this, SupermarketActivity.class));
         });
     }
 }

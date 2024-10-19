@@ -7,8 +7,6 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 public class Firebase {
 
-
-
     private FirebaseFirestore DB = FirebaseFirestore.getInstance();
     private FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
     private String USERID;

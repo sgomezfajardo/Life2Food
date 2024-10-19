@@ -3,6 +3,8 @@ package com.example.life2food;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 public class Product {
+
+    //Product info
     private String id;
     private String name;
     private int quantity;
@@ -11,9 +13,25 @@ public class Product {
     private double price;
     private String imageUrl;
     private String description;
-    private final FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+
+    //Firebase
+    private final Firebase firebase = new Firebase();
+    private final FirebaseFirestore DB = firebase.getDB();;
+    private final String USERID = firebase.getUSERID();
+
 
     public Product() {
+    }
+
+    public Product(String name, int quantity, String type, String email, double price, String imageUrl, String description) {
+        this.name = name;
+        this.quantity = quantity;
+        this.type = type;
+        this.email = email;
+        this.price = price;
+        this.imageUrl = imageUrl;
+        this.description = description;
     }
 
     public Product(String id, String name, int quantity, String type, String email, double price, String imageUrl, String description) {
@@ -64,7 +82,7 @@ public class Product {
     }
     public void updateQuantity(int quantity) {
         this.quantity = quantity;
-        db.collection("products").document(getId()).update("quantity", getQuantity());
+        DB.collection("products").document(getId()).update("quantity", getQuantity());
     }
 
     public String getType() {
