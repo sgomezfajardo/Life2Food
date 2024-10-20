@@ -1,4 +1,5 @@
 package com.example.life2food;
+import android.animation.Animator;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -54,7 +55,7 @@ public class SupermarketActivity extends AppCompatActivity implements ProductAda
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_supermarket);
         setupBottomNavigation();
-        lottieAnimation = findViewById(R.id.lottie_add_product);
+        LottieAnimationView lottieAnimation = findViewById(R.id.lottie_add_product);
 
         FirebaseStorage storage = FirebaseStorage.getInstance();
         storageRef = storage.getReference();
@@ -120,6 +121,7 @@ public class SupermarketActivity extends AppCompatActivity implements ProductAda
     }
 
     private void showAddProductDialog() {
+
         if (currentUserRole == null || currentUserRole.equals("user")) {
             Toast.makeText(this, "No tienes permisos para agregar productos.", Toast.LENGTH_SHORT).show();
             return;
@@ -143,8 +145,6 @@ public class SupermarketActivity extends AppCompatActivity implements ProductAda
         btnSelectImage.setOnClickListener(v -> openImageChooser());
 
         builder.setPositiveButton("Agregar", (dialog, which) -> {
-            lottieAnimation.setVisibility(View.VISIBLE);
-            lottieAnimation.playAnimation();
             String productName = productNameInput.getText().toString().trim();
             String productQuantity = productQuantityInput.getText().toString().trim(); // Aquí capturamos la cantidad
             String productPrice = productPriceInput.getText().toString().trim();

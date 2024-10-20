@@ -36,15 +36,21 @@ import java.util.Map;
 public class EcommerceActivity extends AppCompatActivity
         implements ProductAdapter.OnProductClickListener, ProductAdapter.OnAddToCartClickListener {
 
+
+    //Grapchis and variables
     private RecyclerView recyclerView;
     private ProductAdapter productAdapter;
     private List<Product> productList;
-    private FirebaseFirestore db;
-    private String currentUserEmail;
-    private String userID;
     private Toolbar toolbar;
 
+    //Firebase
+    private final Firebase firebase = new Firebase();
+    private final String USERID = firebase.getUSERID();
+    private final FirebaseFirestore DB = firebase.getDB();
+    private String currentUserEmail;
+
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,9 +83,7 @@ public class EcommerceActivity extends AppCompatActivity
             }
         });
 
-        db = FirebaseFirestore.getInstance();
         currentUserEmail = FirebaseAuth.getInstance().getCurrentUser().getEmail();
-        userID = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
 
         loadProductsFromFirestore();
@@ -118,7 +122,7 @@ public class EcommerceActivity extends AppCompatActivity
     }
 
     private void loadProductsFromFirestore() {
-        db.collection("products")
+        DB.collection("products")
                 .addSnapshotListener((value, error) -> {
                     if (error != null) {
                         return;
@@ -145,7 +149,7 @@ public class EcommerceActivity extends AppCompatActivity
 
     @Override
     public void onDeleteProductClick(Product product) {
-        db.collection("products")
+        DB.collection("products")
                 .document(product.getId())
                 .delete()
                 .addOnSuccessListener(aVoid -> {
@@ -221,7 +225,7 @@ public class EcommerceActivity extends AppCompatActivity
                 return;
             }
 
-            DocumentReference cartRef = db.collection("carts").document(userID);
+            DocumentReference cartRef = DB.collection("carts").document(USERID);
             cartRef.get().addOnSuccessListener(documentSnapshot -> {
                 if (documentSnapshot.exists()) {
                     List<Map<String, Object>> items = (List<Map<String, Object>>) documentSnapshot.get("items");
@@ -273,12 +277,12 @@ public class EcommerceActivity extends AppCompatActivity
 
 
     public void createCartIfNotExists() {
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        FirebaseFirestore DB = FirebaseFirestore.getInstance();
         FirebaseAuth auth = FirebaseAuth.getInstance();
         String userId = auth.getCurrentUser().getUid();  // UID del usuario autenticado
 
         // Referencia al documento del carrito del usuario
-        DocumentReference cartRef = db.collection("carts").document(userId);
+        DocumentReference cartRef = DB.collection("carts").document(userId);
 
         // Verificar si el carrito ya existe
         cartRef.get().addOnCompleteListener(task -> {
