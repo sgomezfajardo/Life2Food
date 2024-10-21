@@ -225,51 +225,72 @@ public class EcommerceActivity extends AppCompatActivity
                 return;
             }
 
-            DocumentReference cartRef = DB.collection("carts").document(USERID);
-            cartRef.get().addOnSuccessListener(documentSnapshot -> {
-                if (documentSnapshot.exists()) {
-                    List<Map<String, Object>> items = (List<Map<String, Object>>) documentSnapshot.get("items");
+            // Obtener el email del producto para buscar la dirección del creador
+            String productCreatorEmail = product.getEmail();  // Asegúrate de que este método obtenga el email del producto
 
-                    if (items != null) {
-                        boolean productExists = false;
+            // Buscar la dirección del usuario que creó el producto
+            FirebaseFirestore DB = FirebaseFirestore.getInstance();
+            DB.collection("users")
+                    .whereEqualTo("email", productCreatorEmail)  // Comparar con el email del producto
+                    .get()
+                    .addOnSuccessListener(queryDocumentSnapshots -> {
+                        if (!queryDocumentSnapshots.isEmpty()) {
+                            DocumentSnapshot userDocument = queryDocumentSnapshots.getDocuments().get(0);
+                            String userAddress = userDocument.getString("address"); // Obtener la dirección del usuario
 
-                        for (Map<String, Object> item : items) {
-                            // Usa el ID del documento en lugar de un campo "productId"
-                            if (item.get("productId").equals(product.getId())) {
-                                int currentQuantity = ((Long) item.get("quantity")).intValue();
-                                int newQuantity = currentQuantity + quantityToAdd;
+                            DocumentReference cartRef = DB.collection("carts").document(USERID);
+                            cartRef.get().addOnSuccessListener(documentSnapshot -> {
+                                if (documentSnapshot.exists()) {
+                                    List<Map<String, Object>> items = (List<Map<String, Object>>) documentSnapshot.get("items");
 
-                                // Actualizamos la cantidad en el carrito
-                                item.put("quantity", newQuantity);
-                                productExists = true;
-                                break;
-                            }
+                                    if (items != null) {
+                                        boolean productExists = false;
+
+                                        for (Map<String, Object> item : items) {
+                                            if (item.get("productId").equals(product.getId())) {
+                                                int currentQuantity = ((Long) item.get("quantity")).intValue();
+                                                int newQuantity = currentQuantity + quantityToAdd;
+
+                                                // Actualizamos la cantidad en el carrito
+                                                item.put("quantity", newQuantity);
+                                                item.put("address", userAddress); // Agregar dirección al producto
+                                                productExists = true;
+                                                break;
+                                            }
+                                        }
+
+                                        if (!productExists) {
+                                            // Si el producto no está en el carrito, lo añadimos
+                                            Map<String, Object> newProduct = new HashMap<>();
+                                            newProduct.put("productId", product.getId());
+                                            newProduct.put("productName", product.getName());
+                                            newProduct.put("quantity", quantityToAdd);
+                                            newProduct.put("price", product.getPrice());
+                                            newProduct.put("imageUrl", product.getImageUrl());
+                                            newProduct.put("address", userAddress); // Agregar dirección al nuevo producto
+
+                                            items.add(newProduct);
+                                        }
+
+                                        // Actualizamos el carrito en la base de datos
+                                        cartRef.update("items", items)
+                                                .addOnSuccessListener(aVoid -> {
+                                                    product.updateQuantity(product.getQuantity() - quantityToAdd);
+                                                    Toast.makeText(this, "Producto actualizado en el carrito", Toast.LENGTH_SHORT).show();
+                                                })
+                                                .addOnFailureListener(e -> {
+                                                    Toast.makeText(this, "Error al actualizar el carrito", Toast.LENGTH_SHORT).show();
+                                                });
+                                    }
+                                }
+                            });
+                        } else {
+                            Toast.makeText(this, "Error: usuario no encontrado", Toast.LENGTH_SHORT).show();
                         }
-
-                        if (!productExists) {
-                            // Si el producto no está en el carrito, lo añadimos
-                            Map<String, Object> newProduct = new HashMap<>();
-                            newProduct.put("productId", product.getId());  // Aquí se refiere al ID del documento
-                            newProduct.put("productName", product.getName());
-                            newProduct.put("quantity", quantityToAdd);
-                            newProduct.put("price", product.getPrice());
-                            newProduct.put("imageUrl", product.getImageUrl());
-
-                            items.add(newProduct);
-                        }
-
-                        // Actualizamos el carrito en la base de datos
-                        cartRef.update("items", items)
-                                .addOnSuccessListener(aVoid -> {
-                                    product.updateQuantity(product.getQuantity() - quantityToAdd);
-                                    Toast.makeText(this, "Producto actualizado en el carrito", Toast.LENGTH_SHORT).show();
-                                })
-                                .addOnFailureListener(e -> {
-                                    Toast.makeText(this, "Error al actualizar el carrito", Toast.LENGTH_SHORT).show();
-                                });
-                    }
-                }
-            });
+                    })
+                    .addOnFailureListener(e -> {
+                        Toast.makeText(this, "Error al obtener la dirección del creador del producto", Toast.LENGTH_SHORT).show();
+                    });
 
             dialog.dismiss();
         });

@@ -39,11 +39,13 @@
 
     </ScrollView>
 
+    <!-- Contenedor de navegación, ahora alineado en la parte inferior -->
     <LinearLayout
         android:id="@+id/button_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_above="@+id/navigation_container"
+        android:layout_marginBottom="-3dp"
         android:orientation="vertical"
         android:padding="16dp">
 
@@ -56,9 +58,15 @@
             android:textColor="@android:color/black"
             android:textSize="20sp" />
 
+        <Button
+            android:id="@+id/Realizar_pago"
+            android:layout_width="173dp"
+            android:layout_height="wrap_content"
+            android:text="Realizar Pago"
+            android:backgroundTint="@color/buy_button" />
+
     </LinearLayout>
 
-    <!-- Contenedor de navegación, ahora alineado en la parte inferior -->
     <LinearLayout
         android:id="@+id/navigation_container"
         android:layout_width="match_parent"

@@ -13,6 +13,7 @@ public class Product {
     private double price;
     private String imageUrl;
     private String description;
+    private String adress;
 
 
     //Firebase
@@ -32,6 +33,7 @@ public class Product {
         this.price = price;
         this.imageUrl = imageUrl;
         this.description = description;
+        this.adress = adress;
     }
 
     public Product(String id, String name, int quantity, String type, String email, double price, String imageUrl, String description) {
@@ -63,6 +65,14 @@ public class Product {
 
     public String getUserEmail() {
         return email;
+    }
+
+    public String getAdress() {
+        return adress;
+    }
+
+    public void setAdress(String adress) {
+        this.adress = adress;
     }
 
     public double getPrice() {

@@ -1,9 +1,12 @@
 package com.example.life2food;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -12,6 +15,8 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -31,7 +36,6 @@ public class CartActivity extends AppCompatActivity {
     private TextView totalTextView;
     private LinearLayout linearLayout;
 
-
     //Firebase
     private final Firebase firebase = new Firebase();
     private final String USERID = firebase.getUSERID();
@@ -42,6 +46,8 @@ public class CartActivity extends AppCompatActivity {
     private double totalPrice = 0;
     private int numberItems = 0;
 
+    private static final int LOCATION_PERMISSION_REQUEST_CODE = 100; // Código de solicitud para permisos de ubicación
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,7 +55,19 @@ public class CartActivity extends AppCompatActivity {
         setupBottomNavigation();
         linearLayout = findViewById(R.id.linearLayout);
         totalTextView = findViewById(R.id.text_total);  // Inicializar el TextView del total
-        //payButton = findViewById(R.id.button_pay);  // Inicializar el botón de pago
+        payButton = findViewById(R.id.Realizar_pago);  // Inicializar el botón de pago
+        payButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Verificar y solicitar permisos de ubicación
+                if (ContextCompat.checkSelfPermission(CartActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                    ActivityCompat.requestPermissions(CartActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_PERMISSION_REQUEST_CODE);
+                } else {
+                    // Permiso concedido, iniciar MapsActivity
+                    startMapsActivity();
+                }
+            }
+        });
 
         DB.collection("carts").whereEqualTo("id_usuario", USERID).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
@@ -75,7 +93,29 @@ public class CartActivity extends AppCompatActivity {
         });
     }
 
+    private void startMapsActivity() {
+        // Crear un Intent para iniciar la nueva actividad
+        Intent intent = new Intent(CartActivity.this, MapsActivity.class); // Reemplaza TargetActivity con el nombre de tu clase de destino
+        startActivity(intent); // Inicia la actividad
+    }
+
+    // Método para manejar la respuesta de la solicitud de permisos
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == LOCATION_PERMISSION_REQUEST_CODE) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // Permiso concedido, iniciar MapsActivity
+                startMapsActivity();
+            } else {
+                // Permiso denegado, mostrar un mensaje
+                Toast.makeText(this, "Se necesita permiso de ubicación para acceder al mapa", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
     private void getInfo() {
+        // Resto de tu método getInfo permanece igual
         String productId;
         String productName;
         String productQuantity;
@@ -161,12 +201,12 @@ public class CartActivity extends AppCompatActivity {
         totalTextView.setText("Total a pagar: $" + String.format("%.2f", totalPrice));
     }
 
-
     private void removeItemFromCart(Map<String, Object> itemToRemove) {
         DB.collection("carts").document(USERID).update("items", FieldValue.arrayRemove(itemToRemove)).addOnSuccessListener(aVoid -> {
         }).addOnFailureListener(e -> {
         });
     }
+
     private void setupBottomNavigation() {
         ImageView profileIcon = findViewById(R.id.action_profile);
         ImageView restaurantIcon = findViewById(R.id.action_ecommerce);

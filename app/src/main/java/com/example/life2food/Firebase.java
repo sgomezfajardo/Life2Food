@@ -1,9 +1,12 @@
 package com.example.life2food;
 
 
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
 
 public class Firebase {
 
@@ -20,6 +23,13 @@ public class Firebase {
         }
     }
 
+    public FirebaseUser getCurrentUser() {
+        return currentUser;
+    }
+
+    public void setCurrentUser(FirebaseUser currentUser) {
+        this.currentUser = currentUser;
+    }
 
     public FirebaseFirestore getDB() {
         return DB;
@@ -31,4 +41,10 @@ public class Firebase {
     public String getUSERID() {
         return USERID;
     }
+
+
+
 }
+
+
+
