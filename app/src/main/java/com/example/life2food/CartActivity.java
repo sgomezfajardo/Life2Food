@@ -6,6 +6,7 @@ import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -20,6 +21,7 @@ import androidx.core.content.ContextCompat;
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -53,9 +55,11 @@ public class CartActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cart);
         setupBottomNavigation();
+
         linearLayout = findViewById(R.id.linearLayout);
         totalTextView = findViewById(R.id.text_total);  // Inicializar el TextView del total
         payButton = findViewById(R.id.Realizar_pago);  // Inicializar el botón de pago
+
         payButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -69,6 +73,22 @@ public class CartActivity extends AppCompatActivity {
             }
         });
 
+        // Obtener el rol del usuario y ocultar el icono del supermercado si es "usuario"
+        String currentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        FirebaseFirestore.getInstance().collection("users").document(currentUserId).get()
+                .addOnSuccessListener(documentSnapshot -> {
+                    if (documentSnapshot.exists()) {
+                        String userRole = documentSnapshot.getString("role"); // Cambia "role" según tu estructura de Firestore
+                        if ("user".equalsIgnoreCase(userRole)) {
+                            findViewById(R.id.action_supermarket).setVisibility(View.GONE);
+                        }
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    Log.e("Firestore", "Error obteniendo el rol: ", e);
+                });
+
+        // Obtener los productos del carrito
         DB.collection("carts").whereEqualTo("id_usuario", USERID).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
@@ -92,6 +112,7 @@ public class CartActivity extends AppCompatActivity {
             }
         });
     }
+
 
     private void startMapsActivity() {
         // Crear un Intent para iniciar la nueva actividad

@@ -4,6 +4,7 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -38,11 +39,14 @@ public class ProfileActivity extends AppCompatActivity {
     ProgressDialog progressDialog;
 
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
         setupBottomNavigation();
+
+        // Inicializar las vistas
         email = findViewById(R.id.email);
         nameTextView = findViewById(R.id.name_text_view);
         radioGroupRole = findViewById(R.id.radio_group_role);
@@ -52,30 +56,43 @@ public class ProfileActivity extends AppCompatActivity {
         Button buttonUpdate = findViewById(R.id.button_update);
         Button buttonLogout = findViewById(R.id.button_logout);
         Button pic_button = findViewById(R.id.pic_button);
+
+        // Firebase
         auth = FirebaseAuth.getInstance();
         firestore = FirebaseFirestore.getInstance();
         storageReference = FirebaseStorage.getInstance().getReference();
 
         loadProfileData();
 
+        String currentUserId = auth.getCurrentUser().getUid();
+        firestore.collection("users").document(currentUserId).get()
+                .addOnSuccessListener(documentSnapshot -> {
+                    if (documentSnapshot.exists()) {
+                        String userRole = documentSnapshot.getString("role"); // Cambia "role" según tu estructura de Firestore
+
+                        if ("user".equalsIgnoreCase(userRole)) {
+                            findViewById(R.id.action_supermarket).setVisibility(View.GONE);
+                        }
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    Log.e("Firestore", "Error obteniendo el rol: ", e);
+                });
+
+        // Configurar los listeners de los botones
         buttonUpdate.setOnClickListener(view -> updateProfile());
 
         buttonLogout.setOnClickListener(view -> {
             auth.signOut();
-
             Intent intent = new Intent(ProfileActivity.this, MainActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(intent);
             finish();
         });
 
-        pic_button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                updatePhoto();
-            }
-        });
+        pic_button.setOnClickListener(view -> updatePhoto());
     }
+
 
     private void loadProfileData() {
         String userId = auth.getCurrentUser().getUid();

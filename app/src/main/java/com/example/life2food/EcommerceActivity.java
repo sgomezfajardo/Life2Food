@@ -59,6 +59,7 @@ public class EcommerceActivity extends AppCompatActivity
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle("");
+
         setupBottomNavigation();
 
         // Verificar permisos al iniciar
@@ -83,8 +84,18 @@ public class EcommerceActivity extends AppCompatActivity
             }
         });
 
-        currentUserEmail = FirebaseAuth.getInstance().getCurrentUser().getEmail();
-
+        String currentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        // Obtener el rol del usuario
+        firebase.getUserRole(currentUserId).addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                String userRole = task.getResult();
+                if ("user".equalsIgnoreCase(userRole)) {
+                    findViewById(R.id.action_supermarket).setVisibility(View.GONE);
+                }
+            } else {
+                Log.e("Firebase", "Error obteniendo el rol: ", task.getException());
+            }
+        });
 
         loadProductsFromFirestore();
 
@@ -92,6 +103,7 @@ public class EcommerceActivity extends AppCompatActivity
         productAdapter.setOnAddToCartClickListener(this);
         recyclerView.setAdapter(productAdapter);
     }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
