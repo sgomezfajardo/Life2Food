@@ -15,6 +15,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -133,6 +134,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     if (task.isSuccessful()) {
                         LatLng latLng = task.getResult();
                         if (latLng != null) {
+                            MarkerOptions markerOptions = new MarkerOptions()
+                                    .position(latLng)
+                                    .title(direccion)
+                                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.icono_productos_mapa)); // Ícono personalizado
+
+                            mMap.addMarker(markerOptions);
                             mMap.addMarker(new MarkerOptions().position(latLng).title(direccion));
                             Log.d(TAG, "Dirección: " + direccion + " Coordenadas: " + latLng);
                         } else {
