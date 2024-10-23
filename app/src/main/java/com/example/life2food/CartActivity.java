@@ -73,20 +73,10 @@ public class CartActivity extends AppCompatActivity {
             }
         });
 
-        // Obtener el rol del usuario y ocultar el icono del supermercado si es "usuario"
-        String currentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        FirebaseFirestore.getInstance().collection("users").document(currentUserId).get()
-                .addOnSuccessListener(documentSnapshot -> {
-                    if (documentSnapshot.exists()) {
-                        String userRole = documentSnapshot.getString("role"); // Cambia "role" según tu estructura de Firestore
-                        if ("user".equalsIgnoreCase(userRole)) {
-                            findViewById(R.id.action_supermarket).setVisibility(View.GONE);
-                        }
-                    }
-                })
-                .addOnFailureListener(e -> {
-                    Log.e("Firestore", "Error obteniendo el rol: ", e);
-                });
+        Firebase firebaseHelper = new Firebase();
+        View supermarketIcon = findViewById(R.id.action_supermarket); // Icono del supermercado
+        firebaseHelper.fetchUserRoleAndHideIcon(supermarketIcon);
+
 
         // Obtener los productos del carrito
         DB.collection("carts").whereEqualTo("id_usuario", USERID).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {

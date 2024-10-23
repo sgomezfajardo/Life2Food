@@ -84,18 +84,9 @@ public class EcommerceActivity extends AppCompatActivity
             }
         });
 
-        String currentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        // Obtener el rol del usuario
-        firebase.getUserRole(currentUserId).addOnCompleteListener(task -> {
-            if (task.isSuccessful()) {
-                String userRole = task.getResult();
-                if ("user".equalsIgnoreCase(userRole)) {
-                    findViewById(R.id.action_supermarket).setVisibility(View.GONE);
-                }
-            } else {
-                Log.e("Firebase", "Error obteniendo el rol: ", task.getException());
-            }
-        });
+        Firebase firebaseHelper = new Firebase();
+        View supermarketIcon = findViewById(R.id.action_supermarket);
+        firebaseHelper.fetchUserRoleAndHideIcon(supermarketIcon);
 
         loadProductsFromFirestore();
 

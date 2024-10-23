@@ -64,20 +64,9 @@ public class ProfileActivity extends AppCompatActivity {
 
         loadProfileData();
 
-        String currentUserId = auth.getCurrentUser().getUid();
-        firestore.collection("users").document(currentUserId).get()
-                .addOnSuccessListener(documentSnapshot -> {
-                    if (documentSnapshot.exists()) {
-                        String userRole = documentSnapshot.getString("role"); // Cambia "role" según tu estructura de Firestore
-
-                        if ("user".equalsIgnoreCase(userRole)) {
-                            findViewById(R.id.action_supermarket).setVisibility(View.GONE);
-                        }
-                    }
-                })
-                .addOnFailureListener(e -> {
-                    Log.e("Firestore", "Error obteniendo el rol: ", e);
-                });
+        Firebase firebaseHelper = new Firebase();
+        View supermarketIcon = findViewById(R.id.action_supermarket); // Icono del supermercado
+        firebaseHelper.fetchUserRoleAndHideIcon(supermarketIcon);
 
         // Configurar los listeners de los botones
         buttonUpdate.setOnClickListener(view -> updateProfile());

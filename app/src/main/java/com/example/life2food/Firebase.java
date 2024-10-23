@@ -1,6 +1,9 @@
 package com.example.life2food;
 
 
+import android.util.Log;
+import android.view.View;
+
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -38,6 +41,22 @@ public class Firebase {
                     }
                 });
     }
+
+    public void fetchUserRoleAndHideIcon(View supermarketIcon) {
+        if (currentUser != null) {
+            String currentUserId = currentUser.getUid();
+            getUserRole(currentUserId).addOnSuccessListener(userRole -> {
+                if ("user".equalsIgnoreCase(userRole)) {
+                    supermarketIcon.setVisibility(View.GONE);
+                }
+            }).addOnFailureListener(e -> {
+                Log.e("Firestore", "Error obteniendo el rol: ", e);
+            });
+        } else {
+            Log.e("Auth", "Usuario no autenticado");
+        }
+    }
+
 
 
 
