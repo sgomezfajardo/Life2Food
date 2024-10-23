@@ -130,20 +130,20 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private void convertirDireccionACoordenadas(String direccion) {
         Log.d(TAG, "Convirtiendo dirección a coordenadas: " + direccion);
-        GeocodingService geocodingService = new GeocodingService("API_KEY_AQUÍ"); // Asegúrate de tener la clave correcta
+        GeocodingService geocodingService = new GeocodingService("AIzaSyBrrXaiHB3RbAkY-4dnDk7pEwp1_7RGRZ0");
         geocodingService.getLocationFromAddress(direccion)
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
                         LatLng latLng = task.getResult();
                         if (latLng != null) {
-                            // Cargar el ícono y ajustar su tamaño
+
                             Bitmap smallIcon = BitmapFactory.decodeResource(getResources(), R.drawable.icono_productos_mapa);
-                            Bitmap resizedIcon = Bitmap.createScaledBitmap(smallIcon, 100, 100, false); // Ajusta el tamaño (100x100 es un ejemplo, puedes cambiarlo)
+                            Bitmap resizedIcon = Bitmap.createScaledBitmap(smallIcon, 100, 100, false); //////
 
                             MarkerOptions markerOptions = new MarkerOptions()
                                     .position(latLng)
                                     .title(direccion)
-                                    .icon(BitmapDescriptorFactory.fromBitmap(resizedIcon)); // Usar el ícono redimensionado
+                                    .icon(BitmapDescriptorFactory.fromBitmap(resizedIcon));
 
                             mMap.addMarker(markerOptions);
                             Log.d(TAG, "Dirección: " + direccion + " Coordenadas: " + latLng);
