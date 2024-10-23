@@ -28,6 +28,7 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class CartActivity extends AppCompatActivity {
@@ -213,8 +214,18 @@ public class CartActivity extends AppCompatActivity {
     }
 
     private void removeItemFromCart(Map<String, Object> itemToRemove) {
-        DB.collection("carts").document(USERID).update("items", FieldValue.arrayRemove(itemToRemove)).addOnSuccessListener(aVoid -> {
-        }).addOnFailureListener(e -> {
+        DB.collection("carts").document(USERID).get().addOnSuccessListener(documentSnapshot -> {
+            List<Map<String, Object>> items = (List<Map<String, Object>>) documentSnapshot.get("items");
+            for (Map<String, Object> item : items) {
+                if (item.get("productId").equals(itemToRemove.get("productId"))) {
+                    DB.collection("carts").document(USERID)
+                            .update("items", FieldValue.arrayRemove(item))
+                            .addOnSuccessListener(aVoid -> {
+                                Log.d("Firestore", "Elemento eliminado correctamente");
+                            });
+                    break;
+                }
+            }
         });
     }
 
