@@ -2,6 +2,8 @@ package com.example.life2food;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.location.Location;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
@@ -128,19 +130,22 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private void convertirDireccionACoordenadas(String direccion) {
         Log.d(TAG, "Convirtiendo dirección a coordenadas: " + direccion);
-        GeocodingService geocodingService = new GeocodingService("AIzaSyBrrXaiHB3RbAkY-4dnDk7pEwp1_7RGRZ0");
+        GeocodingService geocodingService = new GeocodingService("API_KEY_AQUÍ"); // Asegúrate de tener la clave correcta
         geocodingService.getLocationFromAddress(direccion)
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
                         LatLng latLng = task.getResult();
                         if (latLng != null) {
+                            // Cargar el ícono y ajustar su tamaño
+                            Bitmap smallIcon = BitmapFactory.decodeResource(getResources(), R.drawable.icono_productos_mapa);
+                            Bitmap resizedIcon = Bitmap.createScaledBitmap(smallIcon, 100, 100, false); // Ajusta el tamaño (100x100 es un ejemplo, puedes cambiarlo)
+
                             MarkerOptions markerOptions = new MarkerOptions()
                                     .position(latLng)
                                     .title(direccion)
-                                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.icono_productos_mapa)); // Ícono personalizado
+                                    .icon(BitmapDescriptorFactory.fromBitmap(resizedIcon)); // Usar el ícono redimensionado
 
                             mMap.addMarker(markerOptions);
-                            mMap.addMarker(new MarkerOptions().position(latLng).title(direccion));
                             Log.d(TAG, "Dirección: " + direccion + " Coordenadas: " + latLng);
                         } else {
                             Log.e(TAG, "No se pudieron obtener coordenadas para la dirección: " + direccion);
@@ -150,6 +155,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     }
                 });
     }
+
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
