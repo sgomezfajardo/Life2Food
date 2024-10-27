@@ -13,6 +13,9 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.util.List;
+import java.util.Map;
+
 public class Firebase {
 
     private FirebaseFirestore DB = FirebaseFirestore.getInstance();
@@ -56,6 +59,43 @@ public class Firebase {
             Log.e("Auth", "Usuario no autenticado");
         }
     }
+
+    public void fetchCartProducts(OnCartProductsFetchedListener listener) {
+        if (currentUser != null) {
+            DB.collection("carts")
+                    .whereEqualTo("id_usuario", USERID)
+                    .get()
+                    .addOnCompleteListener(task -> {
+                        if (task.isSuccessful() && !task.getResult().isEmpty()) {
+                            for (DocumentSnapshot document : task.getResult()) {
+                                List<Map<String, Object>> items = (List<Map<String, Object>>) document.get("items");
+                                if (items != null) {
+                                    for (Map<String, Object> item : items) {
+                                        String productName = (String) item.get("productName");
+                                        double productPrice = ((Number) item.get("price")).doubleValue();
+                                        int quantity = ((Number) item.get("quantity")).intValue();
+
+                                        // Llama al listener con el producto obtenido
+                                        listener.onProductFetched(productName, productPrice, quantity);
+                                    }
+                                }
+                            }
+                        } else {
+                            Log.e("Firestore", "No se encontraron productos o error en la consulta.");
+                        }
+                    })
+                    .addOnFailureListener(e -> {
+                        Log.e("Firestore", "Error al obtener el carrito: ", e);
+                    });
+        } else {
+            Log.e("Auth", "Usuario no autenticado");
+        }
+    }
+
+    public interface OnCartProductsFetchedListener {
+        void onProductFetched(String productName, double productPrice, int quantity);
+    }
+
 
 
 
