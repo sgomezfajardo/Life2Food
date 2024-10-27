@@ -14,10 +14,10 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="0dp"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHeight_max="200dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintWidth_max="200dp"
-        app:layout_constraintHeight_max="200dp"
         app:srcCompat="@drawable/screenshot_2024_09_17_164645" />
 
     <EditText
@@ -38,28 +38,28 @@
         android:id="@+id/password_edit_text"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
         android:hint="Contraseña"
         android:inputType="textPassword"
         android:padding="16dp"
-        app:layout_constraintTop_toBottomOf="@+id/email_edit_text"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintWidth_percent="0.8"
-        android:layout_marginTop="20dp"/>
+        app:layout_constraintTop_toBottomOf="@+id/email_edit_text"
+        app:layout_constraintWidth_percent="0.8" />
 
     <!-- Botón para iniciar sesión -->
     <Button
         android:id="@+id/login_button"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="Iniciar Sesión"
+        android:layout_marginTop="20dp"
         android:backgroundTint="@color/Life2Food_color"
-    android:textColor="@android:color/white"
-    android:padding="16dp"
-    app:layout_constraintTop_toBottomOf="@+id/password_edit_text"
-    app:layout_constraintLeft_toLeftOf="parent"
-    app:layout_constraintRight_toRightOf="parent"
-    app:layout_constraintWidth_percent="0.8"
-    android:layout_marginTop="20dp"/>
+        android:padding="16dp"
+        android:text="Iniciar Sesión"
+        android:textColor="@android:color/white"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/password_edit_text"
+        app:layout_constraintWidth_percent="0.8" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

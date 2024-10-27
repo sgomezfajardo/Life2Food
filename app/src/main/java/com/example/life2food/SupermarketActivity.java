@@ -1,5 +1,4 @@
 package com.example.life2food;
-import android.animation.Animator;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -19,6 +18,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.airbnb.lottie.LottieAnimationView;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -26,9 +26,11 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-public class SupermarketActivity extends AppCompatActivity implements ProductAdapter.OnProductClickListener {
+public class SupermarketActivity extends AppCompatActivity implements ProductAdapter.OnProductClickListener, ProductAdapter.OnEditProduct {
 
 
     //User and product info
@@ -68,12 +70,12 @@ public class SupermarketActivity extends AppCompatActivity implements ProductAda
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         productAdapter = new ProductAdapter(productList, currentUserEmail, this);
         recyclerView.setAdapter(productAdapter);
+        productAdapter.setOnEditProduct(this);
 
         loadProducts();
 
         Button btnAddProduct = findViewById(R.id.btn_add_product);
         btnAddProduct.setOnClickListener(v -> showAddProductDialog());
-
     }
 
     private void getUserRole() {
@@ -146,7 +148,7 @@ public class SupermarketActivity extends AppCompatActivity implements ProductAda
 
         builder.setPositiveButton("Agregar", (dialog, which) -> {
             String productName = productNameInput.getText().toString().trim();
-            String productQuantity = productQuantityInput.getText().toString().trim(); // Aquí capturamos la cantidad
+            String productQuantity = productQuantityInput.getText().toString().trim();
             String productPrice = productPriceInput.getText().toString().trim();
             String productDescription = productDescriptionInput.getText().toString().trim();
             String productType = productTypeSpinner.getSelectedItem().toString();
@@ -156,14 +158,12 @@ public class SupermarketActivity extends AppCompatActivity implements ProductAda
                 return;
             }
 
-            // Creamos el producto con la cantidad como entero
             Product newProduct = new Product(productName, Integer.parseInt(productQuantity), productType, currentUserEmail, Double.parseDouble(productPrice), null, productDescription);
-            newProduct.setQuantity(Integer.parseInt(productQuantity)); // Se usa setQuantity() para asignar la cantidad
+            newProduct.setQuantity(Integer.parseInt(productQuantity));
             productList.add(newProduct);
             productAdapter.notifyItemInserted(productList.size() - 1);
             Toast.makeText(SupermarketActivity.this, "Producto agregado", Toast.LENGTH_SHORT).show();
 
-            // Manejo de imagen
             if (imageUri != null) {
                 uploadImageToFirebase(newProduct);
             } else {
@@ -223,8 +223,6 @@ public class SupermarketActivity extends AppCompatActivity implements ProductAda
         if (product.getUserEmail().equals(currentUserEmail)) {
             productList.remove(product);
             productAdapter.notifyDataSetChanged();
-            Toast.makeText(this, "Producto eliminado", Toast.LENGTH_SHORT).show();
-
             DB.collection("products").document(product.getId()).delete()
                     .addOnSuccessListener(aVoid -> Toast.makeText(SupermarketActivity.this, "Producto eliminado de la base de datos", Toast.LENGTH_SHORT).show())
                     .addOnFailureListener(e -> Toast.makeText(SupermarketActivity.this, "Error al eliminar el producto", Toast.LENGTH_SHORT).show());
@@ -232,6 +230,96 @@ public class SupermarketActivity extends AppCompatActivity implements ProductAda
             Toast.makeText(this, "No tienes permisos para eliminar este producto", Toast.LENGTH_SHORT).show();
         }
     }
+
+    @Override
+    public void onEditClick(Product product) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        final View customLayout = getLayoutInflater().inflate(R.layout.dialog_edit_product, null);
+        builder.setView(customLayout);
+
+        final TextInputEditText productNameInput = customLayout.findViewById(R.id.product_name);
+        final TextInputEditText productQuantityInput = customLayout.findViewById(R.id.product_quantity);
+        final TextInputEditText productPriceInput = customLayout.findViewById(R.id.product_price);
+        final TextInputEditText productDescriptionInput = customLayout.findViewById(R.id.product_description);
+        final Spinner productTypeSpinner = customLayout.findViewById(R.id.product_type_spinner);
+        Button btnSelectImage = customLayout.findViewById(R.id.btn_select_image);
+
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.product_types, android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        productTypeSpinner.setAdapter(adapter);
+
+        // Set the existing product details in the input fields
+        productNameInput.setText(product.getName());
+        productQuantityInput.setText(String.valueOf(product.getQuantity()));
+        productPriceInput.setText(String.valueOf(product.getPrice()));
+        productDescriptionInput.setText(product.getDescription());
+        int spinnerPosition = adapter.getPosition(product.getType());
+        productTypeSpinner.setSelection(spinnerPosition);
+
+        btnSelectImage.setOnClickListener(v -> openImageChooser());
+
+        builder.setPositiveButton("Confirmar cambio", (dialog, which) -> {
+            String productName = productNameInput.getText().toString().trim();
+            String productQuantity = productQuantityInput.getText().toString().trim();
+            String productPrice = productPriceInput.getText().toString().trim();
+            String productDescription = productDescriptionInput.getText().toString().trim();
+            String productType = productTypeSpinner.getSelectedItem().toString();
+
+            if (productName.isEmpty() || productQuantity.isEmpty() || productPrice.isEmpty() || productDescription.isEmpty()) {
+                Toast.makeText(SupermarketActivity.this, "Por favor llena todos los campos", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            // Update product with new values
+            product.setName(productName);
+            product.setQuantity(Integer.parseInt(productQuantity));
+            product.setPrice(Double.parseDouble(productPrice));
+            product.setDescription(productDescription);
+            product.setType(productType);
+
+            int productIndex = productList.indexOf(product);
+            if (productIndex >= 0) {
+                productAdapter.notifyItemChanged(productIndex);
+            }
+
+            Toast.makeText(SupermarketActivity.this, "Producto editado", Toast.LENGTH_SHORT).show();
+
+            // Handle image upload if there's a new image selected
+            if (imageUri != null) {
+                uploadImageToFirebase(product);
+            } else {
+                updateProductInFirestore(product);
+            }
+        });
+
+        builder.setNegativeButton("Cancelar", (dialog, which) -> dialog.dismiss());
+
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
+
+    private void updateProductInFirestore(Product product) {
+        DocumentReference productRef = DB.collection("products").document(product.getId());
+        Map<String, Object> updatedData = new HashMap<>();
+        updatedData.put("name", product.getName());
+        updatedData.put("quantity", product.getQuantity());
+        updatedData.put("type", product.getType());
+        updatedData.put("userEmail", product.getUserEmail());
+        updatedData.put("price", product.getPrice());
+        updatedData.put("description", product.getDescription());
+        if (product.getImageUrl() != null) {
+            updatedData.put("imageUrl", product.getImageUrl());
+        }
+        productRef.update(updatedData)
+                .addOnSuccessListener(aVoid -> {
+                    Toast.makeText(SupermarketActivity.this, "Producto actualizado en Firestore", Toast.LENGTH_SHORT).show();
+                })
+                .addOnFailureListener(e -> {
+                    Toast.makeText(SupermarketActivity.this, "Error al actualizar el producto: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                });
+    }
+
+
 
     private void setupBottomNavigation() {
         ImageView profileIcon = findViewById(R.id.action_profile);

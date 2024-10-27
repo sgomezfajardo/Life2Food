@@ -106,9 +106,8 @@ public class CartActivity extends AppCompatActivity {
 
 
     private void startMapsActivity() {
-        // Crear un Intent para iniciar la nueva actividad
-        Intent intent = new Intent(CartActivity.this, MapsActivity.class); // Reemplaza TargetActivity con el nombre de tu clase de destino
-        startActivity(intent); // Inicia la actividad
+        Intent intent = new Intent(CartActivity.this, MapsActivity.class);
+        startActivity(intent);
     }
 
     // Método para manejar la respuesta de la solicitud de permisos

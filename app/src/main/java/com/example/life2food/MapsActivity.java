@@ -1,6 +1,7 @@
 package com.example.life2food;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -10,6 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.FragmentActivity;
 import android.util.Log;
+import android.widget.Button;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
@@ -44,6 +46,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         firebase = new Firebase();
         userId = firebase.getCurrentUser().getUid(); // Cambiado a getUid()
+        Button backButton = findViewById(R.id.back_button);
+        backButton.setOnClickListener(v -> {
+            startActivity(new Intent(this, CartActivity.class));
+        });
 
         db = firebase.getDB();
         Log.d(TAG, "Firebase Firestore initialized");

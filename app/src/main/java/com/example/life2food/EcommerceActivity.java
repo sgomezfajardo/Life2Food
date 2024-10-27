@@ -47,7 +47,6 @@ public class EcommerceActivity extends AppCompatActivity
     private final Firebase firebase = new Firebase();
     private final String USERID = firebase.getUSERID();
     private final FirebaseFirestore DB = firebase.getDB();
-    private String currentUserEmail;
 
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
 
@@ -151,18 +150,7 @@ public class EcommerceActivity extends AppCompatActivity
     }
 
     @Override
-    public void onDeleteProductClick(Product product) {
-        DB.collection("products")
-                .document(product.getId())
-                .delete()
-                .addOnSuccessListener(aVoid -> {
-                    productList.remove(product);
-                    productAdapter.notifyDataSetChanged();
-                })
-                .addOnFailureListener(e -> {
-
-                });
-    }
+    public void onDeleteProductClick(Product product) {}
 
     private void setupBottomNavigation() {
         ImageView profileIcon = findViewById(R.id.action_profile);
