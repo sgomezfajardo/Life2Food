@@ -16,4 +16,9 @@
         <item>Pastas</item>
     </string-array>
 
+    <string-array name="direction_types">
+        <item>Calle</item>
+        <item>Carrera</item>
+    </string-array>
+
 </resources>

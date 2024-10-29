@@ -5,7 +5,22 @@ public class User {
     private String lastName;
     private String email;
     private String profileImage;
+    private String street;
+    private String numberStreet;
+    private String city;
+    private String postalCode;
 
+
+    public User(String firstName, String lastName, String email, String street, String numberStreet, String city, String postalCode) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.email = email;
+        this.profileImage = "https://firebasestorage.googleapis.com/v0/b/life2food-ec030.appspot.com/o/profile_images%2Fdefault_profile.png?alt=media&token=6caf9356-80ca-419d-b894-bd58d2878631";
+        this.street = street;
+        this.numberStreet = numberStreet;
+        this.city = city;
+        this.postalCode = postalCode;
+    }
 
     public User(String firstName, String lastName, String email) {
         this.firstName = firstName;
@@ -13,6 +28,8 @@ public class User {
         this.email = email;
         this.profileImage = "https://firebasestorage.googleapis.com/v0/b/life2food-ec030.appspot.com/o/profile_images%2Fdefault_profile.png?alt=media&token=6caf9356-80ca-419d-b894-bd58d2878631";
     }
+
+
 
     // Getters y Setters
     public String getFirstName() {

@@ -2,6 +2,7 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/background_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/Background"
@@ -10,14 +11,27 @@
     <ImageView
         android:id="@+id/imageView2"
         android:layout_width="374dp"
-        android:layout_height="271dp"
+        android:layout_height="200dp"
         android:layout_marginTop="16dp"
-        android:contentDescription="Logo"
+        android:contentDescription="register image"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.486"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/register" />
+
+    <ImageView
+        android:id="@+id/ubication_image"
+        android:layout_width="374dp"
+        android:layout_height="200dp"
+        android:layout_marginTop="16dp"
+        android:contentDescription="ubication image"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.486"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ubication"/>
 
     <EditText
         android:id="@+id/emailEditText"
@@ -29,8 +43,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/imageView2"
-        app:layout_constraintWidth_percent="0.8"
-        android:layout_marginTop="16dp" />
+        app:layout_constraintWidth_percent="0.8"/>
 
     <EditText
         android:id="@+id/firstNameEditText"
@@ -71,17 +84,106 @@
         app:layout_constraintWidth_percent="0.8"
         android:layout_marginTop="16dp" />
 
-    <Button
-        android:id="@+id/registerButton"
+    <EditText
+        android:id="@+id/confirmPassword"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="Registrar"
-        android:textSize="18sp"
-        android:backgroundTint="@color/Life2Food_color"
+        android:hint="Confirma tu contraseña"
+        android:inputType="textPassword"
+        android:padding="16dp"
         app:layout_constraintTop_toBottomOf="@id/passwordEditText"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintWidth_percent="0.8"
+        android:layout_marginTop="16dp" />
+
+    <Button
+        android:id="@+id/continueButton"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Siguiente"
+        android:textSize="18sp"
+        android:backgroundTint="@color/Life2Food_color"
+        app:layout_constraintTop_toBottomOf="@id/confirmPassword"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintWidth_percent="0.8"
         android:layout_marginTop="24dp"/>
+
+    <EditText
+        android:id="@+id/streetEditText"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="Ingresa la calle o carrera"
+        android:padding="16dp"
+        android:visibility="gone"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/ubication_image"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintWidth_percent="0.8"
+        android:layout_marginTop="16dp"/>
+
+    <EditText
+        android:id="@+id/numberStreetEditText"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="Ingresa el numero"
+        android:padding="16dp"
+        android:visibility="gone"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/streetEditText"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintWidth_percent="0.8"
+        android:layout_marginTop="16dp"/>
+
+    <EditText
+        android:id="@+id/cityEditText"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="Ingresa la ciudad"
+        android:padding="16dp"
+        android:visibility="gone"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/numberStreetEditText"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintWidth_percent="0.8"
+        android:layout_marginTop="16dp"/>
+
+    <EditText
+        android:id="@+id/postalCodeEditText"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="Ingresa el código postal"
+        android:padding="16dp"
+        android:visibility="gone"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/cityEditText"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintWidth_percent="0.8"
+        android:layout_marginTop="16dp"/>
+
+    <Spinner
+        android:id="@+id/direction_type_spinner"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:layout_marginLeft="20dp"
+        android:visibility="gone"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/ubication_image"/>
+
+    <Button
+        android:id="@+id/registerButton"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Registrarse"
+        android:textSize="18sp"
+        android:backgroundTint="@color/Life2Food_color"
+        app:layout_constraintTop_toBottomOf="@id/postalCodeEditText"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintWidth_percent="0.8"
+        android:layout_marginTop="24dp"
+        android:visibility="gone"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
