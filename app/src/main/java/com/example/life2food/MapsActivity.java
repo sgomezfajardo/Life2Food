@@ -35,7 +35,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private FirebaseFirestore db;
     private FusedLocationProviderClient fusedLocationClient;
     private Firebase firebase;
-    private String userId; // Cambiado a userId
+    private String userId;
 
     private static final String TAG = "MapsActivity";
 
@@ -46,9 +46,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         firebase = new Firebase();
         userId = firebase.getCurrentUser().getUid(); // Cambiado a getUid()
+
         Button backButton = findViewById(R.id.back_button);
         backButton.setOnClickListener(v -> {
-            startActivity(new Intent(this, CartActivity.class));
+            finish();
         });
 
         db = firebase.getDB();
@@ -132,8 +133,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 });
     }
 
-
-
     private void convertirDireccionACoordenadas(String direccion) {
         Log.d(TAG, "Convirtiendo dirección a coordenadas: " + direccion);
         GeocodingService geocodingService = new GeocodingService("AIzaSyBrrXaiHB3RbAkY-4dnDk7pEwp1_7RGRZ0");
@@ -161,7 +160,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     }
                 });
     }
-
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {

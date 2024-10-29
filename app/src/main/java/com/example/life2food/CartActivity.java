@@ -61,6 +61,8 @@ public class CartActivity extends AppCompatActivity {
         totalTextView = findViewById(R.id.text_total);  // Inicializar el TextView del total
         payButton = findViewById(R.id.Realizar_pago);  // Inicializar el botón de pago
 
+
+
         payButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -69,10 +71,12 @@ public class CartActivity extends AppCompatActivity {
                     ActivityCompat.requestPermissions(CartActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_PERMISSION_REQUEST_CODE);
                 } else {
                     // Permiso concedido, iniciar MapsActivity
-                    startMapsActivity();
+                    startPagoExitosoActivity();
                 }
             }
         });
+
+
 
         Firebase firebaseHelper = new Firebase();
         View supermarketIcon = findViewById(R.id.action_supermarket); // Icono del supermercado
@@ -104,11 +108,11 @@ public class CartActivity extends AppCompatActivity {
         });
     }
 
-
-    private void startMapsActivity() {
-        Intent intent = new Intent(CartActivity.this, MapsActivity.class);
+    private void startPagoExitosoActivity() {
+        Intent intent = new Intent(CartActivity.this, PagoExitosoActivity.class);
         startActivity(intent);
     }
+
 
     // Método para manejar la respuesta de la solicitud de permisos
     @Override
@@ -117,7 +121,7 @@ public class CartActivity extends AppCompatActivity {
         if (requestCode == LOCATION_PERMISSION_REQUEST_CODE) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 // Permiso concedido, iniciar MapsActivity
-                startMapsActivity();
+                startPagoExitosoActivity();
             } else {
                 // Permiso denegado, mostrar un mensaje
                 Toast.makeText(this, "Se necesita permiso de ubicación para acceder al mapa", Toast.LENGTH_SHORT).show();
@@ -126,7 +130,6 @@ public class CartActivity extends AppCompatActivity {
     }
 
     private void getInfo() {
-        // Resto de tu método getInfo permanece igual
         String productId;
         String productName;
         String productQuantity;
