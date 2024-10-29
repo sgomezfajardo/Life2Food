@@ -33,7 +33,6 @@ public class RegisterActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
 
-        // Inicializa los campos de registro y contraseña
         emailEditText = findViewById(R.id.emailEditText);
         firstNameEditText = findViewById(R.id.firstNameEditText);
         lastNameEditText = findViewById(R.id.lastNameEditText);
@@ -41,7 +40,6 @@ public class RegisterActivity extends AppCompatActivity {
         confirmPasswordEditText = findViewById(R.id.confirmPassword);
         continueButton = findViewById(R.id.continueButton);
 
-        // Inicializa los campos de dirección y el botón de registro
         streetEditText = findViewById(R.id.streetEditText);
         numberStreetEditText = findViewById(R.id.numberStreetEditText);
         cityEditText = findViewById(R.id.cityEditText);
@@ -59,7 +57,6 @@ public class RegisterActivity extends AppCompatActivity {
                     String password = passwordEditText.getText().toString().trim();
                     String confirmPassword = confirmPasswordEditText.getText().toString().trim();
 
-                    // Verificación de campos de registro y coincidencia de contraseñas
                     if (email.isEmpty() || password.isEmpty() || firstName.isEmpty() || lastName.isEmpty()) {
                         Toast.makeText(RegisterActivity.this, "Por favor completa todos los campos de registro", Toast.LENGTH_SHORT).show();
                         return;
@@ -70,7 +67,6 @@ public class RegisterActivity extends AppCompatActivity {
                         return;
                     }
 
-                    // Oculta los campos iniciales y muestra los campos de dirección
                     findViewById(R.id.imageView2).setVisibility(View.GONE);
                     emailEditText.setVisibility(View.GONE);
                     firstNameEditText.setVisibility(View.GONE);
@@ -80,7 +76,6 @@ public class RegisterActivity extends AppCompatActivity {
                     continueButton.setVisibility(View.GONE);
                     findViewById(R.id.background_layout).setBackgroundColor(Color.WHITE);
 
-                    // Muestra los campos de dirección
                     findViewById(R.id.ubication_image).setVisibility(View.VISIBLE);
                     streetEditText.setVisibility(View.VISIBLE);
                     numberStreetEditText.setVisibility(View.VISIBLE);
@@ -89,7 +84,6 @@ public class RegisterActivity extends AppCompatActivity {
                     directionTypeSpinner.setVisibility(View.VISIBLE);
                     registerButton.setVisibility(View.VISIBLE);
 
-                    // Configura el Spinner para el tipo de dirección
                     ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(RegisterActivity.this,
                             R.array.direction_types, android.R.layout.simple_spinner_item);
                     adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -103,8 +97,6 @@ public class RegisterActivity extends AppCompatActivity {
         });
 
 
-
-        // Configura el botón "Registrarse" para completar el registro con la dirección
         registerButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -113,20 +105,26 @@ public class RegisterActivity extends AppCompatActivity {
                 String city = cityEditText.getText().toString().trim();
                 String postalCode = postalCodeEditText.getText().toString().trim();
 
-                // Verificación de campos de dirección
                 if (street.isEmpty() || numberStreet.isEmpty() || city.isEmpty() || postalCode.isEmpty()) {
                     Toast.makeText(RegisterActivity.this, "Por favor completa todos los campos de dirección", Toast.LENGTH_SHORT).show();
                     return;
                 }
 
-                // Procede con la creación del usuario en Firebase Authentication
                 mAuth.createUserWithEmailAndPassword(emailEditText.getText().toString(), passwordEditText.getText().toString())
                         .addOnCompleteListener(RegisterActivity.this, task -> {
                             if (task.isSuccessful()) {
                                 String userId = mAuth.getCurrentUser().getUid();
-                                User user = new User(firstNameEditText.getText().toString(), lastNameEditText.getText().toString(), emailEditText.getText().toString(), street, numberStreet, city, postalCode);
 
-                                // Guarda la información del usuario en Firestore
+                                User user = new User(
+                                        firstNameEditText.getText().toString(),
+                                        lastNameEditText.getText().toString(),
+                                        emailEditText.getText().toString(),
+                                        street,
+                                        numberStreet,
+                                        city,
+                                        postalCode
+                                );
+
                                 db.collection("users").document(userId)
                                         .set(user)
                                         .addOnSuccessListener(aVoid -> {
@@ -142,5 +140,6 @@ public class RegisterActivity extends AppCompatActivity {
                         });
             }
         });
+
     }
 }
