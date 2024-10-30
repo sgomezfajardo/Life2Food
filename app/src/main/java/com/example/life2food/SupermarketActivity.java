@@ -339,4 +339,9 @@ public class SupermarketActivity extends AppCompatActivity implements ProductAda
             startActivity(new Intent(this, EcommerceActivity.class));
         });
     }
+
+    @Override
+    public void onCardClick(Product product) {
+
+    }
 }

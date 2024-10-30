@@ -28,6 +28,7 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.DocumentReference;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -61,7 +62,6 @@ public class EcommerceActivity extends AppCompatActivity
 
         setupBottomNavigation();
 
-        // Verificar permisos al iniciar
         checkLocationPermission();
 
         recyclerView = findViewById(R.id.recycler_view);
@@ -141,7 +141,7 @@ public class EcommerceActivity extends AppCompatActivity
                         String imageUrl = document.getString("imageUrl");
                         String description = document.getString("description");
 
-                        if(quantity>0)
+                        if (quantity > 0)
                             productList.add(new Product(id, name, quantity, type, email, price, imageUrl, description));
 
                     }
@@ -216,18 +216,16 @@ public class EcommerceActivity extends AppCompatActivity
                 return;
             }
 
-            // Obtener el email del producto para buscar la dirección del creador
-            String productCreatorEmail = product.getEmail();  // Asegúrate de que este método obtenga el email del producto
+            String productCreatorEmail = product.getEmail();
 
-            // Buscar la dirección del usuario que creó el producto
             FirebaseFirestore DB = FirebaseFirestore.getInstance();
             DB.collection("users")
-                    .whereEqualTo("email", productCreatorEmail)  // Comparar con el email del producto
+                    .whereEqualTo("email", productCreatorEmail)
                     .get()
                     .addOnSuccessListener(queryDocumentSnapshots -> {
                         if (!queryDocumentSnapshots.isEmpty()) {
                             DocumentSnapshot userDocument = queryDocumentSnapshots.getDocuments().get(0);
-                            String userAddress = userDocument.getString("address"); // Obtener la dirección del usuario
+                            String userAddress = userDocument.getString("address");
 
                             DocumentReference cartRef = DB.collection("carts").document(USERID);
                             cartRef.get().addOnSuccessListener(documentSnapshot -> {
@@ -242,28 +240,28 @@ public class EcommerceActivity extends AppCompatActivity
                                                 int currentQuantity = ((Long) item.get("quantity")).intValue();
                                                 int newQuantity = currentQuantity + quantityToAdd;
 
-                                                // Actualizamos la cantidad en el carrito
+
                                                 item.put("quantity", newQuantity);
-                                                item.put("address", userAddress); // Agregar dirección al producto
+                                                item.put("address", userAddress);
                                                 productExists = true;
                                                 break;
                                             }
                                         }
 
                                         if (!productExists) {
-                                            // Si el producto no está en el carrito, lo añadimos
+
                                             Map<String, Object> newProduct = new HashMap<>();
                                             newProduct.put("productId", product.getId());
                                             newProduct.put("productName", product.getName());
                                             newProduct.put("quantity", quantityToAdd);
                                             newProduct.put("price", product.getPrice());
                                             newProduct.put("imageUrl", product.getImageUrl());
-                                            newProduct.put("address", userAddress); // Agregar dirección al nuevo producto
+                                            newProduct.put("address", userAddress);
 
                                             items.add(newProduct);
                                         }
 
-                                        // Actualizamos el carrito en la base de datos
+
                                         cartRef.update("items", items)
                                                 .addOnSuccessListener(aVoid -> {
                                                     product.updateQuantity(product.getQuantity() - quantityToAdd);
@@ -289,22 +287,15 @@ public class EcommerceActivity extends AppCompatActivity
 
 
     public void createCartIfNotExists() {
-        FirebaseFirestore DB = FirebaseFirestore.getInstance();
-        FirebaseAuth auth = FirebaseAuth.getInstance();
-        String userId = auth.getCurrentUser().getUid();  // UID del usuario autenticado
+        DocumentReference cartRef = DB.collection("carts").document(USERID);
 
-        // Referencia al documento del carrito del usuario
-        DocumentReference cartRef = DB.collection("carts").document(userId);
-
-        // Verificar si el carrito ya existe
         cartRef.get().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 DocumentSnapshot document = task.getResult();
                 if (!document.exists()) {
-                    // Si el carrito no existe, creamos un nuevo documento
                     Map<String, Object> newCart = new HashMap<>();
-                    newCart.put("id_usuario", userId);  // Guardar el UID del usuario
-                    newCart.put("items", new ArrayList<>());  // Crear un array vacío para los productos
+                    newCart.put("id_usuario", USERID);
+                    newCart.put("items", new ArrayList<>());
 
                     cartRef.set(newCart)
                             .addOnSuccessListener(aVoid -> {
@@ -335,23 +326,29 @@ public class EcommerceActivity extends AppCompatActivity
         }
     }
 
-    // Método que se llama cuando se recibe la respuesta de la solicitud de permisos
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == LOCATION_PERMISSION_REQUEST_CODE) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                // Permiso otorgado, puedes continuar
+
                 initLocationServices();
             } else {
-                // Permiso denegado, mostrar un mensaje al usuario
+
                 Toast.makeText(this, "Permiso de ubicación denegado. Algunas funciones pueden no estar disponibles.", Toast.LENGTH_SHORT).show();
             }
         }
     }
 
-    // Método para inicializar los servicios de ubicación (implementa tu lógica aquí)
+
     private void initLocationServices() {
-        // Aquí puedes inicializar la lógica que requiere el permiso de ubicación
+
+    }
+
+    @Override
+    public void onCardClick(Product product) {
+        Intent intent = new Intent(this, ProductDetails.class);
+        intent.putExtra("product", product);
+        startActivity(intent);
     }
 }

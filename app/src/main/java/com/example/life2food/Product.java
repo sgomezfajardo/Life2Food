@@ -2,9 +2,13 @@ package com.example.life2food;
 
 import com.google.firebase.firestore.FirebaseFirestore;
 
-public class Product {
+import android.os.Parcel;
+import android.os.Parcelable;
+import com.google.firebase.firestore.FirebaseFirestore;
 
-    //Product info
+public class Product implements Parcelable {
+
+    // Product info
     private String id;
     private String name;
     private int quantity;
@@ -15,13 +19,12 @@ public class Product {
     private String description;
     private String adress;
 
-
-    //Firebase
+    // Firebase
     private final Firebase firebase = new Firebase();
-    private final FirebaseFirestore DB = firebase.getDB();;
+    private final FirebaseFirestore DB = firebase.getDB();
     private final String USERID = firebase.getUSERID();
 
-
+    // Constructors
     public Product() {
     }
 
@@ -33,7 +36,6 @@ public class Product {
         this.price = price;
         this.imageUrl = imageUrl;
         this.description = description;
-        this.adress = adress;
     }
 
     public Product(String id, String name, int quantity, String type, String email, double price, String imageUrl, String description) {
@@ -45,8 +47,53 @@ public class Product {
         this.price = price;
         this.imageUrl = imageUrl;
         this.description = description;
+        this.adress = adress;
     }
 
+    // Parcelable implementation
+    protected Product(Parcel in) {
+        id = in.readString();
+        name = in.readString();
+        quantity = in.readInt();
+        type = in.readString();
+        email = in.readString();
+        price = in.readDouble();
+        imageUrl = in.readString();
+        description = in.readString();
+        adress = in.readString();
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(id);
+        dest.writeString(name);
+        dest.writeInt(quantity);
+        dest.writeString(type);
+        dest.writeString(email);
+        dest.writeDouble(price);
+        dest.writeString(imageUrl);
+        dest.writeString(description);
+        dest.writeString(adress);
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    public static final Creator<Product> CREATOR = new Creator<Product>() {
+        @Override
+        public Product createFromParcel(Parcel in) {
+            return new Product(in);
+        }
+
+        @Override
+        public Product[] newArray(int size) {
+            return new Product[size];
+        }
+    };
+
+    // Getters and setters
     public String getId() {
         return id;
     }
@@ -90,6 +137,7 @@ public class Product {
     public void setQuantity(int quantity) {
         this.quantity = quantity;
     }
+
     public void updateQuantity(int quantity) {
         this.quantity = quantity;
         DB.collection("products").document(getId()).update("quantity", getQuantity());

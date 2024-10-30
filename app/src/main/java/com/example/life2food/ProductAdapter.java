@@ -25,9 +25,9 @@ import java.util.List;
 
 public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductViewHolder> {
 
-    private List<Product> productList;
+    private static List<Product> productList;
     private String currentUserEmail;
-    private OnProductClickListener productClickListener;
+    private static OnProductClickListener productClickListener;
     private OnAddToCartClickListener addToCartClickListener;
     private OnEditProduct onEditProduct;
     private static boolean isEcommerce;
@@ -48,22 +48,25 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
 
     public interface OnProductClickListener {
         void onDeleteProductClick(Product product);
+        void onCardClick(Product product);
     }
 
     public interface OnAddToCartClickListener {
         void onAddToCartClick(Product product);
     }
 
-    public interface OnEditProduct{
+    public interface OnEditProduct {
         void onEditClick(Product product);
     }
 
     public void setOnAddToCartClickListener(OnAddToCartClickListener listener) {
         this.addToCartClickListener = listener;
     }
+
     public void setOnEditProduct(OnEditProduct listener) {
         this.onEditProduct = listener;
     }
+
 
     @NonNull
     @Override
@@ -165,6 +168,15 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
                 green = itemView.findViewById(R.id.edit_product);
                 yellow = itemView.findViewById(R.id.btn_delete_product);
             }
+            itemView.setOnClickListener(v -> {
+                if (productClickListener != null) {
+                    int position = getAdapterPosition();
+                    if (position != RecyclerView.NO_POSITION) {
+                        Product product = productList.get(position);
+                        productClickListener.onCardClick(product); // Método para manejar el clic en la tarjeta
+                    }
+                }
+            });
         }
     }
 }

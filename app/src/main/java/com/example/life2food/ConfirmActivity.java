@@ -33,7 +33,7 @@ public class ConfirmActivity extends AppCompatActivity {
         confirmButton.setOnClickListener(v -> {
             String enteredToken = tokenEditText.getText().toString().trim();
 
-            if (enteredToken.equals(expectedToken)) {
+            /*if (enteredToken.equals(expectedToken)) {
                 // Crear cuenta en Firebase
                 mAuth.createUserWithEmailAndPassword(email, password)
                         .addOnCompleteListener(ConfirmActivity.this, task -> {
@@ -57,7 +57,7 @@ public class ConfirmActivity extends AppCompatActivity {
                         });
             } else {
                 Toast.makeText(ConfirmActivity.this, "Invalid token", Toast.LENGTH_SHORT).show();
-            }
+            }*/
         });
     }
 }

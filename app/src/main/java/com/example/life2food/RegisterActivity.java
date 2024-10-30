@@ -17,11 +17,10 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.FirebaseFirestore;
-
 import com.google.android.libraries.places.api.Places;
 import com.google.android.libraries.places.api.net.PlacesClient;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.List;
 import java.util.Locale;
@@ -58,7 +57,7 @@ public class RegisterActivity extends AppCompatActivity implements OnMapReadyCal
         searchAddressButton = findViewById(R.id.searchAddressButton);
 
 
-        Places.initialize(getApplicationContext(), "AIzaSyBrrXaiHB3RbAkY-4dnDk7pEwp1_7RGRZ0"); // Reemplaza con tu API Key
+        Places.initialize(getApplicationContext(), "AIzaSyBrrXaiHB3RbAkY-4dnDk7pEwp1_7RGRZ0");
         PlacesClient placesClient = Places.createClient(this);
 
 
