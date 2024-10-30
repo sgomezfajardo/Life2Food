@@ -1,7 +1,6 @@
 package com.example.life2food;
 
 import android.Manifest;
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -45,12 +44,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         setContentView(R.layout.activity_maps);
 
         firebase = new Firebase();
-        userId = firebase.getCurrentUser().getUid(); // Cambiado a getUid()
+        userId = firebase.getCurrentUser().getUid();
 
         Button backButton = findViewById(R.id.back_button);
-        backButton.setOnClickListener(v -> {
-            finish();
-        });
+        backButton.setOnClickListener(v -> finish());
 
         db = firebase.getDB();
         Log.d(TAG, "Firebase Firestore initialized");
@@ -111,17 +108,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     if (task.isSuccessful()) {
                         Log.d(TAG, "Consulta exitosa. Documentos recuperados: " + task.getResult().size());
                         for (QueryDocumentSnapshot document : task.getResult()) {
-                            // Obtenemos el array de items
                             List<Map<String, Object>> items = (List<Map<String, Object>>) document.get("items");
                             if (items != null) {
                                 for (Map<String, Object> item : items) {
-                                    String direccion = (String) item.get("address"); // Obtenemos la dirección de cada item
-                                    Log.d(TAG, "Dirección recuperada para el producto " + document.getId() + ": " + direccion);
-                                    if (direccion != null) {
-                                        convertirDireccionACoordenadas(direccion);
-                                    } else {
-                                        Log.e(TAG, "Dirección no encontrada para el producto: " + document.getId());
-                                    }
+                                    String productId = (String) item.get("productId");
+                                    verificarProductoYUbicacion(productId, item);
                                 }
                             } else {
                                 Log.e(TAG, "No se encontraron items para el carrito: " + document.getId());
@@ -133,6 +124,47 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 });
     }
 
+    private void verificarProductoYUbicacion(String productId, Map<String, Object> item) {
+        db.collection("products")
+                .document(productId)
+                .get()
+                .addOnSuccessListener(productDocument -> {
+                    if (productDocument.exists()) {
+                        String email = productDocument.getString("email");
+                        if (email != null) {
+                            db.collection("users")
+                                    .whereEqualTo("email", email)
+                                    .get()
+                                    .addOnSuccessListener(userQuery -> {
+                                        if (!userQuery.isEmpty()) {
+                                            for (QueryDocumentSnapshot userDoc : userQuery) {
+                                                Double latitude = userDoc.getDouble("latitude");
+                                                Double longitude = userDoc.getDouble("longitude");
+                                                if (latitude != null && longitude != null) {
+                                                    LatLng userLocation = new LatLng(latitude, longitude);
+                                                    agregarMarcadorEnMapa(userLocation, "Ubicación de " + email);
+                                                    return;
+                                                }
+                                            }
+                                        }
+                                        String direccion = (String) item.get("address");
+                                        if (direccion != null) {
+                                            convertirDireccionACoordenadas(direccion);
+                                        } else {
+                                            Log.e(TAG, "Dirección no encontrada para el producto: " + productId);
+                                        }
+                                    })
+                                    .addOnFailureListener(e -> Log.e(TAG, "Error al buscar usuario: " + e));
+                        } else {
+                            Log.e(TAG, "No se encontró email para el producto: " + productId);
+                        }
+                    } else {
+                        Log.e(TAG, "Producto no encontrado en la colección 'products': " + productId);
+                    }
+                })
+                .addOnFailureListener(e -> Log.e(TAG, "Error al buscar producto: " + e));
+    }
+
     private void convertirDireccionACoordenadas(String direccion) {
         Log.d(TAG, "Convirtiendo dirección a coordenadas: " + direccion);
         GeocodingService geocodingService = new GeocodingService("AIzaSyBrrXaiHB3RbAkY-4dnDk7pEwp1_7RGRZ0");
@@ -141,9 +173,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     if (task.isSuccessful()) {
                         LatLng latLng = task.getResult();
                         if (latLng != null) {
-
                             Bitmap smallIcon = BitmapFactory.decodeResource(getResources(), R.drawable.icono_productos_mapa);
-                            Bitmap resizedIcon = Bitmap.createScaledBitmap(smallIcon, 100, 100, false); //////
+                            Bitmap resizedIcon = Bitmap.createScaledBitmap(smallIcon, 100, 100, false);
 
                             MarkerOptions markerOptions = new MarkerOptions()
                                     .position(latLng)
@@ -159,6 +190,19 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         Log.e(TAG, "Error al convertir dirección a coordenadas: " + task.getException());
                     }
                 });
+    }
+
+    private void agregarMarcadorEnMapa(LatLng location, String title) {
+        Bitmap smallIcon = BitmapFactory.decodeResource(getResources(), R.drawable.icono_productos_mapa);
+        Bitmap resizedIcon = Bitmap.createScaledBitmap(smallIcon, 100, 100, false);
+
+        MarkerOptions markerOptions = new MarkerOptions()
+                .position(location)
+                .title(title)
+                .icon(BitmapDescriptorFactory.fromBitmap(resizedIcon));
+
+        mMap.addMarker(markerOptions);
+        Log.d(TAG, "Marcador agregado en: " + location + " con título: " + title);
     }
 
     @Override
