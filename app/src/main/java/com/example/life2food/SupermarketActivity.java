@@ -125,6 +125,7 @@ public class SupermarketActivity extends AppCompatActivity implements ProductAda
     private void showAddProductDialog() {
 
         if (currentUserRole == null || currentUserRole.equals("user")) {
+            Log.d("SupermarketActivity", "ROL: " + currentUserRole);
             Toast.makeText(this, "No tienes permisos para agregar productos.", Toast.LENGTH_SHORT).show();
             return;
         }

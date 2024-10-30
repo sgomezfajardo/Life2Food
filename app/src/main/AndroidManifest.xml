@@ -24,6 +24,7 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyBrrXaiHB3RbAkY-4dnDk7pEwp1_7RGRZ0" />
 
+
         <activity
             android:name=".BuySingleProductActivity"
             android:exported="false" />

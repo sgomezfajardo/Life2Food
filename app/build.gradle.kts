@@ -1,6 +1,6 @@
 plugins {
     id("com.android.application")
-    id("com.google.gms.google-services") // Aplicar el plugin aquí
+    id("com.google.gms.google-services")
 }
 
 android {
@@ -68,5 +68,12 @@ dependencies {
     implementation ("org.json:json:20210307")
     implementation ("com.google.android.gms:play-services-maps:18.1.0")
     implementation ("com.google.android.gms:play-services-location:19.0.1")
+    implementation("com.google.android.gms:play-services-maps:18.1.0")
+    implementation("com.google.android.gms:play-services-location:20.0.0")
+    implementation("com.google.android.libraries.places:places:2.6.0")
+    implementation ("androidx.constraintlayout:constraintlayout:2.1.0")
+    implementation ("com.google.android.gms:play-services-location:19.0.1")
+    implementation ("com.google.android.gms:play-services-maps:17.0.1")
+
 
 }
