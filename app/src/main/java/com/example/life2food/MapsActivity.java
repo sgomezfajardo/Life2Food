@@ -21,6 +21,7 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -35,6 +36,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private FusedLocationProviderClient fusedLocationClient;
     private Firebase firebase;
     private String userId;
+    private LatLng currentLocation;
 
     private static final String TAG = "MapsActivity";
 
@@ -76,6 +78,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
         mostrarUbicacionActual();
         obtenerUbicacionesProductosEnCarrito();
+
+        mMap.setOnMarkerClickListener(marker -> {
+            LatLng productLocation = marker.getPosition();
+            trazarRuta(currentLocation, productLocation);
+            return false;
+        });
     }
 
     private void mostrarUbicacionActual() {
@@ -84,17 +92,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             return;
         }
         fusedLocationClient.getLastLocation()
-                .addOnSuccessListener(this, new OnSuccessListener<Location>() {
-                    @Override
-                    public void onSuccess(Location location) {
-                        if (location != null) {
-                            LatLng currentLocation = new LatLng(location.getLatitude(), location.getLongitude());
-                            mMap.addMarker(new MarkerOptions().position(currentLocation).title("Ubicación Actual"));
-                            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, 15));
-                            Log.d(TAG, "Ubicación actual: " + currentLocation);
-                        } else {
-                            Log.e(TAG, "No se pudo obtener la ubicación actual.");
-                        }
+                .addOnSuccessListener(this, location -> {
+                    if (location != null) {
+                        currentLocation = new LatLng(location.getLatitude(), location.getLongitude());
+                        mMap.addMarker(new MarkerOptions().position(currentLocation).title("Ubicación Actual"));
+                        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, 15));
+                        Log.d(TAG, "Ubicación actual: " + currentLocation);
+                    } else {
+                        Log.e(TAG, "No se pudo obtener la ubicación actual.");
                     }
                 });
     }
@@ -141,9 +146,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                                 Double latitude = userDoc.getDouble("latitude");
                                                 Double longitude = userDoc.getDouble("longitude");
                                                 if (latitude != null && longitude != null) {
-                                                    LatLng userLocation = new LatLng(latitude, longitude);
-                                                    agregarMarcadorEnMapa(userLocation, "Ubicación de " + email);
-                                                    return;
+                                                    LatLng productLocation = new LatLng(latitude, longitude);
+                                                    agregarMarcadorEnMapa(productLocation, "Ubicación de " + email);
+                                                    return; // No necesitamos seguir buscando otros usuarios
                                                 }
                                             }
                                         }
@@ -173,15 +178,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     if (task.isSuccessful()) {
                         LatLng latLng = task.getResult();
                         if (latLng != null) {
-                            Bitmap smallIcon = BitmapFactory.decodeResource(getResources(), R.drawable.icono_productos_mapa);
-                            Bitmap resizedIcon = Bitmap.createScaledBitmap(smallIcon, 100, 100, false);
-
-                            MarkerOptions markerOptions = new MarkerOptions()
-                                    .position(latLng)
-                                    .title(direccion)
-                                    .icon(BitmapDescriptorFactory.fromBitmap(resizedIcon));
-
-                            mMap.addMarker(markerOptions);
+                            agregarMarcadorEnMapa(latLng, direccion);
                             Log.d(TAG, "Dirección: " + direccion + " Coordenadas: " + latLng);
                         } else {
                             Log.e(TAG, "No se pudieron obtener coordenadas para la dirección: " + direccion);
@@ -205,15 +202,18 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         Log.d(TAG, "Marcador agregado en: " + location + " con título: " + title);
     }
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == 1) {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                mostrarUbicacionActual();
-            } else {
-                Log.e(TAG, "Permiso de ubicación denegado.");
-            }
+    private void trazarRuta(LatLng inicio, LatLng destino) {
+        if (inicio == null || destino == null) {
+            Log.e(TAG, "Puntos de inicio o destino son nulos. No se puede trazar la ruta.");
+            return;
         }
+
+        Log.d(TAG, "Trazando ruta desde " + inicio.toString() + " hasta " + destino.toString());
+
+        String directionsUrl = "https://maps.googleapis.com/maps/api/directions/json?origin=" + inicio.latitude + "," + inicio.longitude +
+                "&destination=" + destino.latitude + "," + destino.longitude +
+                "&key=AIzaSyBrrXaiHB3RbAkY-4dnDk7pEwp1_7RGRZ0";
+
+        new DirectionsRequest(this, directionsUrl, mMap).execute();
     }
 }
