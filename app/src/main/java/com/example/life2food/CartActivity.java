@@ -1,10 +1,13 @@
 package com.example.life2food;
 
 import android.Manifest;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -17,6 +20,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 import androidx.core.app.ActivityCompat;
+import androidx.core.app.NotificationCompat;
 import androidx.core.content.ContextCompat;
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -33,23 +37,25 @@ import java.util.Map;
 
 public class CartActivity extends AppCompatActivity {
 
-    //Graphic elements
+    private static final int LOCATION_PERMISSION_REQUEST_CODE = 100;
+    private static final int NOTIFICATION_PERMISSION_REQUEST_CODE = 101;
+    private static final String CHANNEL_ID = "payment_notification_channel";
+
+    // Graphic elements
     private Button back;
     private Button payButton;
     private TextView totalTextView;
     private LinearLayout linearLayout;
 
-    //Firebase
+    // Firebase
     private final Firebase firebase = new Firebase();
     private final String USERID = firebase.getUSERID();
     private final FirebaseFirestore DB = firebase.getDB();
 
-    //Cart info
+    // Cart info
     private String items = " ";
     private double totalPrice = 0;
     private int numberItems = 0;
-
-    private static final int LOCATION_PERMISSION_REQUEST_CODE = 100; // Código de solicitud para permisos de ubicación
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,10 +64,19 @@ public class CartActivity extends AppCompatActivity {
         setupBottomNavigation();
 
         linearLayout = findViewById(R.id.linearLayout);
-        totalTextView = findViewById(R.id.text_total);  // Inicializar el TextView del total
-        payButton = findViewById(R.id.Realizar_pago);  // Inicializar el botón de pago
+        totalTextView = findViewById(R.id.text_total);
+        payButton = findViewById(R.id.Realizar_pago);
 
-
+        // Check notification permission
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.POST_NOTIFICATIONS}, NOTIFICATION_PERMISSION_REQUEST_CODE);
+            } else {
+                createNotificationChannel();
+            }
+        } else {
+            createNotificationChannel();
+        }
 
         payButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -70,18 +85,14 @@ public class CartActivity extends AppCompatActivity {
                 if (ContextCompat.checkSelfPermission(CartActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                     ActivityCompat.requestPermissions(CartActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_PERMISSION_REQUEST_CODE);
                 } else {
-                    // Permiso concedido, iniciar MapsActivity
                     startPagoExitosoActivity();
                 }
             }
         });
 
-
-
         Firebase firebaseHelper = new Firebase();
-        View supermarketIcon = findViewById(R.id.action_supermarket); // Icono del supermercado
+        View supermarketIcon = findViewById(R.id.action_supermarket);
         firebaseHelper.fetchUserRoleAndHideIcon(supermarketIcon);
-
 
         // Obtener los productos del carrito
         DB.collection("carts").whereEqualTo("id_usuario", USERID).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -111,20 +122,47 @@ public class CartActivity extends AppCompatActivity {
     private void startPagoExitosoActivity() {
         Intent intent = new Intent(CartActivity.this, PagoExitosoActivity.class);
         startActivity(intent);
+        sendPaymentNotification();
     }
 
+    private void sendPaymentNotification() {
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID)
+                .setSmallIcon(R.drawable.ic_payment) // Icono de la notificación
+                .setContentTitle("Pago exitoso")
+                .setContentText("Tu pago se ha realizado correctamente.")
+                .setPriority(NotificationCompat.PRIORITY_HIGH);
 
-    // Método para manejar la respuesta de la solicitud de permisos
+        NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        notificationManager.notify(1, builder.build());
+    }
+
+    private void createNotificationChannel() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            CharSequence name = "Payment Notifications";
+            String description = "Channel for payment notifications";
+            int importance = NotificationManager.IMPORTANCE_HIGH;
+            NotificationChannel channel = new NotificationChannel(CHANNEL_ID, name, importance);
+            channel.setDescription(description);
+
+            NotificationManager notificationManager = getSystemService(NotificationManager.class);
+            notificationManager.createNotificationChannel(channel);
+        }
+    }
+
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == LOCATION_PERMISSION_REQUEST_CODE) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                // Permiso concedido, iniciar MapsActivity
                 startPagoExitosoActivity();
             } else {
-                // Permiso denegado, mostrar un mensaje
                 Toast.makeText(this, "Se necesita permiso de ubicación para acceder al mapa", Toast.LENGTH_SHORT).show();
+            }
+        } else if (requestCode == NOTIFICATION_PERMISSION_REQUEST_CODE) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                createNotificationChannel();
+            } else {
+                Toast.makeText(this, "Se necesita permiso de notificaciones para recibir alertas", Toast.LENGTH_SHORT).show();
             }
         }
     }
