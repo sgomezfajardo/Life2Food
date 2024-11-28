@@ -23,7 +23,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.textfield.TextInputEditText;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -33,16 +32,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 public class EcommerceActivity extends AppCompatActivity
         implements ProductAdapter.OnProductClickListener, ProductAdapter.OnAddToCartClickListener {
 
 
-    //Grapchis and variables
-    private RecyclerView recyclerView;
     private ProductAdapter productAdapter;
     private List<Product> productList;
-    private Toolbar toolbar;
 
     //Firebase
     private final Firebase firebase = new Firebase();
@@ -56,15 +53,16 @@ public class EcommerceActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_ecommerce);
-        toolbar = findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setTitle("");
+        Objects.requireNonNull(getSupportActionBar()).setTitle("");
 
         setupBottomNavigation();
 
         checkLocationPermission();
 
-        recyclerView = findViewById(R.id.recycler_view);
+        //Graphics and variables
+        RecyclerView recyclerView = findViewById(R.id.recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         productList = new ArrayList<>();
         SearchView searchView = findViewById(R.id.search_view);
@@ -150,7 +148,8 @@ public class EcommerceActivity extends AppCompatActivity
     }
 
     @Override
-    public void onDeleteProductClick(Product product) {}
+    public void onDeleteProductClick(Product product) {
+    }
 
     private void setupBottomNavigation() {
         ImageView profileIcon = findViewById(R.id.action_profile);
@@ -158,15 +157,27 @@ public class EcommerceActivity extends AppCompatActivity
         ImageView supermarketIcon = findViewById(R.id.action_supermarket);
 
         profileIcon.setOnClickListener(v -> {
-            startActivity(new Intent(this, ProfileActivity.class));
+            Intent intent = new Intent(this, ProfileActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
+            overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
+            finish();
         });
 
         cartIcon.setOnClickListener(v -> {
-            startActivity(new Intent(this, CartActivity.class));
+            Intent intent = new Intent(this, CartActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
+            overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
+            finish();
         });
 
         supermarketIcon.setOnClickListener(v -> {
-            startActivity(new Intent(this, SupermarketActivity.class));
+            Intent intent = new Intent(this, SupermarketActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
+            overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+            finish();
         });
     }
 

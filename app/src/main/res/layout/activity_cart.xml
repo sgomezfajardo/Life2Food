@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -7,8 +8,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_above="@+id/button_container"
-        android:background="@color/Background"
-        android:layout_alignParentTop="true">
+        android:layout_alignParentTop="true"
+        android:background="@color/Background">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -21,13 +22,15 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="20dp"
                 android:background="@color/Life2Food_secundary"
-                android:textAlignment="center"
-                android:paddingBottom="10dp"
-                android:paddingTop="10dp"
-                android:text="Tu carrito"
                 android:fontFamily="@font/poppins"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp"
+                android:text="Tu carrito"
+                android:textAlignment="center"
                 android:textColor="@color/white"
-                android:textSize="37dp" />
+                android:textSize="37sp"
+                tools:ignore="HardcodedText" />
+
             <LinearLayout
                 android:id="@+id/linearLayout"
                 android:layout_width="match_parent"
@@ -56,14 +59,16 @@
             android:layout_marginTop="16dp"
             android:text="Total a pagar: $0.00"
             android:textColor="@android:color/black"
-            android:textSize="20sp" />
+            android:textSize="20sp"
+            tools:ignore="HardcodedText" />
 
         <Button
             android:id="@+id/Realizar_pago"
             android:layout_width="173dp"
             android:layout_height="wrap_content"
+            android:backgroundTint="@color/buy_button"
             android:text="Realizar Pago"
-            android:backgroundTint="@color/buy_button" />
+            tools:ignore="HardcodedText" />
 
     </LinearLayout>
 
@@ -72,43 +77,58 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:orientation="horizontal"
-        android:padding="8dp"
-        android:gravity="center"
         android:background="@color/icons"
-        android:elevation="4dp"> <!-- efecto de relieve -->
+        android:elevation="4dp"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:padding="8dp">
 
         <ImageView
             android:id="@+id/action_profile"
             android:layout_width="48dp"
             android:layout_height="48dp"
-            android:src="@drawable/icono_perfil"
             android:contentDescription="@string/profile"
-            android:padding="8dp" />
+            android:padding="8dp"
+            android:src="@drawable/icono_perfil" />
 
-        <ImageView
-            android:id="@+id/action_cart"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:src="@drawable/icono_carrito"
-            android:contentDescription="@string/cart"
-            android:padding="8dp"/>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:background="@color/white" />
+
+            <ImageView
+                android:id="@+id/action_cart"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:contentDescription="@string/cart"
+                android:padding="8dp"
+                android:src="@drawable/icono_carrito" />
+
+        </LinearLayout>
+
 
         <ImageView
             android:id="@+id/action_ecommerce"
             android:layout_width="48dp"
             android:layout_height="48dp"
-            android:src="@drawable/icono_restaurantes"
             android:contentDescription="@string/cart"
-            android:padding="8dp"/>
+            android:padding="8dp"
+            android:src="@drawable/icono_restaurantes" />
 
         <ImageView
             android:id="@+id/action_supermarket"
             android:layout_width="48dp"
             android:layout_height="48dp"
-            android:src="@drawable/icono_supermercado"
             android:contentDescription="@string/supermarket"
-            android:padding="8dp" />
+            android:padding="8dp"
+            android:src="@drawable/icono_supermercado" />
 
     </LinearLayout>
 

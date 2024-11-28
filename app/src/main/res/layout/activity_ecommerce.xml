@@ -5,26 +5,26 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <!-- Toolbar colocado arriba -->
+    <!-- Toolbar -->
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:background="@color/Life2Food_color"
-        app:titleTextColor="@color/white"
         android:fontFamily="@font/poppins"
         android:textStyle="bold"
         android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
-        app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+        app:titleTextColor="@color/white">
 
-        <!-- ImageView para la imagen en la izquierda -->
+        <!-- ImageView -->
         <ImageView
             android:id="@+id/toolbar_image"
             android:layout_width="120dp"
             android:layout_height="80dp"
-            android:src="@drawable/life2foodlettering"
             android:layout_gravity="start"
-            android:padding="8dp" />
+            android:padding="8dp"
+            android:src="@drawable/life2foodlettering" />
 
     </androidx.appcompat.widget.Toolbar>
 
@@ -38,8 +38,6 @@
 
 
     <!-- RecyclerView -->
-
-    <!-- Bottom Navigation: Iconos perfil, carrito, supermercado, restaurante -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_view"
         android:layout_width="match_parent"
@@ -50,43 +48,57 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:padding="8dp"
-        android:gravity="center"
         android:background="@color/icons"
-        android:elevation="4dp"> <!-- efecto de relieve -->
+        android:elevation="4dp"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:padding="8dp">
 
         <ImageView
             android:id="@+id/action_profile"
             android:layout_width="48dp"
             android:layout_height="48dp"
-            android:src="@drawable/icono_perfil"
             android:contentDescription="@string/profile"
-            android:padding="8dp" />
+            android:padding="8dp"
+            android:src="@drawable/icono_perfil" />
 
         <ImageView
             android:id="@+id/action_cart"
             android:layout_width="48dp"
             android:layout_height="48dp"
-            android:src="@drawable/icono_carrito"
             android:contentDescription="@string/cart"
-            android:padding="8dp"/>
+            android:padding="8dp"
+            android:src="@drawable/icono_carrito" />
 
-        <ImageView
-            android:id="@+id/action_ecommerce"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:src="@drawable/icono_restaurantes"
-            android:contentDescription="@string/cart"
-            android:padding="8dp"/>
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:background="@color/white" />
+
+            <ImageView
+                android:id="@+id/action_ecommerce"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:contentDescription="@string/cart"
+                android:padding="8dp"
+                android:src="@drawable/icono_restaurantes" />
+
+        </LinearLayout>
+
 
         <ImageView
             android:id="@+id/action_supermarket"
             android:layout_width="48dp"
             android:layout_height="48dp"
-            android:src="@drawable/icono_supermercado"
             android:contentDescription="@string/supermarket"
-            android:padding="8dp" />
+            android:padding="8dp"
+            android:src="@drawable/icono_supermercado" />
 
     </LinearLayout>
 

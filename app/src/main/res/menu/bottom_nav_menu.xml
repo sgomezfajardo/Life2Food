@@ -1,0 +1,26 @@
+<menu xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/action_profile"
+        android:icon="@drawable/icono_perfil"
+        android:title="Perfil"
+        tools:ignore="HardcodedText" />
+    <item
+        android:id="@+id/action_cart"
+        android:icon="@drawable/icono_carrito"
+        android:title="Carrito"
+        tools:ignore="HardcodedText" />
+
+    <item
+        android:id="@+id/action_ecommerce"
+        android:icon="@drawable/icono_restaurantes"
+        android:title="Restaurantes"
+        tools:ignore="HardcodedText" />
+
+    <item
+        android:id="@+id/action_supermarket"
+        android:icon="@drawable/icono_supermercado"
+        android:title="Supermercado"
+        tools:ignore="HardcodedText" />
+        
+</menu>

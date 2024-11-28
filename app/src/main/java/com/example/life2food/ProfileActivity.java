@@ -12,6 +12,7 @@ import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -39,17 +40,14 @@ public class ProfileActivity extends AppCompatActivity {
     ProgressDialog progressDialog;
 
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
         setupBottomNavigation();
 
-        // Inicializar las vistas
         email = findViewById(R.id.email);
         nameTextView = findViewById(R.id.name_text_view);
-        radioGroupRole = findViewById(R.id.radio_group_role);
         editAddress = findViewById(R.id.edit_address);
         editPhone = findViewById(R.id.edit_phone);
         profileImage = findViewById(R.id.profile_image);
@@ -67,8 +65,6 @@ public class ProfileActivity extends AppCompatActivity {
         Firebase firebaseHelper = new Firebase();
         View supermarketIcon = findViewById(R.id.action_supermarket); // Icono del supermercado
         firebaseHelper.fetchUserRoleAndHideIcon(supermarketIcon);
-
-        // Configurar los listeners de los botones
         buttonUpdate.setOnClickListener(view -> updateProfile());
 
         buttonLogout.setOnClickListener(view -> {
@@ -94,15 +90,6 @@ public class ProfileActivity extends AppCompatActivity {
                 String lastname = documentSnapshot.getString("lastName");
                 nameTextView.setText(firstname + " " + lastname);
 
-                String role = documentSnapshot.getString("role");
-                if ("business".equals(role)) {
-                    ((RadioButton) findViewById(R.id.radio_business)).setChecked(true);
-                } else if ("restaurant".equals(role)) {
-                    ((RadioButton) findViewById(R.id.radio_restaurant)).setChecked(true);
-                } else {
-                    ((RadioButton) findViewById(R.id.radio_user)).setChecked(true);
-                }
-
                 editAddress.setText(documentSnapshot.getString("address"));
                 editPhone.setText(documentSnapshot.getString("phone"));
 
@@ -120,22 +107,16 @@ public class ProfileActivity extends AppCompatActivity {
         String userId = auth.getCurrentUser().getUid();
         String address = editAddress.getText().toString();
         String phone = editPhone.getText().toString();
-        String role = "";
-
-        int selectedId = radioGroupRole.getCheckedRadioButtonId();
-        if (selectedId == R.id.radio_business) {
-            role = "business";
-        } else if (selectedId == R.id.radio_restaurant) {
-            role = "restaurant";
-        } else {
-            role = "user";
+        try {
+            DocumentReference docRef = firestore.collection("users").document(userId);
+            docRef.update("address", address, "phone", phone)
+                    .addOnSuccessListener(aVoid -> {
+                        Toast.makeText(this, "Perfil actualizado", Toast.LENGTH_SHORT).show();
+                    });
+        } catch (Exception e) {
+            Toast.makeText(this, "No se ha podido actualizar tu perfil", Toast.LENGTH_SHORT).show();
         }
 
-        DocumentReference docRef = firestore.collection("users").document(userId);
-        docRef.update("role", role, "address", address, "phone", phone)
-                .addOnSuccessListener(aVoid -> {
-                    finish();
-                });
     }
 
     private void updatePhoto() {
@@ -164,7 +145,8 @@ public class ProfileActivity extends AppCompatActivity {
             progressDialog.show();
 
             String userId = auth.getCurrentUser().getUid();
-            StorageReference fileReference = storageReference.child("profile_images/" + userId + ".jpg"); // Cambia el nombre de archivo según sea necesario
+
+            StorageReference fileReference = storageReference.child("profile_images/" + userId + ".jpg");
 
             fileReference.putFile(image_url)
                     .addOnSuccessListener(taskSnapshot -> {
@@ -185,19 +167,31 @@ public class ProfileActivity extends AppCompatActivity {
 
     private void setupBottomNavigation() {
         ImageView cartIcon = findViewById(R.id.action_cart);
-        ImageView restaurantIcon = findViewById(R.id.action_ecommerce);
+        ImageView ecommerceIcon = findViewById(R.id.action_ecommerce);
         ImageView supermarketIcon = findViewById(R.id.action_supermarket);
 
         cartIcon.setOnClickListener(v -> {
-            startActivity(new Intent(this, CartActivity.class));
+            Intent intent = new Intent(this, CartActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
+            overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+            finish();
         });
 
-        restaurantIcon.setOnClickListener(v -> {
-            startActivity(new Intent(this, EcommerceActivity.class));
+        ecommerceIcon.setOnClickListener(v -> {
+            Intent intent = new Intent(this, EcommerceActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
+            overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+            finish();
         });
 
         supermarketIcon.setOnClickListener(v -> {
-            startActivity(new Intent(this, SupermarketActivity.class));
+            Intent intent = new Intent(this, SupermarketActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
+            overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+            finish();
         });
     }
 }

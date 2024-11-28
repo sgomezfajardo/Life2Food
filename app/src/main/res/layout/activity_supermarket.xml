@@ -1,9 +1,9 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <!-- Contenido desplazable de los productos -->
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -13,9 +13,9 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
+            android:background="@color/Background"
             android:gravity="center"
-            android:background="@color/Background">
+            android:orientation="vertical">
 
             <TextView
                 android:id="@+id/title"
@@ -29,7 +29,8 @@
                 android:text="Tus productos"
                 android:textAlignment="center"
                 android:textColor="@color/white"
-                android:textSize="37dp" />
+                android:textSize="37sp"
+                tools:ignore="HardcodedText" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recycler_view"
@@ -40,76 +41,87 @@
 
     </ScrollView>
 
-    <!-- Botón de agregar producto -->
     <Button
         android:id="@+id/btn_add_product"
         android:layout_width="60dp"
         android:layout_height="60dp"
-        android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
         android:layout_marginEnd="20dp"
         android:layout_marginBottom="80dp"
-        android:text="+"
         android:backgroundTint="@color/blue"
-        android:textSize="30dp"/>
+        android:text="+"
+        android:textSize="30sp"
+        tools:ignore="HardcodedText" />
 
     <com.airbnb.lottie.LottieAnimationView
         android:id="@+id/lottie_add_product"
         android:layout_width="120dp"
         android:layout_height="120dp"
-        android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
         android:layout_marginEnd="-10dp"
         android:layout_marginBottom="50dp"
         app:lottie_autoPlay="true"
         app:lottie_loop="false"
         app:lottie_rawRes="@raw/add_products" />
 
-    <!-- Lottie Animation para agregar productos -->
-
-    <!-- Barra de navegación inferior -->
     <LinearLayout
         android:id="@+id/navigation_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:padding="8dp"
-        android:gravity="center"
-        android:background="@color/icons"
         android:layout_alignParentBottom="true"
-        android:elevation="4dp">
+        android:background="@color/icons"
+        android:elevation="4dp"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:padding="8dp">
 
         <ImageView
             android:id="@+id/action_profile"
             android:layout_width="48dp"
             android:layout_height="48dp"
-            android:src="@drawable/icono_perfil"
             android:contentDescription="@string/profile"
-            android:padding="8dp" />
+            android:padding="8dp"
+            android:src="@drawable/icono_perfil" />
 
         <ImageView
             android:id="@+id/action_cart"
             android:layout_width="48dp"
             android:layout_height="48dp"
-            android:src="@drawable/icono_carrito"
             android:contentDescription="@string/cart"
-            android:padding="8dp"/>
+            android:padding="8dp"
+            android:src="@drawable/icono_carrito" />
 
         <ImageView
             android:id="@+id/action_ecommerce"
             android:layout_width="48dp"
             android:layout_height="48dp"
-            android:src="@drawable/icono_restaurantes"
             android:contentDescription="@string/cart"
-            android:padding="8dp"/>
+            android:padding="8dp"
+            android:src="@drawable/icono_restaurantes" />
 
-        <ImageView
-            android:id="@+id/action_supermarket"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:src="@drawable/icono_supermercado"
-            android:contentDescription="@string/supermarket"
-            android:padding="8dp" />
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:background="@color/white" />
+
+            <ImageView
+                android:id="@+id/action_supermarket"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:contentDescription="@string/supermarket"
+                android:padding="8dp"
+                android:src="@drawable/icono_supermercado" />
+
+        </LinearLayout>
+
     </LinearLayout>
 
 </RelativeLayout>

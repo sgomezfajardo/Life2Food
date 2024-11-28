@@ -271,19 +271,31 @@ public class CartActivity extends AppCompatActivity {
 
     private void setupBottomNavigation() {
         ImageView profileIcon = findViewById(R.id.action_profile);
-        ImageView restaurantIcon = findViewById(R.id.action_ecommerce);
+        ImageView ecommerceIcon = findViewById(R.id.action_ecommerce);
         ImageView supermarketIcon = findViewById(R.id.action_supermarket);
 
         profileIcon.setOnClickListener(v -> {
-            startActivity(new Intent(this, ProfileActivity.class));
+            Intent intent = new Intent(this, ProfileActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
+            overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
+            finish();
         });
 
-        restaurantIcon.setOnClickListener(v -> {
-            startActivity(new Intent(this, EcommerceActivity.class));
+        ecommerceIcon.setOnClickListener(v -> {
+            Intent intent = new Intent(this, EcommerceActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
+            overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+            finish();
         });
 
         supermarketIcon.setOnClickListener(v -> {
-            startActivity(new Intent(this, SupermarketActivity.class));
+            Intent intent = new Intent(this, SupermarketActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
+            overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+            finish();
         });
     }
 }

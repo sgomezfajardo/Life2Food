@@ -1,4 +1,5 @@
 package com.example.life2food;
+
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -43,7 +44,6 @@ public class SupermarketActivity extends AppCompatActivity implements ProductAda
     private final FirebaseFirestore DB = firebase.getDB();
     private String currentUserEmail = FirebaseAuth.getInstance().getCurrentUser().getEmail();
     private String currentUserRole;
-
 
 
     private StorageReference storageRef;
@@ -321,22 +321,32 @@ public class SupermarketActivity extends AppCompatActivity implements ProductAda
     }
 
 
-
     private void setupBottomNavigation() {
         ImageView profileIcon = findViewById(R.id.action_profile);
         ImageView cartIcon = findViewById(R.id.action_cart);
-        ImageView restaurantIcon = findViewById(R.id.action_ecommerce);
+        ImageView ecommerceIcon = findViewById(R.id.action_ecommerce);
 
         profileIcon.setOnClickListener(v -> {
-            startActivity(new Intent(this, ProfileActivity.class));
+            Intent intent = new Intent(this, ProfileActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
+            overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
+            finish();
         });
-
         cartIcon.setOnClickListener(v -> {
-            startActivity(new Intent(this, CartActivity.class));
+            Intent intent = new Intent(this, CartActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
+            overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
+            finish();
         });
 
-        restaurantIcon.setOnClickListener(v -> {
-            startActivity(new Intent(this, EcommerceActivity.class));
+        ecommerceIcon.setOnClickListener(v -> {
+            Intent intent = new Intent(this, EcommerceActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
+            overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
+            finish();
         });
     }
 
