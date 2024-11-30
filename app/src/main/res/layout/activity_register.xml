@@ -93,22 +93,27 @@
         app:layout_constraintTop_toBottomOf="@+id/initialLayout"
         app:layout_constraintBottom_toBottomOf="parent">
 
-        <EditText
-            android:id="@+id/addressEditText"
+        <!-- Address suggestions -->
+        <AutoCompleteTextView
+            android:id="@+id/addressAutoCompleteTextView"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:hint="Ingresa la dirección"
+            android:padding="16dp"
+            android:layout_margin="16dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/searchAddressButton"
             app:layout_constraintTop_toTopOf="parent"
-            android:layout_margin="16dp"/>
+            app:layout_constraintBottom_toTopOf="@id/map"
+            android:elevation="10dp"
+            tools:ignore="MissingConstraints" />
 
         <Button
             android:id="@+id/searchAddressButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Buscar Dirección"
-            app:layout_constraintTop_toTopOf="@id/addressEditText"
+            app:layout_constraintTop_toTopOf="@id/addressAutoCompleteTextView"
             app:layout_constraintEnd_toEndOf="parent"
             android:layout_marginStart="8dp"
             android:layout_marginEnd="16dp"
@@ -116,15 +121,19 @@
             android:layout_marginBottom="8dp"
             android:backgroundTint="@color/Life2Food_color"/>
 
+        <!-- Map -->
         <fragment
             android:id="@+id/map"
             android:name="com.google.android.gms.maps.SupportMapFragment"
             android:layout_width="0dp"
             android:layout_height="0dp"
+            android:layout_margin="16dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/addressEditText"
-            app:layout_constraintBottom_toBottomOf="parent"/>
+            app:layout_constraintTop_toBottomOf="@id/addressAutoCompleteTextView"
+            app:layout_constraintBottom_toTopOf="@+id/selectLocationButton"
+            tools:layout_editor_absoluteX="0dp"
+            tools:layout_editor_absoluteY="0dp"/>
 
         <Button
             android:id="@+id/selectLocationButton"
@@ -146,5 +155,6 @@
             android:layout_margin="16dp"
             android:backgroundTint="@color/Life2Food_color"/>
     </androidx.constraintlayout.widget.ConstraintLayout>
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
