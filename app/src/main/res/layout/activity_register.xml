@@ -112,7 +112,7 @@
             android:id="@+id/searchAddressButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Buscar Dirección"
+            android:text="Buscar"
             app:layout_constraintTop_toTopOf="@id/addressAutoCompleteTextView"
             app:layout_constraintEnd_toEndOf="parent"
             android:layout_marginStart="8dp"
