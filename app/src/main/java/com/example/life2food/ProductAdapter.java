@@ -1,5 +1,6 @@
 package com.example.life2food;
 
+import android.annotation.SuppressLint;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.util.Log;
@@ -75,7 +76,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
         View view = null;
 
         if (isEcommerce) {
-            view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_product_ecommerce, parent, false);
+            view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_product_market, parent, false);
         } else {
             view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_product, parent, false);
         }
@@ -140,6 +141,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
         return productList.size();
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     public void updateData(List<Product> newProductList) {
         productList = newProductList;
         notifyDataSetChanged();
@@ -173,7 +175,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
                     int position = getAdapterPosition();
                     if (position != RecyclerView.NO_POSITION) {
                         Product product = productList.get(position);
-                        productClickListener.onCardClick(product); // Método para manejar el clic en la tarjeta
+                        productClickListener.onCardClick(product);
                     }
                 }
             });

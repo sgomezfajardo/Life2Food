@@ -33,7 +33,7 @@
                 android:layout_width="300dp"
                 android:layout_height="300dp"
                 android:layout_gravity="center_horizontal"
-                android:background="@color/black"
+                android:background="@drawable/rounded_background"
                 android:backgroundTint="@color/Life2Food_color"
                 android:padding="10dp" />
 
@@ -119,19 +119,9 @@
                 android:layout_height="30dp"
                 android:layout_gravity="center_horizontal"
                 android:fontFamily="@font/poppins"
-                android:text="Bryan Alexander Riano Romero"
+                android:text=""
                 android:textColor="@color/Life2Food_color"
                 android:textSize="20dp" />
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:fontFamily="@font/poppins"
-                android:text="RESEÑAS"
-                android:textColor="@color/black"
-                android:textSize="50dp"
-                android:gravity="center_horizontal"
-                android:background="@color/white"/>
 
         </LinearLayout>
     </ScrollView>

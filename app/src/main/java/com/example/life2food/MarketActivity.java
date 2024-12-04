@@ -151,7 +151,7 @@ public class MarketActivity extends AppCompatActivity implements ProductAdapter.
         });
     }
 
-    //This method onAddToCartClick is called when the user clicks on the add to cart button
+    /** @noinspection DataFlowIssue*/ //This method onAddToCartClick is called when the user clicks on the add to cart button
     @Override
     public void onAddToCartClick(Product product) {
         createCartIfNotExists();
