@@ -28,7 +28,6 @@ public class ProfileActivity extends AppCompatActivity {
 
     private EditText editAddress, editPhone;
     private TextView email, nameTextView;
-    private RadioGroup radioGroupRole;
     private ImageView profileImage;
     private FirebaseAuth auth;
     private FirebaseFirestore firestore;
@@ -54,6 +53,9 @@ public class ProfileActivity extends AppCompatActivity {
         Button buttonUpdate = findViewById(R.id.button_update);
         Button buttonLogout = findViewById(R.id.button_logout);
         Button pic_button = findViewById(R.id.pic_button);
+        Button add_address = findViewById(R.id.add_address);
+        add_address.setOnClickListener(view ->
+                Toast.makeText(this, "Nueva direccion", Toast.LENGTH_SHORT).show());
 
         // Firebase
         auth = FirebaseAuth.getInstance();
@@ -61,10 +63,6 @@ public class ProfileActivity extends AppCompatActivity {
         storageReference = FirebaseStorage.getInstance().getReference();
 
         loadProfileData();
-
-        Firebase firebaseHelper = new Firebase();
-        View supermarketIcon = findViewById(R.id.action_supermarket); // Icono del supermercado
-        firebaseHelper.fetchUserRoleAndHideIcon(supermarketIcon);
         buttonUpdate.setOnClickListener(view -> updateProfile());
 
         buttonLogout.setOnClickListener(view -> {

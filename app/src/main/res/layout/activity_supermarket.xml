@@ -4,6 +4,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+
+    <!--Product ScrollView-->
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -17,6 +19,7 @@
             android:gravity="center"
             android:orientation="vertical">
 
+            <!--Title-->
             <TextView
                 android:id="@+id/title"
                 android:layout_width="match_parent"
@@ -31,7 +34,7 @@
                 android:textColor="@color/white"
                 android:textSize="37sp"
                 tools:ignore="HardcodedText" />
-
+            <!--Product RecyclerView-->
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recycler_view"
                 android:layout_width="match_parent"
@@ -41,10 +44,25 @@
 
     </ScrollView>
 
-    <Button
-        android:id="@+id/btn_add_product"
+    <!-- WhatsApp Button -->
+    <ImageButton
+        android:id="@+id/btn_whatsapp"
         android:layout_width="60dp"
         android:layout_height="60dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="20dp"
+        android:layout_marginBottom="80dp"
+        android:background="@drawable/whatsapp"
+        android:contentDescription="Whatsapp"
+        tools:ignore="HardcodedText" />
+
+
+    <!--New Product Button-->
+    <Button
+        android:id="@+id/btn_add_product"
+        android:layout_width="40sp"
+        android:layout_height="40sp"
         android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
         android:layout_marginEnd="20dp"
@@ -53,19 +71,19 @@
         android:text="+"
         android:textSize="30sp"
         tools:ignore="HardcodedText" />
-
+    <!--New Product Button Animation-->
     <com.airbnb.lottie.LottieAnimationView
         android:id="@+id/lottie_add_product"
-        android:layout_width="120dp"
-        android:layout_height="120dp"
+        android:layout_width="100sp"
+        android:layout_height="100sp"
         android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
         android:layout_marginEnd="-10dp"
-        android:layout_marginBottom="50dp"
+        android:layout_marginBottom="55dp"
         app:lottie_autoPlay="true"
         app:lottie_loop="false"
         app:lottie_rawRes="@raw/add_products" />
-
+    <!--Navigation Bar-->
     <LinearLayout
         android:id="@+id/navigation_container"
         android:layout_width="match_parent"

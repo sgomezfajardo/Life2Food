@@ -38,6 +38,7 @@ public class EcommerceActivity extends AppCompatActivity
         implements ProductAdapter.OnProductClickListener, ProductAdapter.OnAddToCartClickListener {
 
 
+    //Product adapter
     private ProductAdapter productAdapter;
     private List<Product> productList;
 
@@ -81,9 +82,6 @@ public class EcommerceActivity extends AppCompatActivity
             }
         });
 
-        Firebase firebaseHelper = new Firebase();
-        View supermarketIcon = findViewById(R.id.action_supermarket);
-        firebaseHelper.fetchUserRoleAndHideIcon(supermarketIcon);
 
         loadProductsFromFirestore();
 
@@ -277,6 +275,9 @@ public class EcommerceActivity extends AppCompatActivity
                                                 .addOnSuccessListener(aVoid -> {
                                                     product.updateQuantity(product.getQuantity() - quantityToAdd);
                                                     Toast.makeText(this, "Producto actualizado en el carrito", Toast.LENGTH_SHORT).show();
+                                                    Intent intent = new Intent(this, MarketActivity.class);
+                                                    intent.putExtra("product", product);
+                                                    startActivity(intent);
                                                 })
                                                 .addOnFailureListener(e -> {
                                                     Toast.makeText(this, "Error al actualizar el carrito", Toast.LENGTH_SHORT).show();
@@ -291,7 +292,6 @@ public class EcommerceActivity extends AppCompatActivity
                     .addOnFailureListener(e -> {
                         Toast.makeText(this, "Error al obtener la dirección del creador del producto", Toast.LENGTH_SHORT).show();
                     });
-
             dialog.dismiss();
         });
     }

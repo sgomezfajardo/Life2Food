@@ -1,12 +1,14 @@
 package com.example.life2food;
 
 import android.content.Intent;
+import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.Toast;
@@ -50,6 +52,7 @@ public class SupermarketActivity extends AppCompatActivity implements ProductAda
     private static final int PICK_IMAGE_REQUEST = 1;
     private Uri imageUri;
     private LottieAnimationView lottieAnimation;
+    private final String url = "https://wa.me/573104083853";
 
 
     @Override
@@ -58,7 +61,12 @@ public class SupermarketActivity extends AppCompatActivity implements ProductAda
         setContentView(R.layout.activity_supermarket);
         setupBottomNavigation();
         LottieAnimationView lottieAnimation = findViewById(R.id.lottie_add_product);
-
+        ImageButton whatsapp = findViewById(R.id.btn_whatsapp);
+        whatsapp.setOnClickListener(v -> {
+            Intent intent = new Intent(Intent.ACTION_VIEW);
+            intent.setData(Uri.parse(url));
+            startActivity(intent);
+        });
         FirebaseStorage storage = FirebaseStorage.getInstance();
         storageRef = storage.getReference();
 

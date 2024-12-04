@@ -16,12 +16,14 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
 import androidx.core.content.ContextCompat;
+
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -89,10 +91,6 @@ public class CartActivity extends AppCompatActivity {
                 }
             }
         });
-
-        Firebase firebaseHelper = new Firebase();
-        View supermarketIcon = findViewById(R.id.action_supermarket);
-        firebaseHelper.fetchUserRoleAndHideIcon(supermarketIcon);
 
         // Obtener los productos del carrito
         DB.collection("carts").whereEqualTo("id_usuario", USERID).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {

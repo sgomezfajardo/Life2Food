@@ -22,6 +22,9 @@
         tools:replace="android:theme"
         tools:targetApi="31">
         <activity
+            android:name=".MarketActivity"
+            android:exported="false" />
+        <activity
             android:name=".ProductDetails"
             android:exported="false" />
         <activity

@@ -8,6 +8,8 @@
     <color name="cardBackground">#E0F2F1</color>
     <color name="Life2Food_color">#00704A</color>
     <color name="Life2Food_secundary">#33c461</color>
+    <color name="dark_green">#34832F</color>
+    <color name="green">#8ad373</color>
     <color name="buy_button">#00c853</color>
     <color name="cart_button">#ffd600</color>
     <color name="text">#424242</color>

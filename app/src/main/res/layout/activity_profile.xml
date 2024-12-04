@@ -59,6 +59,16 @@
                 android:hint="Dirección"
                 tools:ignore="HardcodedText" />
 
+            <Button
+                android:id="@+id/add_address"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:backgroundTint="#006F4A"
+                android:text="Agregar nueva dirección"
+                android:textColor="#FFFFFF"
+                tools:ignore="HardcodedText" />
+
             <EditText
                 android:id="@+id/edit_phone"
                 android:layout_width="match_parent"
