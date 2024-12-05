@@ -27,8 +27,9 @@
         <activity
             android:name=".ProductDetails"
             android:exported="false" />
+
         <activity
-            android:name=".Product_details"
+            android:name=".OrdersActivity"
             android:exported="false" />
 
         <meta-data
@@ -56,9 +57,7 @@
         <activity
             android:name=".RealizarPagosActivity"
             android:exported="false" />
-        <activity
-            android:name=".vistaProductos"
-            android:exported="false" />
+
         <activity
             android:name=".RegisterActivity"
             android:exported="true" />
@@ -77,9 +76,7 @@
         <activity
             android:name=".SupermarketActivity"
             android:exported="true" />
-        <activity
-            android:name=".RestaurantActivity"
-            android:exported="true" />
+
     </application>
 
 </manifest>

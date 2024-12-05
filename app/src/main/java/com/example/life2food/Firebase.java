@@ -6,6 +6,7 @@ import android.view.View;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
@@ -38,7 +39,7 @@ public class Firebase {
                 .continueWith(task -> {
                     if (task.isSuccessful()) {
                         DocumentSnapshot document = task.getResult();
-                        return document.getString("role"); // Asegúrate de que "role" sea el campo correcto en tu base de datos
+                        return document.getString("role");
                     } else {
                         throw task.getException();
                     }
@@ -60,6 +61,7 @@ public class Firebase {
         }
     }
 
+    // Gets the products in the current user's cart
     public void fetchCartProducts(OnCartProductsFetchedListener listener) {
         if (currentUser != null) {
             DB.collection("carts")
@@ -74,9 +76,8 @@ public class Firebase {
                                         String productName = (String) item.get("productName");
                                         double productPrice = ((Number) item.get("price")).doubleValue();
                                         int quantity = ((Number) item.get("quantity")).intValue();
-
-                                        // Llama al listener con el producto obtenido
-                                        listener.onProductFetched(productName, productPrice, quantity);
+                                        String address = (String) item.get("address");
+                                        listener.onProductFetched(productName, productPrice, quantity, address);
                                     }
                                 }
                             }
@@ -93,11 +94,29 @@ public class Firebase {
     }
 
     public interface OnCartProductsFetchedListener {
-        void onProductFetched(String productName, double productPrice, int quantity);
+        void onProductFetched(String productName, double productPrice, int quantity, String address);
+
     }
 
+    // Method to get the current address of the user in session
+    public Task<String> getUserCurrentAddress() {
+        if (currentUser != null) {
 
-
+            return DB.collection("users")
+                    .document(USERID)
+                    .get()
+                    .continueWith(task -> {
+                        if (task.isSuccessful()) {
+                            DocumentSnapshot document = task.getResult();
+                            return document.getString("address");
+                        } else {
+                            throw task.getException();
+                        }
+                    });
+        } else {
+            return Tasks.forException(new Exception("Usuario no autenticado"));
+        }
+    }
 
 
     public FirebaseUser getCurrentUser() {

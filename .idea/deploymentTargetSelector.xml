@@ -2,7 +2,7 @@
 <project version="4">
   <component name="deploymentTargetSelector">
     <selectionStates>
-      <SelectionState runConfigName="life2food">
+      <SelectionState runConfigName="Life2Food">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
     </selectionStates>
