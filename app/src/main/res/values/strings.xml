@@ -4,6 +4,7 @@
     <string name="cart">Carrito</string>
     <string name="supermarket">Supermercado</string>
     <string name="restaurant">Restaurante</string>
+    <string name="orders">Ordenes</string>
     <string name="profile_picture">Imagen de perfil</string>
     <string name="delete_product">Eliminar</string>
     <string name="add_product">Agregar</string>

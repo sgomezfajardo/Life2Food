@@ -154,6 +154,15 @@
             android:contentDescription="@string/supermarket"
             android:padding="8dp"
             android:src="@drawable/icono_supermercado" />
+
+        <ImageView
+            android:id="@+id/action_Orders"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:contentDescription="@string/orders"
+            android:padding="8dp"
+            android:src="@drawable/icono_ordenes" />
+
     </LinearLayout>
 
 </RelativeLayout>

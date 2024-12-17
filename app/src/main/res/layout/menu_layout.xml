@@ -36,4 +36,13 @@
         android:src="@drawable/icono_restaurantes"
         android:contentDescription="@string/restaurant" />
 
+    <!--action orders added-->
+    <ImageView
+        android:id="@+id/action_Orders"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:src="@drawable/icono_ordenes"
+        android:contentDescription="@string/orders"/>
+
 </LinearLayout>

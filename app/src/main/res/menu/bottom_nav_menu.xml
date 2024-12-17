@@ -22,5 +22,11 @@
         android:icon="@drawable/icono_supermercado"
         android:title="Supermercado"
         tools:ignore="HardcodedText" />
+
+    <item
+        android:id="@+id/action_orders"
+        android:icon="@drawable/icono_ordenes"
+        android:title="Ordenes"
+        tools:ignore="HardcodedText" />
         
 </menu>

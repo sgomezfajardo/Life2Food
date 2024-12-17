@@ -167,6 +167,7 @@ public class ProfileActivity extends AppCompatActivity {
         ImageView cartIcon = findViewById(R.id.action_cart);
         ImageView ecommerceIcon = findViewById(R.id.action_ecommerce);
         ImageView supermarketIcon = findViewById(R.id.action_supermarket);
+        ImageView OrdersIcon = findViewById(R.id.action_Orders);
 
         cartIcon.setOnClickListener(v -> {
             Intent intent = new Intent(this, CartActivity.class);
@@ -186,6 +187,14 @@ public class ProfileActivity extends AppCompatActivity {
 
         supermarketIcon.setOnClickListener(v -> {
             Intent intent = new Intent(this, SupermarketActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
+            overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+            finish();
+        });
+
+        OrdersIcon.setOnClickListener(v -> {
+            Intent intent = new Intent(this, OrdersActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(intent);
             overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);

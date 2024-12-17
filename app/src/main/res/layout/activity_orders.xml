@@ -3,44 +3,133 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="16dp">
+    android:padding="16dp"
+    android:background="#F8F9FA">
 
+    <!-- Texto para cuando no hay órdenes -->
     <TextView
         android:id="@+id/no_orders_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="No hay órdenes disponibles"
-        android:visibility="gone"/>
+        android:textSize="16sp"
+        android:textColor="#777777"
+        android:gravity="center"
+        android:padding="8dp"
+        android:background="#FFFFFF"
+        android:elevation="2dp"
+        android:layout_marginBottom="8dp"
+        android:visibility="gone" />
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:background="#FFFFFF"
+        android:elevation="2dp"
+        android:clipToPadding="false"
+        android:padding="8dp"
+        android:layout_marginBottom="8dp">
 
         <LinearLayout
             android:id="@+id/order_tickets_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"/>
+            android:orientation="vertical"
+            android:padding="8dp"
+            android:background="#F5F5F5" />
 
     </ScrollView>
 
+    <!-- Separador -->
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="#CCCCCC"
-        android:layout_marginVertical="8dp"/>
+        android:background="#DDDDDD"
+        android:layout_marginVertical="8dp" />
 
+    <!-- Contenedor de productos -->
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1">
+        android:layout_weight="1"
+        android:background="#FFFFFF"
+        android:elevation="2dp"
+        android:clipToPadding="false"
+        android:padding="8dp">
 
         <LinearLayout
             android:id="@+id/products_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"/>
+            android:orientation="vertical"
+            android:padding="8dp"
+            android:background="#F5F5F5" />
 
     </ScrollView>
+
+    <!-- Contenedor de iconos -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/icons"
+        android:elevation="4dp"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:padding="8dp">
+
+        <ImageView
+            android:id="@+id/action_profile"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:contentDescription="@string/profile"
+            android:padding="8dp"
+            android:src="@drawable/icono_perfil" />
+
+        <ImageView
+            android:id="@+id/action_cart"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:contentDescription="@string/cart"
+            android:padding="8dp"
+            android:src="@drawable/icono_carrito" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:background="@color/white" />
+
+            <ImageView
+                android:id="@+id/action_ecommerce"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:contentDescription="@string/cart"
+                android:padding="8dp"
+                android:src="@drawable/icono_restaurantes" />
+
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/action_supermarket"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:contentDescription="@string/supermarket"
+            android:padding="8dp"
+            android:src="@drawable/icono_supermercado" />
+
+        <ImageView
+            android:id="@+id/action_Orders"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:contentDescription="@string/orders"
+            android:padding="8dp"
+            android:src="@drawable/icono_ordenes" />
+
+    </LinearLayout>
 
 </LinearLayout>

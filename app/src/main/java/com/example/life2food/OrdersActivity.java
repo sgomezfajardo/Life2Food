@@ -1,8 +1,10 @@
 package com.example.life2food;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
@@ -34,8 +36,50 @@ public class OrdersActivity extends AppCompatActivity {
         firebase = new Firebase();
         db = firebase.getDB();
 
+        setupBottomNavigation();
         getCurrentUserAddress();
     }
+
+    private void setupBottomNavigation() {
+        ImageView profileIcon = findViewById(R.id.action_profile);
+        ImageView cartIcon = findViewById(R.id.action_cart);
+        ImageView supermarketIcon = findViewById(R.id.action_supermarket);
+        ImageView ecommerceIcon = findViewById(R.id.action_ecommerce);
+
+        profileIcon.setOnClickListener(v -> {
+            Intent intent = new Intent(this, ProfileActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
+            overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
+            finish();
+        });
+
+        cartIcon.setOnClickListener(v -> {
+            Intent intent = new Intent(this, CartActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
+            overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
+            finish();
+        });
+
+        supermarketIcon.setOnClickListener(v -> {
+            Intent intent = new Intent(this, SupermarketActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
+            overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+            finish();
+        });
+
+        ecommerceIcon.setOnClickListener(v -> {
+            Intent intent = new Intent(this, EcommerceActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
+            overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
+            finish();
+        });
+    }
+
+
 
     // Gets the orderTicket based on the userAddress
     private void getCurrentUserAddress() {
@@ -78,6 +122,7 @@ public class OrdersActivity extends AppCompatActivity {
                     }
                 });
     }
+
 
     // Creates a button with the ticket and allows you to see its associated content
     private void createOrderTicketButton(String orderTicket) {

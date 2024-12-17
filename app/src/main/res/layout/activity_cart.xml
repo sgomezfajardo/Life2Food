@@ -2,7 +2,8 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <ScrollView
         android:layout_width="match_parent"
@@ -62,13 +63,17 @@
             android:textSize="20sp"
             tools:ignore="HardcodedText" />
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/Realizar_pago"
             android:layout_width="173dp"
             android:layout_height="wrap_content"
-            android:backgroundTint="@color/buy_button"
+            android:background="@drawable/payment_button_background"
             android:text="Realizar Pago"
+            app:backgroundTint="@color/buy_button"
+            android:padding="12dp"
+            android:elevation="2dp"
             tools:ignore="HardcodedText" />
+
 
     </LinearLayout>
 
@@ -129,6 +134,14 @@
             android:contentDescription="@string/supermarket"
             android:padding="8dp"
             android:src="@drawable/icono_supermercado" />
+
+        <ImageView
+            android:id="@+id/action_Orders"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:contentDescription="@string/orders"
+            android:padding="8dp"
+            android:src="@drawable/icono_ordenes" />
 
     </LinearLayout>
 

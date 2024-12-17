@@ -333,6 +333,7 @@ public class SupermarketActivity extends AppCompatActivity implements ProductAda
         ImageView profileIcon = findViewById(R.id.action_profile);
         ImageView cartIcon = findViewById(R.id.action_cart);
         ImageView ecommerceIcon = findViewById(R.id.action_ecommerce);
+        ImageView OrdersIcon = findViewById(R.id.action_Orders);
 
         profileIcon.setOnClickListener(v -> {
             Intent intent = new Intent(this, ProfileActivity.class);
@@ -354,6 +355,14 @@ public class SupermarketActivity extends AppCompatActivity implements ProductAda
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(intent);
             overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
+            finish();
+        });
+
+        OrdersIcon.setOnClickListener(v -> {
+            Intent intent = new Intent(this, OrdersActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
+            overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
             finish();
         });
     }
