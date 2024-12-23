@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:padding="16dp"
-    android:background="#F8F9FA">
+    android:background="#F8F9FA"
+    tools:context=".OrdersActivity">
 
     <!-- Texto para cuando no hay órdenes -->
     <TextView
@@ -16,14 +18,17 @@
         android:textColor="#777777"
         android:gravity="center"
         android:padding="8dp"
-        android:background="#FFFFFF"
+        android:background="@drawable/rounded_background"
         android:elevation="2dp"
         android:layout_marginBottom="8dp"
         android:visibility="gone" />
 
+    <!-- ScrollView for order tickets -->
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:maxHeight="300dp"
         android:background="#FFFFFF"
         android:elevation="2dp"
         android:clipToPadding="false"
@@ -36,18 +41,18 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:padding="8dp"
-            android:background="#F5F5F5" />
+            android:background="@drawable/rounded_background" />
 
     </ScrollView>
 
-    <!-- Separador -->
+    <!-- Separator -->
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:background="#DDDDDD"
         android:layout_marginVertical="8dp" />
 
-    <!-- Contenedor de productos -->
+    <!-- ScrollView for products -->
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -63,11 +68,11 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:padding="8dp"
-            android:background="#F5F5F5" />
+            android:background="@drawable/rounded_background" />
 
     </ScrollView>
 
-    <!-- Contenedor de iconos -->
+    <!-- Icon container -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

@@ -1,14 +1,16 @@
 package com.example.life2food;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
-import com.google.android.gms.tasks.Task;
+import androidx.core.content.ContextCompat;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
@@ -40,6 +42,7 @@ public class OrdersActivity extends AppCompatActivity {
         getCurrentUserAddress();
     }
 
+    // Method to set up the bottom navigation bar.
     private void setupBottomNavigation() {
         ImageView profileIcon = findViewById(R.id.action_profile);
         ImageView cartIcon = findViewById(R.id.action_cart);
@@ -79,9 +82,7 @@ public class OrdersActivity extends AppCompatActivity {
         });
     }
 
-
-
-    // Gets the orderTicket based on the userAddress
+    // Method to get the current address of the user.
     private void getCurrentUserAddress() {
         firebase.getUserCurrentAddress()
                 .addOnCompleteListener(task -> {
@@ -94,7 +95,7 @@ public class OrdersActivity extends AppCompatActivity {
                 });
     }
 
-    // Get all codes and filter by checkOrderTicketForUserAddress
+    // Method to fetch user orders from the database.
     private void fetchUserOrderTickets() {
         db.collection("orders")
                 .get()
@@ -107,7 +108,7 @@ public class OrdersActivity extends AppCompatActivity {
                 });
     }
 
-    // Check tickets that contain the address of the user in session
+    // Method to check if the user's address is associated with a specific order ticket and add the ticket to the user's order list.
     private void checkOrderTicketForUserAddress(String orderTicket, List<String> userOrderTickets) {
         db.collection("orders")
                 .document(orderTicket)
@@ -118,21 +119,79 @@ public class OrdersActivity extends AppCompatActivity {
                 .addOnSuccessListener(queryDocumentSnapshots -> {
                     if (!queryDocumentSnapshots.isEmpty()) {
                         userOrderTickets.add(orderTicket);
-                        createOrderTicketButton(orderTicket);
+                        createOrderTicketButtons(orderTicket);
                     }
                 });
     }
 
+    // Method to create buttons for the order tickets.
+    private void createOrderTicketButtons(String orderTicket) {
+        LinearLayout buttonLayout = new LinearLayout(this);
+        buttonLayout.setOrientation(LinearLayout.HORIZONTAL);
+        buttonLayout.setPadding(8, 8, 8, 8);
 
-    // Creates a button with the ticket and allows you to see its associated content
-    private void createOrderTicketButton(String orderTicket) {
+        // "Order Ticket" button
         Button orderTicketButton = new Button(this);
         orderTicketButton.setText("Order Ticket: " + orderTicket);
         orderTicketButton.setOnClickListener(v -> showOrderTicketProducts(orderTicket));
-        orderTicketsLayout.addView(orderTicketButton);
+
+        // Set fixed width and height for the button
+        LinearLayout.LayoutParams buttonParams = new LinearLayout.LayoutParams(
+                0, LinearLayout.LayoutParams.WRAP_CONTENT, 1.0f);
+        orderTicketButton.setLayoutParams(buttonParams);
+
+        // "Order Delivered" button
+        Button deliveredButton = new Button(this);
+        deliveredButton.setText("Orden entregada");
+        deliveredButton.setBackground(ContextCompat.getDrawable(this, R.drawable.button_orders_background_black));
+        deliveredButton.setTextColor(Color.WHITE);
+        deliveredButton.setTextSize(11);
+        deliveredButton.setOnClickListener(v -> markOrderAsDelivered(orderTicket));
+
+        // Set layout parameters with a top margin to lower the position of the button
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        params.setMargins(16, 10, 0, 0);
+        deliveredButton.setLayoutParams(params);
+
+        buttonLayout.addView(orderTicketButton);
+        buttonLayout.addView(deliveredButton);
+
+        orderTicketsLayout.addView(buttonLayout);
     }
 
-    // queries the products associated with a specific order ticket and its address, then displays them in the user interface.
+    // Method to mark an order as delivered by the current user.
+    private void markOrderAsDelivered(String orderTicket) {
+        db.collection("orders")
+                .document(orderTicket)
+                .update("userConfirmedDelivery", true)
+                .addOnSuccessListener(aVoid -> checkAndDeleteOrder(orderTicket));
+    }
+
+    // Method to check if both parties have confirmed the delivery of an order and, if so, delete the order from the database.
+    private void checkAndDeleteOrder(String orderTicket) {
+        db.collection("orders")
+                .document(orderTicket)
+                .get()
+                .addOnSuccessListener(documentSnapshot -> {
+                    Boolean userConfirmedDelivery = documentSnapshot.getBoolean("userConfirmedDelivery");
+                    Boolean otherUserConfirmedDelivery = documentSnapshot.getBoolean("otherUserConfirmedDelivery");
+
+                    if (Boolean.TRUE.equals(userConfirmedDelivery) && Boolean.TRUE.equals(otherUserConfirmedDelivery)) {
+                        db.collection("orders")
+                                .document(orderTicket)
+                                .delete()
+                                .addOnSuccessListener(aVoid -> {
+
+                                })
+                                .addOnFailureListener(e -> {
+
+                                });
+                    }
+                });
+    }
+
+    // Method to display the products associated with a specific order ticket.
     private void showOrderTicketProducts(String orderTicket) {
         productsLayout.removeAllViews();
         db.collection("orders")

@@ -1,5 +1,6 @@
 package com.example.life2food;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -18,7 +19,9 @@ public class PagoExitosoActivity extends AppCompatActivity {
     private LinearLayout productsLayout;
     private TextView totalCostTextView;
     private TextView orderTicketValueTextView;
+    private TextView warningTextView;
     private Button toggleMapButton;
+    private Button orderReceivedButton;
     private Firebase firebase;
     private double totalCost = 0.0;
     private String orderTicket = null;
@@ -28,27 +31,43 @@ public class PagoExitosoActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pago_exitoso);
 
-        // References to views
+        // Initialize views
         productsLayout = findViewById(R.id.products_layout);
         totalCostTextView = findViewById(R.id.total_cost);
         orderTicketValueTextView = findViewById(R.id.order_ticket_value);
+        warningTextView = findViewById(R.id.warning_text);
         toggleMapButton = findViewById(R.id.toggle_map_button);
+        orderReceivedButton = findViewById(R.id.order_received_button);
         firebase = new Firebase();
+
+        // Set warning message
+        warningTextView.setText("NO PRESIONAR \"ORDEN RECIBIDA\" HASTA TENER TODOS LOS PRODUCTOS");
+
+        // Fetch and process cart products
         fetchAndProcessCartProducts();
+
+        // Set up listener for the order received button
+        orderReceivedButton.setOnClickListener(v -> markOrderAsReceived());
+
+        // Set up listener for the toggle map button
+        toggleMapButton.setOnClickListener(v -> {
+            Intent intent = new Intent(PagoExitosoActivity.this, MapsActivity.class);
+            startActivity(intent);
+        });
     }
 
-    // Calculate total price. Group products by store and generate OrderTicket
+    // Method to fetch and process cart products.
     private void fetchAndProcessCartProducts() {
         firebase.fetchCartProducts((productName, productPrice, quantity, address) -> {
-            agregarProductoALista(productName, productPrice, quantity);
+            addProductToList(productName, productPrice, quantity);
             totalCost += productPrice * quantity;
-            totalCostTextView.setText("Costo Total: $" + totalCost);
+            totalCostTextView.setText("Costo total: $" + totalCost);
             generateAndSaveOrderTickets(productName, productPrice, quantity, address);
         });
     }
 
-    // Add products to the list
-    private void agregarProductoALista(String productName, double productPrice, int quantity) {
+    // Method to add a product to the product list in the user interface.
+    private void addProductToList(String productName, double productPrice, int quantity) {
         View productView = getLayoutInflater().inflate(R.layout.item_product_pago, null);
         TextView productNameTextView = productView.findViewById(R.id.product_name);
         TextView productPriceTextView = productView.findViewById(R.id.product_price);
@@ -60,9 +79,8 @@ public class PagoExitosoActivity extends AppCompatActivity {
         productsLayout.addView(productView);
     }
 
-    // Create an OrderTicket. Save the order in the database. call the method to add the products to the corresponding subcollection.
+    // Method to generate and save order tickets in the database.
     private void generateAndSaveOrderTickets(String productName, double productPrice, int quantity, String address) {
-
         if (orderTicket == null) {
             orderTicket = generateOrderTicket();
             orderTicketValueTextView.setText("Order Ticket: " + orderTicket);
@@ -72,6 +90,7 @@ public class PagoExitosoActivity extends AppCompatActivity {
         orderData.put("orderTicket", orderTicket);
         orderData.put("userId", firebase.getUSERID());
         orderData.put("totalCost", totalCost);
+        orderData.put("otherUserConfirmedDelivery", false); // Add this line
 
         FirebaseFirestore db = firebase.getDB();
 
@@ -85,7 +104,7 @@ public class PagoExitosoActivity extends AppCompatActivity {
                 .addOnFailureListener(e -> Log.e("OrderTicket", "Error saving order: ", e));
     }
 
-    // Method to add products to the subcollection
+    // Method to add a product to the product sub-collection in the database.
     private void addProductToSubCollection(FirebaseFirestore db, String orderTicket, String address, String productName, double productPrice, int quantity) {
         db.collection("orders")
                 .document(orderTicket)
@@ -98,7 +117,7 @@ public class PagoExitosoActivity extends AppCompatActivity {
                 .addOnFailureListener(e -> Log.e("Product", "Error adding product: ", e));
     }
 
-    // Create a map with product details
+    // Method to create a product data map.
     private Map<String, Object> createProductMap(String productName, double productPrice, int quantity) {
         Map<String, Object> productData = new HashMap<>();
         productData.put("productName", productName);
@@ -107,7 +126,7 @@ public class PagoExitosoActivity extends AppCompatActivity {
         return productData;
     }
 
-    // OrderTicket Generator
+    // Method to generate a random order ticket.
     private String generateOrderTicket() {
         String letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
         Random random = new Random();
@@ -121,5 +140,35 @@ public class PagoExitosoActivity extends AppCompatActivity {
         }
 
         return ticket.toString();
+    }
+
+    // Method to mark an order as received.
+    private void markOrderAsReceived() {
+        FirebaseFirestore db = firebase.getDB();
+        db.collection("orders")
+                .document(orderTicket)
+                .update("otherUserConfirmedDelivery", true)
+                .addOnSuccessListener(aVoid -> checkAndDeleteOrder(orderTicket));
+    }
+
+    // Method to check if both parties have confirmed the delivery of an order and, if so, delete the order from the database.
+    private void checkAndDeleteOrder(String orderTicket) {
+        FirebaseFirestore db = firebase.getDB();
+        db.collection("orders")
+                .document(orderTicket)
+                .get()
+                .addOnSuccessListener(documentSnapshot -> {
+                    Boolean userConfirmedDelivery = documentSnapshot.getBoolean("userConfirmedDelivery");
+                    Boolean otherUserConfirmedDelivery = documentSnapshot.getBoolean("otherUserConfirmedDelivery");
+
+                    if (Boolean.TRUE.equals(userConfirmedDelivery) && Boolean.TRUE.equals(otherUserConfirmedDelivery)) {
+                        db.collection("orders")
+                                .document(orderTicket)
+                                .delete()
+                                .addOnSuccessListener(aVoid -> {
+
+                                });
+                    }
+                });
     }
 }
