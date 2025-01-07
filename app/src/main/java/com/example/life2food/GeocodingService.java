@@ -22,7 +22,7 @@ public class GeocodingService {
         this.apiKey = apiKey;
     }
 
-    // Método para convertir una dirección en coordenadas
+    // takes an address as input, makes a request to the Geocoding API to get the coordinates (latitude and longitude) of that address, and returns a Task<LatLng> containing the coordinates if the request is successful
     public Task<LatLng> getLocationFromAddress(String address) {
         TaskCompletionSource<LatLng> taskCompletionSource = new TaskCompletionSource<>();
 
@@ -61,7 +61,7 @@ public class GeocodingService {
 
             } catch (Exception e) {
                 e.printStackTrace();
-                taskCompletionSource.setException(e); // Manejo de error
+                taskCompletionSource.setException(e);
             }
         }).start();
 

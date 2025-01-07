@@ -5,24 +5,94 @@
     android:layout_height="match_parent"
     tools:context=".MapsActivity">
 
+    <!-- Fragment for the map -->
+    <fragment
+        android:id="@+id/map"
+        android:name="com.google.android.gms.maps.SupportMapFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <!-- LinearLayout for the route buttons -->
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="10dp"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:background="@android:color/transparent">
+
+        <!-- LinearLayout for the car button -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginEnd="10dp">
+
+            <ImageButton
+            android:id="@+id/btn_route_driving"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:src="@drawable/ic_car"
+            android:contentDescription="Route Driving"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:scaleType="fitCenter"
+            android:clickable="true"
+            android:focusable="true"
+            app:tint="@android:color/white" />
+
+            <TextView
+                android:id="@+id/tv_time_driving"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="-- min"
+                android:textColor="@android:color/black"
+                android:textSize="12sp"
+                android:gravity="center" />
+        </LinearLayout>
+
+        <!-- LinearLayout for the walking button -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <ImageButton
+            android:id="@+id/btn_route_walking"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:src="@drawable/ic_walk"
+            android:contentDescription="Route Walking"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:scaleType="fitCenter"
+            android:clickable="true"
+            android:focusable="true"
+            app:tint="@android:color/white" />
+
+            <TextView
+                android:id="@+id/tv_time_walking"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="-- min"
+                android:textColor="@android:color/black"
+                android:textSize="12sp"
+                android:gravity="center" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- LinearLayout for the back button -->
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center"
-        android:orientation="vertical">
-
-
-        <fragment
-            android:id="@+id/map"
-            android:name="com.google.android.gms.maps.SupportMapFragment"
-            android:layout_width="400dp"
-            android:layout_height="550dp" />
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="10dp"
+        android:layout_alignParentBottom="true"
+        android:background="@android:color/transparent">
 
         <Button
             android:id="@+id/back_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
             android:backgroundTint="@color/Life2Food_color"
             android:padding="20dp"
             android:text="Volver"

@@ -20,15 +20,21 @@ import java.util.List;
 
 public class DirectionsRequest extends AsyncTask<Void, Void, String> {
 
-    private static final String TAG = "DirectionsRequest";
-    private final String url;
-    private final GoogleMap googleMap;
+    private static final String TAG = "DirectionsRequest"; // Etiqueta para los mensajes de depuración
+    private final String url; // URL de la solicitud de direcciones
+    private final GoogleMap googleMap; // Mapa de Google
+    private final String mode; // Modo de transporte
+    private final DirectionsRequestCallback callback; // Callback
 
-    public DirectionsRequest(MapsActivity activity, String url, GoogleMap googleMap) {
+    // Constructor
+    public DirectionsRequest(MapsActivity activity, String url, GoogleMap googleMap, String mode, DirectionsRequestCallback callback) {
         this.url = url;
         this.googleMap = googleMap;
+        this.mode = mode;
+        this.callback = callback;
     }
 
+    // makes an HTTP GET request, reads the response, and returns it as a string.
     @Override
     protected String doInBackground(Void... voids) {
         try {
@@ -48,6 +54,7 @@ public class DirectionsRequest extends AsyncTask<Void, Void, String> {
         }
     }
 
+    // takes the result of a directions request (in JSON format), processes it to extract the route and duration information, decodes the route points, creates a line on the map with these points, and then reports the route duration.
     @Override
     protected void onPostExecute(String result) {
         if (result != null) {
@@ -55,15 +62,31 @@ public class DirectionsRequest extends AsyncTask<Void, Void, String> {
                 JSONObject json = new JSONObject(result);
                 JSONArray routes = json.getJSONArray("routes");
                 if (routes.length() > 0) {
-                    JSONArray steps = routes.getJSONObject(0).getJSONArray("legs")
-                            .getJSONObject(0).getJSONArray("steps");
+                    JSONArray legs = routes.getJSONObject(0).getJSONArray("legs");
+                    JSONObject leg = legs.getJSONObject(0);
+                    JSONObject duration = leg.getJSONObject("duration");
+                    String durationText = duration.getString("text");
+
+                    JSONArray steps = leg.getJSONArray("steps");
                     List<LatLng> path = new ArrayList<>();
                     for (int i = 0; i < steps.length(); i++) {
                         String polyline = steps.getJSONObject(i).getJSONObject("polyline").getString("points");
                         path.addAll(DecodePoly.decodePolyline(polyline));
                     }
-                    googleMap.addPolyline(new PolylineOptions().addAll(path));
+
+                    PolylineOptions polylineOptions = new PolylineOptions().addAll(path);
+                    if ("driving".equals(mode)) {
+                        polylineOptions.color(0xFF3BC1BF);
+                    } else if ("walking".equals(mode)) {
+                        polylineOptions.color(0xFF3BC16E);
+                    }
+
+                    googleMap.addPolyline(polylineOptions);
                     Log.d(TAG, "Ruta trazada con éxito.");
+
+                    if (callback != null) {
+                        callback.onDurationRetrieved(mode, durationText);
+                    }
                 } else {
                     Log.e(TAG, "No se encontraron rutas.");
                 }
@@ -71,5 +94,10 @@ public class DirectionsRequest extends AsyncTask<Void, Void, String> {
                 Log.e(TAG, "Error al analizar la respuesta JSON: " + e.getMessage());
             }
         }
+    }
+
+    // Callback interface
+    public interface DirectionsRequestCallback {
+        void onDurationRetrieved(String mode, String duration);
     }
 }

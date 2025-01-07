@@ -11,6 +11,8 @@ import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.FragmentActivity;
 import android.util.Log;
 import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.TextView;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
@@ -21,25 +23,32 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
+public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, DirectionsRequest.DirectionsRequestCallback {
 
     private GoogleMap mMap;
-    private FirebaseFirestore db;
-    private FusedLocationProviderClient fusedLocationClient;
-    private Firebase firebase;
-    private String userId;
-    private LatLng currentLocation;
+    private FirebaseFirestore db; // Add a variable to store the Firestore instance
+    private FusedLocationProviderClient fusedLocationClient; // Add a variable to store the FusedLocationProviderClient instance
+    private Firebase firebase; // Add a variable to store the Firebase instance
+    private String userId; // Add a variable to store the current user ID
+    private LatLng currentLocation; // Add a variable to store the current location
+    private LatLng productLocation; // Add a variable to store the product location
+    private List<Polyline> polylines = new ArrayList<>(); // To keep track of drawn polylines
+    private Polyline currentPolyline; // To keep track of the current polyline
+    private TextView tvTimeDriving; // Add a variable to store the TextView for the driving time
+    private TextView tvTimeWalking; // Add a variable to store the TextView for the walking time
 
     private static final String TAG = "MapsActivity";
 
+    // Initialize the activity, set the content view, and get the current user ID
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,8 +57,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         firebase = new Firebase();
         userId = firebase.getCurrentUser().getUid();
 
+        tvTimeDriving = findViewById(R.id.tv_time_driving);
+        tvTimeWalking = findViewById(R.id.tv_time_walking);
+
         Button backButton = findViewById(R.id.back_button);
         backButton.setOnClickListener(v -> finish());
+
+        ImageButton btnRouteDriving = findViewById(R.id.btn_route_driving);
+        ImageButton btnRouteWalking = findViewById(R.id.btn_route_walking);
 
         db = firebase.getDB();
         Log.d(TAG, "Firebase Firestore initialized");
@@ -64,8 +79,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         } else {
             Log.e(TAG, "Map fragment is null");
         }
+
+        btnRouteDriving.setOnClickListener(v -> trazarRuta(currentLocation, productLocation, "driving"));
+        btnRouteWalking.setOnClickListener(v -> trazarRuta(currentLocation, productLocation, "walking"));
     }
 
+    // Request location permissions
     @Override
     public void onMapReady(GoogleMap googleMap) {
         Log.d(TAG, "Map is ready");
@@ -80,12 +99,21 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         obtenerUbicacionesProductosEnCarrito();
 
         mMap.setOnMarkerClickListener(marker -> {
-            LatLng productLocation = marker.getPosition();
-            trazarRuta(currentLocation, productLocation);
+            LatLng newProductLocation = marker.getPosition();
+            if (currentPolyline != null) {
+                currentPolyline.remove();
+                currentPolyline = null;
+                if (newProductLocation.equals(productLocation)) {
+                    productLocation = null;
+                    return true;
+                }
+            }
+            productLocation = newProductLocation;
             return false;
         });
     }
 
+    // Get the current location of the device and add a marker to the map
     private void mostrarUbicacionActual() {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
                 && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -104,6 +132,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 });
     }
 
+    // Query the 'carts' collection to get the products in the user's cart
     private void obtenerUbicacionesProductosEnCarrito() {
         Log.d(TAG, "Consultando productos en el carrito para el usuario con ID: " + userId);
         db.collection("carts")
@@ -129,6 +158,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 });
     }
 
+    // Check if the product exists in the 'products' collection, then check if the user's location is available. If not, convert the address to coordinates.
     private void verificarProductoYUbicacion(String productId, Map<String, Object> item) {
         db.collection("products")
                 .document(productId)
@@ -146,7 +176,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                                 Double latitude = userDoc.getDouble("latitude");
                                                 Double longitude = userDoc.getDouble("longitude");
                                                 if (latitude != null && longitude != null) {
-                                                    LatLng productLocation = new LatLng(latitude, longitude);
+                                                    productLocation = new LatLng(latitude, longitude); // Update productLocation
+                                                    Log.d(TAG, "Ubicación del producto: " + productLocation);
                                                     agregarMarcadorEnMapa(productLocation, "Ubicación de " + email);
                                                     return; // No necesitamos seguir buscando otros usuarios
                                                 }
@@ -170,16 +201,17 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 .addOnFailureListener(e -> Log.e(TAG, "Error al buscar producto: " + e));
     }
 
+    // Converts an address to coordinates and then updates a marker on the map
     private void convertirDireccionACoordenadas(String direccion) {
         Log.d(TAG, "Convirtiendo dirección a coordenadas: " + direccion);
         GeocodingService geocodingService = new GeocodingService("AIzaSyBrrXaiHB3RbAkY-4dnDk7pEwp1_7RGRZ0");
         geocodingService.getLocationFromAddress(direccion)
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
-                        LatLng latLng = task.getResult();
-                        if (latLng != null) {
-                            agregarMarcadorEnMapa(latLng, direccion);
-                            Log.d(TAG, "Dirección: " + direccion + " Coordenadas: " + latLng);
+                        productLocation = task.getResult(); // Update productLocation
+                        if (productLocation != null) {
+                            Log.d(TAG, "Coordenadas de la dirección: " + productLocation);
+                            agregarMarcadorEnMapa(productLocation, direccion);
                         } else {
                             Log.e(TAG, "No se pudieron obtener coordenadas para la dirección: " + direccion);
                         }
@@ -189,6 +221,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 });
     }
 
+    // Add the corresponding product icons to the map
     private void agregarMarcadorEnMapa(LatLng location, String title) {
         Bitmap smallIcon = BitmapFactory.decodeResource(getResources(), R.drawable.icono_productos_mapa);
         Bitmap resizedIcon = Bitmap.createScaledBitmap(smallIcon, 100, 100, false);
@@ -202,18 +235,40 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         Log.d(TAG, "Marcador agregado en: " + location + " con título: " + title);
     }
 
-    private void trazarRuta(LatLng inicio, LatLng destino) {
+    // Checks if the start and end points are not null, constructs a URL to request directions from the Google API, and then makes the request. When the response is received, the method updates the UI with the route duration based on the selected mode of transport.
+    private void trazarRuta(LatLng inicio, LatLng destino, String mode) {
         if (inicio == null || destino == null) {
             Log.e(TAG, "Puntos de inicio o destino son nulos. No se puede trazar la ruta.");
             return;
         }
 
-        Log.d(TAG, "Trazando ruta desde " + inicio.toString() + " hasta " + destino.toString());
+        Log.d(TAG, "Trazando ruta desde " + inicio.toString() + " hasta " + destino.toString() + " en modo: " + mode);
 
         String directionsUrl = "https://maps.googleapis.com/maps/api/directions/json?origin=" + inicio.latitude + "," + inicio.longitude +
                 "&destination=" + destino.latitude + "," + destino.longitude +
+                "&mode=" + mode +
                 "&key=AIzaSyBrrXaiHB3RbAkY-4dnDk7pEwp1_7RGRZ0";
 
-        new DirectionsRequest(this, directionsUrl, mMap).execute();
+        new DirectionsRequest(this, directionsUrl, mMap, mode, new DirectionsRequest.DirectionsRequestCallback() {
+
+            @Override
+            public void onDurationRetrieved(String mode, String duration) {
+                if ("driving".equals(mode)) {
+                    tvTimeDriving.setText(duration );
+                } else if ("walking".equals(mode)) {
+                    tvTimeWalking.setText(duration );
+                }
+            }
+        }).execute();
+    }
+
+    // Updates the UI elements (TextView) with the route duration, depending on the mode of transport
+    @Override
+    public void onDurationRetrieved(String mode, String duration) {
+        if ("driving".equals(mode)) {
+            tvTimeDriving.setText(duration );
+        } else if ("walking".equals(mode)) {
+            tvTimeWalking.setText(duration );
+        }
     }
 }
