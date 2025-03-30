@@ -58,7 +58,7 @@
             android:id="@+id/passwordEditText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Ingresa tu contraseña"
+            android:hint="Ingresa tu contraseña (6 o mas caracteres)"
             android:inputType="textPassword"
             android:padding="16dp"
             android:layout_marginTop="16dp" />
