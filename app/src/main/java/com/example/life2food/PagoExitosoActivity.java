@@ -7,6 +7,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import androidx.appcompat.app.AppCompatActivity;
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -47,7 +49,11 @@ public class PagoExitosoActivity extends AppCompatActivity {
         fetchAndProcessCartProducts();
 
         // Set up listener for the order received button
-        orderReceivedButton.setOnClickListener(v -> markOrderAsReceived());
+        orderReceivedButton.setOnClickListener(v -> {
+            markOrderAsReceived();
+            Toast.makeText(PagoExitosoActivity.this, "Todos los productos han sido recibidos", Toast.LENGTH_SHORT).show();
+
+        });
 
         // Set up listener for the toggle map button
         toggleMapButton.setOnClickListener(v -> {

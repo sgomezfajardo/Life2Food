@@ -2,12 +2,12 @@
 <project version="4">
   <component name="deploymentTargetSelector">
     <selectionStates>
-      <SelectionState runConfigName="Life2Food">
+      <SelectionState runConfigName="life2food">
         <option name="selectionMode" value="DROPDOWN" />
-        <DropdownSelection timestamp="2024-12-17T00:39:33.423609400Z">
+        <DropdownSelection timestamp="2025-04-10T17:40:09.764149600Z">
           <Target type="DEFAULT_BOOT">
             <handle>
-              <DeviceId pluginId="PhysicalDevice" identifier="serial=R58T20XG49B" />
+              <DeviceId pluginId="PhysicalDevice" identifier="serial=z9kjjnskjvr8qob6" />
             </handle>
           </Target>
         </DropdownSelection>

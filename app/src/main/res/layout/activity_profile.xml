@@ -17,23 +17,6 @@
             android:orientation="vertical"
             android:padding="16dp">
 
-            <ImageView
-                android:id="@+id/profile_image"
-                android:layout_width="100dp"
-                android:layout_height="100dp"
-                android:layout_gravity="center"
-                android:contentDescription="@string/profile_picture"
-                android:src="@drawable/ic_default_profile" />
-
-            <Button
-                android:id="@+id/pic_button"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:backgroundTint="#006F4A"
-                android:text="Nueva foto de perfil"
-                android:textColor="#FDF9FC" />
-
             <TextView
                 android:id="@+id/name_text_view"
                 android:layout_width="match_parent"
@@ -42,14 +25,6 @@
                 android:gravity="center"
                 android:textSize="18sp" />
 
-            <TextView
-                android:id="@+id/email"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="2dp"
-                android:gravity="center"
-                android:textColor="@color/text"
-                android:textSize="15sp" />
 
             <EditText
                 android:id="@+id/edit_address"
